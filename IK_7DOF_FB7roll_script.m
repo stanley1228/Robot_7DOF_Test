@@ -5,7 +5,7 @@
 %L5 end effector
 %第七軸為roll軸
 
-%function theta = IK_7DOF_FullBend_proj_5to7(L0,L1,L2,L3,L4,L5,x_base,y_base,z_base,x_end,y_end,z_end,alpha,beta,gamma,Rednt_alpha)
+%function theta = IK_7DOF_FB7roll(L0,L1,L2,L3,L4,L5,x_base,y_base,z_base,x_end,y_end,z_end,alpha,beta,gamma,Rednt_alpha)
 
     %輸出參數
     theta=zeros(1,7);
@@ -16,7 +16,7 @@
     V_H_hat_x=R(1:3,1);%取出歐拉角轉換的旋轉矩陣，取出第1行為X軸旋轉後向量
     V_H_hat_x=V_H_hat_x/norm(V_H_hat_x);
     V_H_hat_y=R(1:3,2);%取出歐拉角轉換的旋轉矩陣，取出第2行為Y軸旋轉後向量
-
+    V_H_hat_z=R(1:3,3);
     %V_H_hat_y=V_H_hat_y/norm(V_H_hat_y);
     V_r_end=[x_end-x_base;
              y_end-y_base;
@@ -84,9 +84,7 @@
         theta(3)=acos(temp);
     end
     
-    %% ==Axis7== %%
-    theta(7)=0;
-
+ 
     %% ==Axis5== %%
     %旋轉V_r_f 到 V_rf_l4
     theat_lowoff=atan(L3/L4);
@@ -135,5 +133,30 @@
     else
         theta(6)=acos(temp); 
     end
+      %% ==Axis7== %%
+     
+    %V_shx經過123456軸旋轉後變應該要與末點座標系的Z軸貼齊
+    V_x_rot1to6=Ry(-theta(1))*Rx(theta(2))*[V_shx;1];  %第一軸和大地Z座標方向相反
+    temp=Rogridues(theta(3),V_ru_l1/norm(V_ru_l1))*V_x_rot1to6;  
+    temp=Rogridues(theta(4),Vn_u_f/norm(Vn_u_f))*temp;  
+    temp=Rogridues(theta(5),Vn_rfl4_nuf/norm(Vn_rfl4_nuf))*temp; 
+    temp=Rogridues(theta(6),Vn_nuf_rotx5_along_NRfl4Nuf)*temp; 
+    V_x_rot1to6=temp(1:3,1); 
+    V_x_rot1to6=V_x_rot1to6/norm(V_x_rot1to6);
+    
+    %xrot1to6 和 V_H_hat_z 的法向量來判斷第7軸旋轉方向
+    Vn_xrot1to6_VHhatz=cross(V_x_rot1to6,V_H_hat_z);
+    Vn_xrot1to6_VHhatz=Vn_xrot1to6_VHhatz/norm(Vn_xrot1to6_VHhatz);
+    
+    %V_shx經過123456軸旋轉後和末點座標系的Z軸還差幾度
+    theta(7)=acos(V_x_rot1to6'*V_H_hat_z/norm(V_x_rot1to6)/norm(V_H_hat_z));
+    if norm(Vn_xrot1to6_VHhatz - V_H_hat_x) <  1.e-7
+        theta(7)=theta(7);
+    else
+        theta(7)=-theta(7);
+    end
+    
+    
+   
 %end
 
