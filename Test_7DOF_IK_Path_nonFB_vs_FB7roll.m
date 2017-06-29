@@ -12,15 +12,15 @@ y_base_L=0;
 z_base_L=0;
 
 
-DEF_DESCRETE_POINT=90;
+DEF_DESCRETE_POINT=1;
 
 %把此路徑分成90份
-O_R=[500 200 0];
+O_R=[500 -200 -44];%O_R=[500 200 100];%%
 Q_R=[500 -200 0];
 R_R=[500 -200 -220];
 S_R=[500 200 -220];
 
-O_L=[500 200 0];
+O_L=[500 -200 -44];%O_L=[500 200 100];%%
 Q_L=[500 -200 0];
 R_L=[500 -200 -220];
 S_L=[500 200 -220];
@@ -61,12 +61,12 @@ end
     in_y_end_L=Path_L(t,2);
     in_z_end_L=Path_L(t,3);
    
-    in_alpha_R=0*(pi/180);
-    in_beta_R=0*(t/DEF_DESCRETE_POINT)*(pi/180);
+    in_alpha_R=30*(pi/180);
+    in_beta_R=0*(pi/180);
     in_gamma_R=0*(t/DEF_DESCRETE_POINT)*(pi/180);
     
-    in_alpha_L=0*(pi/180);
-    in_beta_L=0*(t/DEF_DESCRETE_POINT)*(pi/180);
+    in_alpha_L=30*(pi/180);
+    in_beta_L=0*(pi/180);
     in_gamma_L=0*(t/DEF_DESCRETE_POINT)*(pi/180);
 
     Rednt_alpha_R=(-90)*(pi/180);
@@ -137,7 +137,7 @@ end
     %theta_L(7)=0;
     %forward kinematic
     %theta=[0 0 0 0 0 0 0];
-    %theta_L(7)=0
+    %theta_L(7)=1.7;
     [out_x_end_R,out_y_end_R,out_z_end_R,out_alpha_R,out_beta_R,out_gamma_R,P_R,RotationM_R] = FK_7DOF_nonFB(L0n,org_upper,org_fore,L5n,x_base_R,y_base_R,z_base_R,theta_R);
     [out_x_end_L,out_y_end_L,out_z_end_L,out_alpha_L,out_beta_L,out_gamma_L,P_L,RotationM_L] = FK_7DOF_FB7roll(L0n,L1n,L2n,L3n,L4n,L5n,x_base_L,y_base_L,z_base_L,theta_L);
     
@@ -147,7 +147,7 @@ end
     
     
     %畫關節點圖
-    Draw_7DOF_nonFB_vs_FB7roll_point(P_R,RotationM_R,PathPoint_R,P_L,RotationM_L,PathPoint_L,Vn_u_f,V_rf_l4,Vn_rfl4_nuf,Vproj_end_rfl4_nuf,Vn_nuf_rotx5_along_NRfl4Nuf,Vn_WstToEnd_WstToProjEndRfl4Nuf,V_n_yrot12);
+    Draw_7DOF_nonFB_vs_FB7roll_point(P_R,RotationM_R,PathPoint_R,P_L,RotationM_L,PathPoint_L,Vn_u_f,V_rf_l4,Vn_rfl4_nuf,Vproj_end_rfl4_nuf,Vn_nuf_rotx5_along_NRfl4Nuf,Vn_WstToEnd_WstToProjEndRfl4Nuf,V_n_yrot12,V_x_rot1to6);
    
     %記錄每軸角度變化
     PathTheta_R(t,1:7)=theta_R*(180/pi);

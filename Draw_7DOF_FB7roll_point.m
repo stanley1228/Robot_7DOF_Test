@@ -52,7 +52,7 @@ plot3(PathPoint(:,1),PathPoint(:,2),PathPoint(:,3),'mo','MarkerSize',2,'Linewidt
 plot3(P(10,1),P(10,2),P(10,3),'go','MarkerSize',10,'Linewidth',4);text(P(10,1),P(10,2),P(10,3),'End');
 
 %% ========末點姿態座標軸標示  orientation V_H_hat_x V_H_hat_y V_H_hat_z ========%%
-V_H_HAT_UNIT_LEN=10;
+V_H_HAT_UNIT_LEN=100;
 RotationM=RotationM*V_H_HAT_UNIT_LEN;
 V_H_hat_x=RotationM(1:3,1);
 V_H_hat_y=RotationM(1:3,2);
