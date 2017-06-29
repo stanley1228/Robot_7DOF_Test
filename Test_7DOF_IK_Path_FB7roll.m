@@ -46,10 +46,10 @@ for t=1:1:DEF_DESCRETE_POINT
     in_y_end=Path(t,2);
     in_z_end=Path(t,3);
    
-    in_alpha=0*(t/DEF_DESCRETE_POINT)*(pi/180);
+    in_alpha=-30*(pi/180);
     in_beta=0*(t/DEF_DESCRETE_POINT)*(pi/180);
-    in_gamma=0*(t/DEF_DESCRETE_POINT)*(pi/180);
-
+    in_gamma=0*(pi/180);
+    
     Rednt_alpha=-(90)*(pi/180);
    
     %末點位置in==>IK==>theta==>FK==>末點位置out

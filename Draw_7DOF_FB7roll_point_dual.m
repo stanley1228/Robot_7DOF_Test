@@ -109,7 +109,7 @@ plot3(P_L(10,1),P_L(10,2),P_L(10,3),'go','MarkerSize',10,'Linewidth',4);text(P_L
 
 %% ========末點姿態座標軸標示  orientation V_H_hat_x V_H_hat_y V_H_hat_z ========%%
 %Right Arm
-V_H_HAT_UNIT_LEN=10;
+V_H_HAT_UNIT_LEN=100;
 RotationM_R=RotationM_R*V_H_HAT_UNIT_LEN;
 V_H_hat_x=RotationM_R(1:3,1);
 V_H_hat_y=RotationM_R(1:3,2);
@@ -119,7 +119,7 @@ plot3([P_R(10,1),P_R(10,1)+V_H_hat_y(1,1)],[P_R(10,2),P_R(10,2)+V_H_hat_y(2,1)],
 plot3([P_R(10,1),P_R(10,1)+V_H_hat_z(1,1)],[P_R(10,2),P_R(10,2)+V_H_hat_z(2,1)],[P_R(10,3),P_R(10,3)+V_H_hat_z(3,1)],'-b','LineWidth',2); text(P_R(10,1)+V_H_hat_z(1,1),P_R(10,2)+V_H_hat_z(2,1),P_R(10,3)+V_H_hat_z(3,1),'Z')
 
 %Left Arm
-V_H_HAT_UNIT_LEN=10;
+V_H_HAT_UNIT_LEN=100;
 RotationM_L=RotationM_L*V_H_HAT_UNIT_LEN;
 V_H_hat_x=RotationM_L(1:3,1);
 V_H_hat_y=RotationM_L(1:3,2);
