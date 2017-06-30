@@ -57,7 +57,8 @@ for t=1:1:DEF_DESCRETE_POINT
     in_base=[x_base;y_base;z_base];
     in_end=[in_x_end;in_y_end;in_z_end];
     in_PoseAngle=[in_alpha;in_alpha;in_gamma];
-    theta = IK_7DOF_FB7roll( L0,L1,L2,L3,L4,L5,in_base,in_end,in_PoseAngle,Rednt_alpha);
+    in_linkL=[L0;L1;L2;L3;L4;L5];
+    theta = IK_7DOF_FB7roll(in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha);
     
     
     %% AngleConstrain

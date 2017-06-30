@@ -1,15 +1,17 @@
-%L1 上臂L型長邊
-%L2 上臂L型短邊
-%L3 上臂L型短邊
-%L4 上臂L型長邊
-%L5 end effector
 %第七軸為roll軸
 
-%function theta = IK_7DOF_FB7roll(L0,L1,L2,L3,L4,L5,base,Pend,PoseAngle,Rednt_alpha)
+%function theta = IK_7DOF_FB7roll(linkL,base,Pend,PoseAngle,Rednt_alpha)
 
     %輸出參數
     theta=zeros(1,7);
-
+    
+    %輸入連桿長度
+    L0=linkL(1);%L0 頭到肩膀
+    L1=linkL(2);%L1 上臂L型長邊
+    L2=linkL(3);%L2 上臂L型短邊
+    L3=linkL(4);%L3 上臂L型短邊
+    L4=linkL(5);%L4 上臂L型長邊
+    L5=linkL(6);%L5 end effector
     %% == 求出H_hat_x ==%%
     %R=R_z1x2z3(alpha,beta,gamma);
     R=R_z1x2y3(PoseAngle(1),PoseAngle(2),PoseAngle(3)); %alpha,beta,gamma
@@ -21,7 +23,6 @@
     V_r_end=Pend-base;
     V_r_h=L5*V_H_hat_x;
     V_r_wst=V_r_end-V_r_h;
-
 
      %% ==Axis4== %%
     ru_norm=(L1^2+L2^2)^0.5; %L型的斜邊長度

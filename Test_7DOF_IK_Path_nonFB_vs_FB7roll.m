@@ -109,12 +109,7 @@ end
     %y_base_L=-L0;%¥ª¤â fullbend
     % theta_L=IK_7DOF_FullBend_proj(L0,L1,L2,L3,L4,L5,x_base_L,y_base_L,z_base_L,in_x_end_L,in_y_end_L,in_z_end_L,in_alpha_L,in_beta_L,in_gamma_L,Rednt_alpha_L)
     %IK_7DOF_FullBend_proj(L0,L1,L2,L3,L4,L5,x_base,y_base,z_base,x_end,y_end,z_end,alpha,beta,gamma,Rednt_alpha)
-    L0=L0n;
-    L1=L1n;
-    L2=L2n;
-    L3=L3n;
-    L4=L4n;
-    L5=L5n;
+    linkL=[L0n;L1n;L2n;L3n;L4n;L5n];
     base=[x_base_L;y_base_L;z_base_L];
     Pend=[in_x_end_L;in_y_end_L;in_z_end_L];
     PoseAngle=[in_alpha_L;in_beta_L;in_gamma_L];
