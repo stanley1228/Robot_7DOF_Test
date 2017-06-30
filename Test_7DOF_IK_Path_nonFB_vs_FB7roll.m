@@ -101,7 +101,9 @@ end
     beta=in_beta_R;
     gamma=in_gamma_R;
     Rednt_alpha=Rednt_alpha_R;
+    tic
     IK_7DOF_nonFB_script
+    toc
     theta_R=theta;
   	
     %y_base_L=-L0;%¥ª¤â fullbend
@@ -113,18 +115,13 @@ end
     L3=L3n;
     L4=L4n;
     L5=L5n;
-    x_base=x_base_L;
-    y_base=y_base_L;
-    z_base=z_base_L;
-    x_end=in_x_end_L;
-    y_end=in_y_end_L;
-    z_end=in_z_end_L;
-    alpha=in_alpha_L;
-    beta=in_beta_L;
-    gamma=in_gamma_L;
+    base=[x_base_L;y_base_L;z_base_L];
+    Pend=[in_x_end_L;in_y_end_L;in_z_end_L];
+    PoseAngle=[in_alpha_L;in_beta_L;in_gamma_L];
     Rednt_alpha=Rednt_alpha_L;
-  
+    tic
     IK_7DOF_FB7roll_script
+    toc
     theta_L=theta;
    
     %theta_L(1)=0*(pi/180);
