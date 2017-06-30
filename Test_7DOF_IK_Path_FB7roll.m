@@ -19,8 +19,8 @@ DEF_DESCRETE_POINT=90;
 %把此路徑分成90份
 O=[500 -50 0];  %需要測試 O=[300 100 -100]; 
 Q=[500 -200 0];
-R=[500 -200 -220];
-S=[500 -50 -220];
+R=[500 -200 -150];
+S=[500 -50 -150];
  
 Path=zeros(DEF_DESCRETE_POINT,3);%規畫的路徑點
 PathPoint=zeros(DEF_DESCRETE_POINT,3);%記錄實際上的點，畫圖使用
@@ -46,23 +46,27 @@ for t=1:1:DEF_DESCRETE_POINT
     in_y_end=Path(t,2);
     in_z_end=Path(t,3);
    
-    in_alpha=-30*(pi/180);
+    in_alpha=30*(pi/180);
     in_beta=0*(t/DEF_DESCRETE_POINT)*(pi/180);
     in_gamma=0*(pi/180);
     
     Rednt_alpha=-(90)*(pi/180);
    
     %末點位置in==>IK==>theta==>FK==>末點位置out
-    %inverse kinematic
-    theta = IK_7DOF_FB7roll( L0,L1,L2,L3,L4,L5,x_base,y_base,z_base,in_x_end,in_y_end,in_z_end,in_alpha,in_beta,in_gamma,Rednt_alpha);
+    %% inverse kinematic
+    in_base=[x_base;y_base;z_base];
+    in_end=[in_x_end;in_y_end;in_z_end];
+    in_PoseAngle=[in_alpha;in_alpha;in_gamma];
+    theta = IK_7DOF_FB7roll( L0,L1,L2,L3,L4,L5,in_base,in_end,in_PoseAngle,Rednt_alpha);
     
+    
+    %% AngleConstrain
     axis=AngleConstrain(theta);
-%     if axis ~= 0
-%         xx=['Axis ',num2str(axis),' over constrain'];
-%         display(xx);
-%     end
+    if axis ~= 0
+        break;
+    end
     
-    %forward kinematic
+    %% forward kinematic
     [out_x_end,out_y_end,out_z_end,out_alpha,out_beta,out_gamma,P,RotationM] = FK_7DOF_FB7roll(L0,L1,L2,L3,L4,L5,x_base,y_base,z_base,theta);
 
     %記錄路徑上的點
