@@ -5,21 +5,19 @@
 %L5 end effector
 %第七軸為roll軸
 
-function theta = IK_7DOF_FB7roll(L0,L1,L2,L3,L4,L5,x_base,y_base,z_base,x_end,y_end,z_end,alpha,beta,gamma,Rednt_alpha)
+function theta = IK_7DOF_FB7roll(L0,L1,L2,L3,L4,L5,base,Pend,PoseAngle,Rednt_alpha)
     %輸出參數
     theta=zeros(1,7);
 
     %% == 求出H_hat_x ==%%
     %R=R_z1x2z3(alpha,beta,gamma);
-    R=R_z1x2y3(alpha,beta,gamma);
+    R=R_z1x2y3(PoseAngle(1),PoseAngle(2),PoseAngle(3)); %alpha,beta,gamma
     V_H_hat_x=R(1:3,1);%取出歐拉角轉換的旋轉矩陣，取出第1行為X軸旋轉後向量
     V_H_hat_x=V_H_hat_x/norm(V_H_hat_x);
     V_H_hat_y=R(1:3,2);%取出歐拉角轉換的旋轉矩陣，取出第2行為Y軸旋轉後向量
     V_H_hat_z=R(1:3,3);
-    %V_H_hat_y=V_H_hat_y/norm(V_H_hat_y);
-    V_r_end=[x_end-x_base;
-             y_end-y_base;
-             z_end-z_base];
+ 
+    V_r_end=Pend-base;
     V_r_h=L5*V_H_hat_x;
     V_r_wst=V_r_end-V_r_h;
 
