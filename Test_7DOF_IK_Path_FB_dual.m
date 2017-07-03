@@ -28,6 +28,11 @@ O_R=[500 -50 0];
 Q_R=[500 -200 0];
 R_R=[500 -200 -220];
 S_R=[500 -50 -220];
+% O_R=[500 180 0];
+% Q_R=[500 30 0];
+% R_R=[500 30 -220];
+% S_R=[500 180 -220];
+
 
 O_L=[500 50 0];
 Q_L=[500 200 0];
@@ -70,16 +75,16 @@ for t=1:1:DEF_DESCRETE_POINT
     in_y_end_L=Path_L(t,2);
     in_z_end_L=Path_L(t,3);
    
-    in_alpha_R=60*(pi/180);
+    in_alpha_R=30*(pi/180);
     in_beta_R=0*(t/DEF_DESCRETE_POINT)*(pi/180);
     in_gamma_R=0*(t/DEF_DESCRETE_POINT)*(pi/180);
     
-    in_alpha_L=-60*(pi/180);
+    in_alpha_L=-30*(pi/180);
     in_beta_L=0*(t/DEF_DESCRETE_POINT)*(pi/180);
     in_gamma_L=0*(t/DEF_DESCRETE_POINT)*(pi/180);
 
-    Rednt_alpha_R=-45*(pi/180);
-    Rednt_alpha_L=45*(pi/180);
+    Rednt_alpha_R=-90*(pi/180);
+    Rednt_alpha_L=90*(pi/180);
   
     
   
@@ -87,10 +92,10 @@ for t=1:1:DEF_DESCRETE_POINT
     %inverse kinematic
     y_base_R=-L0;%header0 座標系偏移到shoulder0 座標系 差Y方向的L0
     theta_R=IK_7DOF_FB(L0,L1,L2,L3,L4,L5,x_base_R,y_base_R,z_base_R,in_x_end_R,in_y_end_R,in_z_end_R,in_alpha_R,in_beta_R,in_gamma_R,Rednt_alpha_R);
+   
     y_base_L=L0;
     theta_L=IK_7DOF_FB(L0,L1,L2,L3,L4,L5,x_base_L,y_base_L,z_base_L,in_x_end_L,in_y_end_L,in_z_end_L,in_alpha_L,in_beta_L,in_gamma_L,Rednt_alpha_L);
-    
-    
+   
     R=theta_R*57.3;
     L=theta_L*57.3;
     %forward kinematic
