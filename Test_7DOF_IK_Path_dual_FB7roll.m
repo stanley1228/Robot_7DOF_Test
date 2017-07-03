@@ -5,6 +5,9 @@ clc
 
 
 %固定參數
+DEF_RIGHT_HAND=1;
+DEF_LEFT_HAND=2;
+
 L0=225;   %頭到肩膀
 L1=250;   %L型 長邊
 L2=50;    %L型 短邊
@@ -93,10 +96,10 @@ for t=1:1:DEF_DESCRETE_POINT
     in_base=[0;-L0;0];%header0 座標系偏移到shoulder0 座標系 差Y方向的L0
     in_end=[in_x_end_R;in_y_end_R;in_z_end_R];
     in_PoseAngle=[in_alpha_R;in_alpha_R;in_gamma_R];
-    theta_R=IK_7DOF_FB7roll(in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha_R);
+    theta_R=IK_7DOF_FB7roll(DEF_RIGHT_HAND,in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha_R);
     
     %AngleConstrain
-    bover=AngleOverConstrain(1,theta_R); %1表示右手
+    bover=AngleOverConstrain(DEF_RIGHT_HAND,theta_R);
     if bover == true
         break;
     end    
@@ -105,18 +108,19 @@ for t=1:1:DEF_DESCRETE_POINT
     in_base=[0;L0;0];
     in_end=[in_x_end_L;in_y_end_L;in_z_end_L];
     in_PoseAngle=[in_alpha_L;in_alpha_L;in_gamma_L];
-    theta_L=IK_7DOF_FB7roll(in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha_L);
+    theta_L=IK_7DOF_FB7roll(DEF_LEFT_HAND,in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha_L);
     
     %AngleConstrain
-    bover=AngleOverConstrain(2,theta_L);%1表示左手
+    bover=AngleOverConstrain(DEF_LEFT_HAND,theta_L);
     if bover == true
         break;
     end    
     
     %forward kinematic
     %theta=[0 0 0 0 0 0 0];
-    [out_x_end_R,out_y_end_R,out_z_end_R,out_alpha_R,out_beta_R,out_gamma_R,P_R,RotationM_R] = FK_7DOF_FB7roll(L0,L1,L2,L3,L4,L5,x_base_R,y_base_R,z_base_R,theta_R);
-    [out_x_end_L,out_y_end_L,out_z_end_L,out_alpha_L,out_beta_L,out_gamma_L,P_L,RotationM_L] = FK_7DOF_FB7roll(-L0,L1,L2,L3,L4,L5,x_base_L,y_base_L,z_base_L,theta_L);
+    
+    [out_x_end_R,out_y_end_R,out_z_end_R,out_alpha_R,out_beta_R,out_gamma_R,P_R,RotationM_R] = FK_7DOF_FB7roll(DEF_RIGHT_HAND,L0,L1,L2,L3,L4,L5,x_base_R,y_base_R,z_base_R,theta_R);
+    [out_x_end_L,out_y_end_L,out_z_end_L,out_alpha_L,out_beta_L,out_gamma_L,P_L,RotationM_L] = FK_7DOF_FB7roll(DEF_LEFT_HAND,L0,L1,L2,L3,L4,L5,x_base_L,y_base_L,z_base_L,theta_L);
 
     
     %記錄路徑上的點
