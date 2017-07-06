@@ -2,13 +2,18 @@ clear all
 close all
 clc
 
+ %definr 
+DEF_RIGHT_HAND=1;
+DEF_LEFT_HAND=2;
+
 %固定參數
-L0=0;     %頭到肩膀
+L0=0;   %頭到肩膀
 L1=250;   %L型 長邊
-L2=50;    %L型 短邊
-L3=50;    %L型 短邊
-L4=250;   %L型 長邊 
-L5=150;   %到end-effector
+L2=25;    %L型 短邊
+L3=25;    %L型 短邊
+L4=230;   %L型 長邊 
+L5=180;   %到end-effector
+
 x_base=0; %基準點
 y_base=0;
 z_base=0;
@@ -51,24 +56,24 @@ for t=1:1:DEF_DESCRETE_POINT
     in_gamma=0*(pi/180);
     
     Rednt_alpha=-(90)*(pi/180);
-   
+    RLHand=DEF_RIGHT_HAND;
     %末點位置in==>IK==>theta==>FK==>末點位置out
     %% inverse kinematic
     in_base=[x_base;y_base;z_base];
     in_end=[in_x_end;in_y_end;in_z_end];
     in_PoseAngle=[in_alpha;in_alpha;in_gamma];
     in_linkL=[L0;L1;L2;L3;L4;L5];
-    theta = IK_7DOF_FB7roll(in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha);
+    theta = IK_7DOF_FB7roll(RLHand,in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha);
     
     
-    %% AngleConstrain
-    axis=AngleConstrain(theta);
-    if axis ~= 0
+    %AngleConstrain
+    bover=AngleOverConstrain(RLHand,theta);
+    if bover == true
         break;
-    end
+    end    
     
     %% forward kinematic
-    [out_x_end,out_y_end,out_z_end,out_alpha,out_beta,out_gamma,P,RotationM] = FK_7DOF_FB7roll(L0,L1,L2,L3,L4,L5,x_base,y_base,z_base,theta);
+    [out_x_end,out_y_end,out_z_end,out_alpha,out_beta,out_gamma,P,RotationM] = FK_7DOF_FB7roll(RLHand,L0,L1,L2,L3,L4,L5,x_base,y_base,z_base,theta);
 
     %記錄路徑上的點
     PathPoint(t,1:3)=[out_x_end out_y_end out_z_end];
