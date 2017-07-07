@@ -2,7 +2,7 @@ clear all
 close all
 clc
 
- %definr 
+ %define
 DEF_RIGHT_HAND=1;
 DEF_LEFT_HAND=2;
 
@@ -61,7 +61,7 @@ for t=1:1:DEF_DESCRETE_POINT
     %% inverse kinematic
     in_base=[x_base;y_base;z_base];
     in_end=[in_x_end;in_y_end;in_z_end];
-    in_PoseAngle=[in_alpha;in_alpha;in_gamma];
+    in_PoseAngle=[in_alpha;in_beta;in_gamma];
     in_linkL=[L0;L1;L2;L3;L4;L5];
     theta = IK_7DOF_FB7roll(RLHand,in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha);
     
