@@ -2,7 +2,7 @@
 
 function theta = IK_7DOF_FB7roll(RLHand,linkL,base,Pend,PoseAngle,Rednt_alpha)
     
-    %definr 
+    %define 
     DEF_RIGHT_HAND=1;
     DEF_LEFT_HAND=2;
 
