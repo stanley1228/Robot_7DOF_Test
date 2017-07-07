@@ -11,19 +11,22 @@ x_base_L=0;
 y_base_L=0;
 z_base_L=0;
 
+%define
+DEF_RIGHT_HAND=1;
+DEF_LEFT_HAND=2;
 
-DEF_DESCRETE_POINT=1;
+DEF_DESCRETE_POINT=90;
 
 %把此路徑分成90份
 O_R=[500 -50 0];%O_R=[500 200 100];%%
 Q_R=[500 -200 0];
-R_R=[500 -200 -220];
-S_R=[500 200 -220];
+R_R=[500 -200 -200];
+S_R=[500 -50 -200];
 
 O_L=[500 -50 0];%O_L=[500 200 100];%%
 Q_L=[500 -200 0];
-R_L=[500 -200 -220];
-S_L=[500 200 -220];
+R_L=[500 -200 -200];
+S_L=[500 -50 -200];
  
 Path_R=zeros(DEF_DESCRETE_POINT,3);%規畫的路徑點
 PathPoint_R=zeros(DEF_DESCRETE_POINT,3);%記錄實際上的點，畫圖使用
@@ -61,11 +64,11 @@ end
     in_y_end_L=Path_L(t,2);
     in_z_end_L=Path_L(t,3);
    
-    in_alpha_R=30*(pi/180);
+    in_alpha_R=0*(pi/180);
     in_beta_R=0*(pi/180);
     in_gamma_R=0*(t/DEF_DESCRETE_POINT)*(pi/180);
     
-    in_alpha_L=30*(pi/180);
+    in_alpha_L=0*(pi/180);
     in_beta_L=0*(pi/180);
     in_gamma_L=0*(t/DEF_DESCRETE_POINT)*(pi/180);
 
@@ -101,9 +104,9 @@ end
     beta=in_beta_R;
     gamma=in_gamma_R;
     Rednt_alpha=Rednt_alpha_R;
-    tic
+    %tic
     IK_7DOF_nonFB_script
-    toc
+    %toc
     theta_R=theta;
   	
     %y_base_L=-L0;%左手 fullbend
@@ -114,10 +117,12 @@ end
     Pend=[in_x_end_L;in_y_end_L;in_z_end_L];
     PoseAngle=[in_alpha_L;in_beta_L;in_gamma_L];
     Rednt_alpha=Rednt_alpha_L;
-    tic
+    
+    RLHand=DEF_RIGHT_HAND;
+    %tic
     IK_7DOF_FB7roll_script
-    toc
-    theta_L=theta
+    %toc
+    theta_L=theta;
    
     %theta_L(1)=0*(pi/180);
     %theta_L(2)=0*(pi/180);
