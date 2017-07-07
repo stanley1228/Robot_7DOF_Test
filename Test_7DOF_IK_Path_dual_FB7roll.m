@@ -95,7 +95,7 @@ for t=1:1:DEF_DESCRETE_POINT
     in_linkL=[L0;L1;L2;L3;L4;L5];
     in_base=[0;-L0;0];%header0 座標系偏移到shoulder0 座標系 差Y方向的L0
     in_end=[in_x_end_R;in_y_end_R;in_z_end_R];
-    in_PoseAngle=[in_alpha_R;in_alpha_R;in_gamma_R];
+    in_PoseAngle=[in_alpha_R;in_beta_R;in_gamma_R];
     theta_R=IK_7DOF_FB7roll(DEF_RIGHT_HAND,in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha_R);
     
     %AngleConstrain
@@ -107,7 +107,7 @@ for t=1:1:DEF_DESCRETE_POINT
     in_linkL=[L0;L1;L2;L3;L4;L5];
     in_base=[0;L0;0];
     in_end=[in_x_end_L;in_y_end_L;in_z_end_L];
-    in_PoseAngle=[in_alpha_L;in_alpha_L;in_gamma_L];
+    in_PoseAngle=[in_alpha_L;in_beta_L;in_gamma_L];
     theta_L=IK_7DOF_FB7roll(DEF_LEFT_HAND,in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha_L);
     
     %AngleConstrain
