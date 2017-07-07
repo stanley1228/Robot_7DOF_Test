@@ -1,6 +1,6 @@
 %第七軸為roll軸
 
-%function theta = IK_7DOF_FB7roll(linkL,base,Pend,PoseAngle,Rednt_alpha)
+%function theta = IK_7DOF_FB7roll(RLHand,linkL,base,Pend,PoseAngle,Rednt_alpha)
 
     %輸出參數
     theta=zeros(1,7);
@@ -19,10 +19,11 @@
     V_H_hat_x=V_H_hat_x/norm(V_H_hat_x);
     V_H_hat_y=R(1:3,2);%取出歐拉角轉換的旋轉矩陣，取出第2行為Y軸旋轉後向量
     V_H_hat_z=R(1:3,3);
-   
+ 
     V_r_end=Pend-base;
     V_r_h=L5*V_H_hat_x;
     V_r_wst=V_r_end-V_r_h;
+
 
      %% ==Axis4== %%
     ru_norm=(L1^2+L2^2)^0.5; %L型的斜邊長度
@@ -58,14 +59,15 @@
     V_ru_l1=temp(1:3,1);
     V_ru_l1=V_ru_l1*L1/norm(V_ru_l1); %調整成L1長度
 
-    theta(1)=atan2(V_ru_l1(1),-V_ru_l1(3));%org
-
+    theta(1)=atan2(V_ru_l1(1),-V_ru_l1(3));
+    
     if theta(1) ~= 0
         theta(2)=atan2(V_ru_l1(2),V_ru_l1(1)/sin(theta(1)));
     else
         theta(2)=atan2(V_ru_l1(2),-V_ru_l1(3));   
     end   
 
+    
     %% ==Axis3== %%
     %看shy(V_r_u,V_r_f的法向量)經過1,2軸旋轉後  與V_r_u,V_r_f 需要第3軸轉多少
     V_n_yrot12=Ry(-theta(1))*Rx(theta(2))*[-V_shy;1];  %第一軸和大地Y座標方向相反
@@ -155,7 +157,10 @@
         theta(7)=-theta(7);
     end
     
-    
    
+    %%  ==左右手第1軸方向相反== %%
+    if RLHand == DEF_LEFT_HAND %左手和右手第一軸方向相反
+        theta(1)=-theta(1);
+    end
 %end
 
