@@ -12,10 +12,10 @@ DEF_LEFT_HAND=2;
 %固定參數
 L0=225;   %頭到肩膀
 L1=250;   %L型 長邊
-L2=50;    %L型 短邊
-L3=50;    %L型 短邊
-L4=250;   %L型 長邊 
-L5=150;   %到end-effector
+L2=25;    %L型 短邊
+L3=25;    %L型 短邊
+L4=230;   %L型 長邊 
+L5=180;   %到end-effector
 
 x_base_R=0;   %基準點
 y_base_R=0;
