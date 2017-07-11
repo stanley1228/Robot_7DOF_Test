@@ -2,14 +2,25 @@
 %第四軸可完全彎曲機構的順向
 %JointTheta_j 多出兩個偏移R3m4(3到4中間點)  R4m5(4到5中間點) 
 %第7軸為roll軸
-function [x_end,y_end,z_end,alpha,beta,gamma,P,RotationM] = FK_7DOF_FullBend_5to7(L0,L1,L2,L3,L4,L5,x_base,y_base,z_base,JointTheta_j)
+function [x_end,y_end,z_end,alpha,beta,gamma,P,RotationM] = FK_7DOF_FB7roll(RLHand,L0,L1,L2,L3,L4,L5,x_base,y_base,z_base,JointTheta_j)
 
 %D-H表訂完後的定值
-ALPHA=[0.5*pi 0.5*pi -0.5*pi 0 0.5*pi -0.5*pi -0.5*pi 0.5*pi -0.5*pi -0.5*pi 0.5*pi];   %DH中的alpha  沿著x轉的角度 
-THETHA_HOME=[0 0.5*pi 0.5*pi 0.5*pi 0 0 0.5*pi -0.5*pi -0.5*pi 0 -0.5*pi];%DH中的theta  沿著Z轉的角度
+DEF_RIGHT_HAND=1;
+DEF_LEFT_HAND=2;
+if RLHand==DEF_RIGHT_HAND
+    ALPHA=[0.5*pi 0.5*pi -0.5*pi 0 0.5*pi -0.5*pi -0.5*pi 0.5*pi -0.5*pi -0.5*pi 0.5*pi];   %DH中的alpha  沿著x轉的角度 
+    THETHA_HOME=[0 0.5*pi 0.5*pi 0.5*pi 0 0 0.5*pi -0.5*pi -0.5*pi 0 -0.5*pi];%DH中的theta  沿著Z轉的角度
 
-d_Axis_j=[0 L0 0 L1 0 0 L4 0 0 L5 0];%軸向距d
-a_Radia_j=[0 0 0 0 -L2 L3 0 0 0 0 0];%徑向距a
+    d_Axis_j=[0 L0 0 L1 0 0 L4 0 0 L5 0];%軸向距d
+    a_Radia_j=[0 0 0 0 -L2 L3 0 0 0 0 0];%徑向距a
+    
+elseif RLHand==DEF_LEFT_HAND
+    ALPHA=[-0.5*pi -0.5*pi -0.5*pi 0 0.5*pi -0.5*pi -0.5*pi 0.5*pi -0.5*pi -0.5*pi 0.5*pi];   %DH中的alpha  沿著x轉的角度 
+    THETHA_HOME=[0 -0.5*pi 0.5*pi 0.5*pi 0 0 0.5*pi -0.5*pi -0.5*pi 0 -0.5*pi];%DH中的theta  沿著Z轉的角度
+
+    d_Axis_j=[0 L0 0 L1 0 0 L4 0 0 L5 0];%軸向距d
+    a_Radia_j=[0 0 0 0 -L2 L3 0 0 0 0 0];%徑向距a
+end
 
 Theta_j=[0 0 0 0 0 0 0 0 0 0];
 
