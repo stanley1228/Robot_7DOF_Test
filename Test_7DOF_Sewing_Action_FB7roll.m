@@ -5,6 +5,9 @@ clc
 
 
 
+%固定參數
+DEF_RIGHT_HAND=1;
+DEF_LEFT_HAND=2;
 
 %固定參數
 L0=225;   %頭到肩膀
@@ -111,14 +114,33 @@ for t=1:1:DEF_DESCRETE_POINT
 
     %末點位置in==>IK==>theta==>FK==>末點位置out
     %inverse kinematic
-    y_base_R=-L0;%header0 座標系偏移到shoulder0 座標系 差Y方向的L0
-    theta_R=IK_7DOF_FB7roll(L0,L1,L2,L3,L4,L5,x_base_R,y_base_R,z_base_R,in_x_end_R,in_y_end_R,in_z_end_R,in_alpha_R,in_beta_R,in_gamma_R,Rednt_alpha_R);
-  	y_base_L=L0;%header0 座標系偏移到shoulder0 座標系 差Y方向的L0
-    theta_L=IK_7DOF_FB7roll(L0,L1,L2,L3,L4,L5,x_base_L,y_base_L,z_base_L,in_x_end_L,in_y_end_L,in_z_end_L,in_alpha_L,in_beta_L,in_gamma_L,Rednt_alpha_L);
+    in_linkL=[L0;L1;L2;L3;L4;L5];
+    in_base=[0;-L0;0];%header0 座標系偏移到shoulder0 座標系 差Y方向的L0
+    in_end=[in_x_end_R;in_y_end_R;in_z_end_R];
+    in_PoseAngle=[in_alpha_R;in_beta_R;in_gamma_R];
+   theta_R=IK_7DOF_FB7roll(DEF_RIGHT_HAND,in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha_R);
+  	
+    %AngleConstrain
+    bover=AngleOverConstrain(DEF_RIGHT_HAND,theta_R);
+    if bover == true
+        break;
+    end    
+    
+    in_linkL=[L0;L1;L2;L3;L4;L5];
+    in_base=[0;L0;0];%header0 座標系偏移到shoulder0 座標系 差Y方向的L0
+    in_end=[in_x_end_L;in_y_end_L;in_z_end_L];
+    in_PoseAngle=[in_alpha_L;in_beta_L;in_gamma_L];
+    theta_L=IK_7DOF_FB7roll(DEF_LEFT_HAND,in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha_L);
 
+    %AngleConstrain
+    bover=AngleOverConstrain(DEF_LEFT_HAND,theta_L);
+    if bover == true
+        break;
+    end    
+    
     %forward kinematic
-    [out_x_end_R,out_y_end_R,out_z_end_R,out_alpha_R,out_beta_R,out_gamma_R,P_R,RotationM_R] = FK_7DOF_FB7roll(L0,L1,L2,L3,L4,L5,x_base_R,y_base_R,z_base_R,theta_R);
-    [out_x_end_L,out_y_end_L,out_z_end_L,out_alpha_L,out_beta_L,out_gamma_L,P_L,RotationM_L] = FK_7DOF_FB7roll(-L0,L1,L2,L3,L4,L5,x_base_L,y_base_L,z_base_L,theta_L);
+    [out_x_end_R,out_y_end_R,out_z_end_R,out_alpha_R,out_beta_R,out_gamma_R,P_R,RotationM_R] = FK_7DOF_FB7roll(DEF_RIGHT_HAND,L0,L1,L2,L3,L4,L5,x_base_R,y_base_R,z_base_R,theta_R);
+    [out_x_end_L,out_y_end_L,out_z_end_L,out_alpha_L,out_beta_L,out_gamma_L,P_L,RotationM_L] = FK_7DOF_FB7roll(DEF_LEFT_HAND,L0,L1,L2,L3,L4,L5,x_base_L,y_base_L,z_base_L,theta_L);
 
     %記錄路徑上的點
     PathPoint_R(t,1:3)=[out_x_end_R out_y_end_R out_z_end_R];
