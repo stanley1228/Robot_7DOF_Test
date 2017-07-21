@@ -29,8 +29,17 @@ z_base_L=0;
 
 
 %各段點數
-BonPt=[10 20 30 40 50 60 70 80 90 100];%BonPt=boundary point	區段分界點		
-SegPt=[10 10 10 10 10 10 10 10 10 10];  %SegPt=segment point 各區段點數
+BonPt=[0 0 0 0 0 0 0 0 0 0];%BonPt=boundary point	區段分界點		
+%SegPt=[600 2000 300 200 800 800 300 400 400 400];  %SegPt=segment point 各區段點數
+SegPt=[6 20 3 2 8 8 3 4 4 4];  %SegPt=segment point 各區段點數
+
+%計算區段分界點
+for i=1:1:10
+    for j=1:1:i
+        BonPt(i)= BonPt(i)+SegPt(j);
+    end    
+end
+
 TotalPt=0;
 for i=1:1:10
     TotalPt=TotalPt+SegPt(i);
@@ -260,7 +269,7 @@ for t=1:1:TotalPt
         refri_R1_bottom(t,1:3)=Refri_R1_bottom;
         refri_L1_bottom(t,1:3)=Refri_L1_bottom;
         
-    elseif t<=BonPt(10)
+    elseif t<=BonPt(10)%右手靠上去拿飲料
         Path_R(t,1:3)=R_p9+(R_p10-R_p9)*(t-BonPt(9))/SegPt(10);
         Path_L(t,1:3)=L_p9+(L_p10-L_p9)*(t-BonPt(9))/SegPt(10);
         Red_can(t,1:3)=RedCan1;
@@ -359,7 +368,7 @@ for t=1:1:TotalPt
     
     
     %畫關節點圖
-    Draw_7DOF_FB7roll_point_dual(P_R,RotationM_R,PathPoint_R,P_L,RotationM_L,PathPoint_L);
+    %Draw_7DOF_FB7roll_point_dual(P_R,RotationM_R,PathPoint_R,P_L,RotationM_L,PathPoint_L);
    
     %記錄每軸角度變化
     PathTheta_R(t,1:7)=theta_R*(180/pi);
@@ -371,18 +380,18 @@ for t=1:1:TotalPt
     In_L=[in_x_end_L in_y_end_L in_z_end_L in_alpha_L in_beta_L in_gamma_L]
     Out_L=[out_x_end_L out_y_end_L out_z_end_L out_alpha_L out_beta_L out_gamma_L]
     
-     plot3( Red_can(t,1), Red_can(t,2), Red_can(t,3),'ro','MarkerFaceColor','r','MarkerSize',20,'Linewidth',4);
-%     text(525,120,-70,'Red can') 
-    plot3( Green_can(t,1), Green_can(t,2), Green_can(t,3),'go','MarkerFaceColor','g','MarkerSize',20,'Linewidth',4);
-%     text(525,20,-70,'Green can')
-    plot3( Blue_can(t,1), Blue_can(t,2), Blue_can(t,3),'bo','MarkerFaceColor','b','MarkerSize',20,'Linewidth',4);
-%     text(525,-80,-70,'Blue can')
-    plot3([handle_top(t,1), handle_bottom(t,1)], [handle_top(t,2), handle_bottom(t,2)], [handle_top(t,3)+60, handle_bottom(t,3)-60], '-','Color',[0 0 0],'Linewidth',8); 
-
-    plot3([refri_L1_top(t,1), refri_L1_bottom(t,1)],[refri_L1_top(t,2)+50, refri_L1_bottom(t,2)+50],[refri_L1_top(t,3)+210, refri_L1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line2
-    plot3([refri_R1_top(t,1), refri_R1_bottom(t,1)],[refri_R1_top(t,2)+50, refri_R1_bottom(t,2)+50],[refri_R1_top(t,3)+210, refri_R1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line6
-    plot3([refri_L1_top(t,1), refri_R1_top(t,1)],[refri_L1_top(t,2)+50, refri_R1_top(t,2)+50],[refri_L1_top(t,3)+210, refri_R1_top(t,3)+210],'-','Color',[0 0 0],'Linewidth',4); %Line9
-    plot3([refri_L1_bottom(t,1), refri_R1_bottom(t,1)],[refri_L1_bottom(t,2)+50, refri_R1_bottom(t,2)+50],[refri_L1_bottom(t,3)-190, refri_R1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line11
+%      plot3( Red_can(t,1), Red_can(t,2), Red_can(t,3),'ro','MarkerFaceColor','r','MarkerSize',20,'Linewidth',4);
+% %     text(525,120,-70,'Red can') 
+%     plot3( Green_can(t,1), Green_can(t,2), Green_can(t,3),'go','MarkerFaceColor','g','MarkerSize',20,'Linewidth',4);
+% %     text(525,20,-70,'Green can')
+%     plot3( Blue_can(t,1), Blue_can(t,2), Blue_can(t,3),'bo','MarkerFaceColor','b','MarkerSize',20,'Linewidth',4);
+% %     text(525,-80,-70,'Blue can')
+%     plot3([handle_top(t,1), handle_bottom(t,1)], [handle_top(t,2), handle_bottom(t,2)], [handle_top(t,3)+60, handle_bottom(t,3)-60], '-','Color',[0 0 0],'Linewidth',8); 
+% 
+%     plot3([refri_L1_top(t,1), refri_L1_bottom(t,1)],[refri_L1_top(t,2)+50, refri_L1_bottom(t,2)+50],[refri_L1_top(t,3)+210, refri_L1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line2
+%     plot3([refri_R1_top(t,1), refri_R1_bottom(t,1)],[refri_R1_top(t,2)+50, refri_R1_bottom(t,2)+50],[refri_R1_top(t,3)+210, refri_R1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line6
+%     plot3([refri_L1_top(t,1), refri_R1_top(t,1)],[refri_L1_top(t,2)+50, refri_R1_top(t,2)+50],[refri_L1_top(t,3)+210, refri_R1_top(t,3)+210],'-','Color',[0 0 0],'Linewidth',4); %Line9
+%     plot3([refri_L1_bottom(t,1), refri_R1_bottom(t,1)],[refri_L1_bottom(t,2)+50, refri_R1_bottom(t,2)+50],[refri_L1_bottom(t,3)-190, refri_R1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line11
     
     %確認FK 和IK誤差
 %     if(out_x_end-in_x_end)>1e-5 || (out_y_end-in_y_end)>1e-5 || (out_z_end-in_z_end)>1e-5 || (out_alpha-in_alpha)>1e-5 || (out_beta-in_beta)>1e-5 || (out_gamma-in_gamma)>1e-5 
@@ -395,13 +404,43 @@ for t=1:1:TotalPt
 %         break;
 %     end
     
-    pause(0.1);
+   % pause(0.001);
 end
 
  %畫JointAngle
 figure(2)
 Draw_7DOF_JointAnglePath(PathTheta_R);
- hold on; grid on; 
+hold on; grid on; 
+ 
+
+PathVel_R=zeros(size(PathTheta_R,1),7);
+for i=1:1:size(PathTheta_R,1)
+    if(i==1)
+         PathVel_R(i,:)= PathVel_R(i,:);
+    else
+         PathVel_R(i,:)=PathTheta_R(i,:)-PathTheta_R(i-1,:);
+    end
+end
+
+figure(3)
+Draw_7DOF_JointVelPath(PathVel_R);
+
+
+figure(4)
+Draw_7DOF_JointAnglePath(PathTheta_L);
+hold on; grid on; 
+
+PathVel_L=zeros(size(PathTheta_L,1),7);
+for i=1:1:size(PathTheta_L,1)
+    if(i==1)
+         PathVel_L(i,:)= PathVel_L(i,:);
+    else
+         PathVel_L(i,:)=PathTheta_L(i,:)-PathTheta_L(i-1,:);
+    end
+end
+
+figure(5)
+Draw_7DOF_JointVelPath(PathVel_L);
 % title('Trajectory Planning of Joint Space for Right-Arm');
 % figure(2)
 % Draw_7DOF_JointAnglePath(PathTheta_L)
