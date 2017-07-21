@@ -25,7 +25,16 @@ y_base_L=0;
 z_base_L=0;
 
 
-DEF_DESCRETE_POINT=90;
+%DEF_DESCRETE_POINT=5000;
+
+
+%各段點數
+BonPt=[10 20 30 40 50 60 70 80 90 100];%BonPt=boundary point	區段分界點		
+SegPt=[10 10 10 10 10 10 10 10 10 10];  %SegPt=segment point 各區段點數
+TotalPt=0;
+for i=1:1:10
+    TotalPt=TotalPt+SegPt(i);
+end
 
 %把此路徑分成90份
 % O_R=[500 -50 0];
@@ -44,23 +53,23 @@ DEF_DESCRETE_POINT=90;
 % S_L=[500 50 -200];
 
 
-Path_R=zeros(DEF_DESCRETE_POINT,3);%規畫的路徑點
-PathPoint_R=zeros(DEF_DESCRETE_POINT,3);%記錄實際上的點，畫圖使用
-PathTheta_R=zeros(DEF_DESCRETE_POINT,7);%記錄每軸角度，畫圖使用
+Path_R=zeros(TotalPt,3);%規畫的路徑點
+PathPoint_R=zeros(TotalPt,3);%記錄實際上的點，畫圖使用
+PathTheta_R=zeros(TotalPt,7);%記錄每軸角度，畫圖使用
  
-Path_L=zeros(DEF_DESCRETE_POINT,3);%規畫的路徑點
-PathPoint_L=zeros(DEF_DESCRETE_POINT,3);%記錄實際上的點，畫圖使用
-PathTheta_L=zeros(DEF_DESCRETE_POINT,7);%記錄每軸角度，畫圖使用
+Path_L=zeros(TotalPt,3);%規畫的路徑點
+PathPoint_L=zeros(TotalPt,3);%記錄實際上的點，畫圖使用
+PathTheta_L=zeros(TotalPt,7);%記錄每軸角度，畫圖使用
 
-Red_can=zeros(DEF_DESCRETE_POINT,3);
-Green_can=zeros(DEF_DESCRETE_POINT,3);
-Blue_can=zeros(DEF_DESCRETE_POINT,3);
-handle_top=zeros(DEF_DESCRETE_POINT,3);
-handle_bottom=zeros(DEF_DESCRETE_POINT,3);
-refri_R1_top=zeros(DEF_DESCRETE_POINT,3);
-refri_L1_top=zeros(DEF_DESCRETE_POINT,3);
-refri_R1_bottom=zeros(DEF_DESCRETE_POINT,3);
-refri_L1_bottom=zeros(DEF_DESCRETE_POINT,3);
+Red_can=zeros(TotalPt,3);
+Green_can=zeros(TotalPt,3);
+Blue_can=zeros(TotalPt,3);
+handle_top=zeros(TotalPt,3);
+handle_bottom=zeros(TotalPt,3);
+refri_R1_top=zeros(TotalPt,3);
+refri_L1_top=zeros(TotalPt,3);
+refri_R1_bottom=zeros(TotalPt,3);
+refri_L1_bottom=zeros(TotalPt,3);
 
 %% 路徑規劃
 R_p0 = [300 -300 -200];%起始點
@@ -90,7 +99,8 @@ R_p6 = [150 -300 -210];%右手不動
 L_p6 = [400 100 -200];%左手退回
 
 R_p7 = [150 -300 -210];%右手不動
-L_p7 = [400 200 -210];%左手下降
+L_p7 = [400 200 -210];%左手
+
 
 Rp8x = 500;
 Rp8y = (50-650)*0.5;
@@ -129,118 +139,13 @@ Refri_R1_bottom=[500 -350 -210];%point3     y-50  z+190
 Refri_L1_top=[500 50 -210];%point5     y-50  z-210
 Refri_L1_bottom=[500 50 -210];%point7    y-50  z+190
 
-for t=1:1:DEF_DESCRETE_POINT
-    if t<=DEF_DESCRETE_POINT*0.1
-        Path_R(t,1:3)=R_p0+(R_p1-R_p0)*t/(DEF_DESCRETE_POINT*0.1);
-        Path_L(t,1:3)=L_p0+(L_p1-L_p0)*t/(DEF_DESCRETE_POINT*0.1);
-        Red_can(t,1:3)=RedCan1;
-        Green_can(t,1:3)=GreenCan1;
-        Blue_can(t,1:3)=BlueCan1;
-        handle_top(t,1:3)=handleTop;
-        handle_bottom(t,1:3)=handleBottom;
-        refri_R1_top(t,1:3)=Refri_R1_top;
-        refri_L1_top(t,1:3)=Refri_L1_top;
-        refri_R1_bottom(t,1:3)=Refri_R1_bottom;
-        refri_L1_bottom(t,1:3)=Refri_L1_bottom;
-        
-    elseif t<=DEF_DESCRETE_POINT*0.2
-        Path_R(t,1:3)=R_p2+rR2*[sin(0.5*pi*(t-DEF_DESCRETE_POINT*0.1)/(DEF_DESCRETE_POINT*0.1)+ pi) cos(0.5*pi*(t-DEF_DESCRETE_POINT*0.1)/(DEF_DESCRETE_POINT*0.1)) 0];
-%         Path_R(t,1:3)=R_p1+(R_pp2-R_p1)*(t-DEF_DESCRETE_POINT*0.1)/(DEF_DESCRETE_POINT*0.1);
-        Path_L(t,1:3)=L_p1+(L_p2-L_p1)*(t-DEF_DESCRETE_POINT*0.1)/(DEF_DESCRETE_POINT*0.1);
-        Red_can(t,1:3)=RedCan1;
-        Green_can(t,1:3)=GreenCan1;
-        Blue_can(t,1:3)=BlueCan1;
-        handle_top(t,1:3)=R_p2+rR2*[sin(0.5*pi*(t-DEF_DESCRETE_POINT*0.1)/(DEF_DESCRETE_POINT*0.1)+ pi) cos(0.5*pi*(t-DEF_DESCRETE_POINT*0.1)/(DEF_DESCRETE_POINT*0.1)) 0];
-        handle_bottom(t,1:3)=R_p2+rR2*[sin(0.5*pi*(t-DEF_DESCRETE_POINT*0.1)/(DEF_DESCRETE_POINT*0.1)+ pi) cos(0.5*pi*(t-DEF_DESCRETE_POINT*0.1)/(DEF_DESCRETE_POINT*0.1)) 0];
-        refri_R1_top(t,1:3)=Refri_R1_top;
-        refri_L1_top(t,1:3)=R_p2+rR2*[sin(0.5*pi*(t-DEF_DESCRETE_POINT*0.1)/(DEF_DESCRETE_POINT*0.1)+ pi) cos(0.5*pi*(t-DEF_DESCRETE_POINT*0.1)/(DEF_DESCRETE_POINT*0.1)) 0];
-        refri_R1_bottom(t,1:3)=Refri_R1_bottom;
-        refri_L1_bottom(t,1:3)=R_p2+rR2*[sin(0.5*pi*(t-DEF_DESCRETE_POINT*0.1)/(DEF_DESCRETE_POINT*0.1)+ pi) cos(0.5*pi*(t-DEF_DESCRETE_POINT*0.1)/(DEF_DESCRETE_POINT*0.1)) 0];
-        
-    elseif t<=DEF_DESCRETE_POINT*0.3
-        Path_R(t,1:3)=R_pp2+(R_p3-R_pp2)*(t-DEF_DESCRETE_POINT*0.2)/(DEF_DESCRETE_POINT*0.1);
-        Path_L(t,1:3)=L_p2+(L_p3-L_p2)*(t-DEF_DESCRETE_POINT*0.2)/(DEF_DESCRETE_POINT*0.1);
-        Red_can(t,1:3)=RedCan1;
-        Green_can(t,1:3)=GreenCan1;
-        Blue_can(t,1:3)=BlueCan1;
-        handle_top(t,1:3)=R_pp2+(R_p3-R_pp2)*(t-DEF_DESCRETE_POINT*0.2)/(DEF_DESCRETE_POINT*0.1);
-        handle_bottom(t,1:3)=R_pp2+(R_p3-R_pp2)*(t-DEF_DESCRETE_POINT*0.2)/(DEF_DESCRETE_POINT*0.1);
-        refri_R1_top(t,1:3)=Refri_R1_top;
-        refri_L1_top(t,1:3)=R_pp2+(R_p3-R_pp2)*(t-DEF_DESCRETE_POINT*0.2)/(DEF_DESCRETE_POINT*0.1);
-        refri_R1_bottom(t,1:3)=Refri_R1_bottom;
-        refri_L1_bottom(t,1:3)=R_pp2+(R_p3-R_pp2)*(t-DEF_DESCRETE_POINT*0.2)/(DEF_DESCRETE_POINT*0.1);
-        
-    elseif t<=DEF_DESCRETE_POINT*0.4
-        Path_R(t,1:3)=R_p3+(R_p4-R_p3)*(t-DEF_DESCRETE_POINT*0.3)/(DEF_DESCRETE_POINT*0.1);
-        Path_L(t,1:3)=L_p3+(L_p4-L_p3)*(t-DEF_DESCRETE_POINT*0.3)/(DEF_DESCRETE_POINT*0.1);
-        Red_can(t,1:3)=RedCan1;
-        Green_can(t,1:3)=GreenCan1;
-        Blue_can(t,1:3)=BlueCan1;
-        handle_top(t,1:3)=R_p3+(R_p4-R_p3)*(t-DEF_DESCRETE_POINT*0.3)/(DEF_DESCRETE_POINT*0.1);
-        handle_bottom(t,1:3)=R_p3+(R_p4-R_p3)*(t-DEF_DESCRETE_POINT*0.3)/(DEF_DESCRETE_POINT*0.1);
-        refri_R1_top(t,1:3)=Refri_R1_top;
-        refri_L1_top(t,1:3)=R_p3+(R_p4-R_p3)*(t-DEF_DESCRETE_POINT*0.3)/(DEF_DESCRETE_POINT*0.1);
-        refri_R1_bottom(t,1:3)=Refri_R1_bottom;
-        refri_L1_bottom(t,1:3)=R_p3+(R_p4-R_p3)*(t-DEF_DESCRETE_POINT*0.3)/(DEF_DESCRETE_POINT*0.1);
-        
-    elseif t<=DEF_DESCRETE_POINT*0.5
-        Path_R(t,1:3)=R_p4+(R_p5-R_p4)*(t-DEF_DESCRETE_POINT*0.4)/(DEF_DESCRETE_POINT*0.1);
-        Path_L(t,1:3)=L_p4+(L_p5-L_p4)*(t-DEF_DESCRETE_POINT*0.4)/(DEF_DESCRETE_POINT*0.1);
-        Red_can(t,1:3)=RedCan1;
-        Green_can(t,1:3)=GreenCan1;
-        Blue_can(t,1:3)=BlueCan1;
-        handle_top(t,1:3)=R_p4+(R_p5-R_p4)*(t-DEF_DESCRETE_POINT*0.4)/(DEF_DESCRETE_POINT*0.1);
-        handle_bottom(t,1:3)=R_p4+(R_p5-R_p4)*(t-DEF_DESCRETE_POINT*0.4)/(DEF_DESCRETE_POINT*0.1);
-        refri_R1_top(t,1:3)=Refri_R1_top;
-        refri_L1_top(t,1:3)=R_p4+(R_p5-R_p4)*(t-DEF_DESCRETE_POINT*0.4)/(DEF_DESCRETE_POINT*0.1);
-        refri_R1_bottom(t,1:3)=Refri_R1_bottom;
-        refri_L1_bottom(t,1:3)=R_p4+(R_p5-R_p4)*(t-DEF_DESCRETE_POINT*0.4)/(DEF_DESCRETE_POINT*0.1);
-        
-    elseif t<=DEF_DESCRETE_POINT*0.6
-        Path_R(t,1:3)=R_p5+(R_p6-R_p5)*(t-DEF_DESCRETE_POINT*0.5)/(DEF_DESCRETE_POINT*0.1);
-        Path_L(t,1:3)=L_p5+(L_p6-L_p5)*(t-DEF_DESCRETE_POINT*0.5)/(DEF_DESCRETE_POINT*0.1);
-        Red_can(t,1:3)=RedCan1;
-        Green_can(t,1:3)=L_p5+(L_p6-L_p5)*(t-DEF_DESCRETE_POINT*0.5)/(DEF_DESCRETE_POINT*0.1);
-        Blue_can(t,1:3)=BlueCan1;
-        handle_top(t,1:3)=R_p5+(R_p6-R_p5)*(t-DEF_DESCRETE_POINT*0.5)/(DEF_DESCRETE_POINT*0.1);
-        handle_bottom(t,1:3)=R_p5+(R_p6-R_p5)*(t-DEF_DESCRETE_POINT*0.5)/(DEF_DESCRETE_POINT*0.1);
-        refri_R1_top(t,1:3)=Refri_R1_top;
-        refri_L1_top(t,1:3)=R_p5+(R_p6-R_p5)*(t-DEF_DESCRETE_POINT*0.5)/(DEF_DESCRETE_POINT*0.1);
-        refri_R1_bottom(t,1:3)=Refri_R1_bottom;
-        refri_L1_bottom(t,1:3)=R_p5+(R_p6-R_p5)*(t-DEF_DESCRETE_POINT*0.5)/(DEF_DESCRETE_POINT*0.1);
-        
-    elseif t<=DEF_DESCRETE_POINT*0.7
-        Path_R(t,1:3)=R_p6+(R_p7-R_p6)*(t-DEF_DESCRETE_POINT*0.6)/(DEF_DESCRETE_POINT*0.1);
-        Path_L(t,1:3)=L_p6+(L_p7-L_p6)*(t-DEF_DESCRETE_POINT*0.6)/(DEF_DESCRETE_POINT*0.1);
-        Red_can(t,1:3)=RedCan1;
-        Green_can(t,1:3)= L_p6+(L_p7-L_p6)*(t-DEF_DESCRETE_POINT*0.6)/(DEF_DESCRETE_POINT*0.1);
-        Blue_can(t,1:3)=BlueCan1;
-        handle_top(t,1:3)=R_p6+(R_p7-R_p6)*(t-DEF_DESCRETE_POINT*0.6)/(DEF_DESCRETE_POINT*0.1);
-        handle_bottom(t,1:3)=R_p6+(R_p7-R_p6)*(t-DEF_DESCRETE_POINT*0.6)/(DEF_DESCRETE_POINT*0.1);
-        refri_R1_top(t,1:3)=Refri_R1_top;
-        refri_L1_top(t,1:3)=R_p6+(R_p7-R_p6)*(t-DEF_DESCRETE_POINT*0.6)/(DEF_DESCRETE_POINT*0.1);
-        refri_R1_bottom(t,1:3)=Refri_R1_bottom;
-        refri_L1_bottom(t,1:3)=R_p6+(R_p7-R_p6)*(t-DEF_DESCRETE_POINT*0.6)/(DEF_DESCRETE_POINT*0.1);
-        
-    elseif t<=DEF_DESCRETE_POINT*0.8
-        Path_R(t,1:3)=R_p8+rR8*[cos(0.5*pi*(t-DEF_DESCRETE_POINT*0.7)/(DEF_DESCRETE_POINT*0.1)+pi) sin(0.5*pi*(t-DEF_DESCRETE_POINT*0.7)/(DEF_DESCRETE_POINT*0.1)) 0];
-%         Path_R(t,1:3)=R_p7+(R_pp8-R_p7)*(t-DEF_DESCRETE_POINT*0.7)/(DEF_DESCRETE_POINT*0.1);
-        Path_L(t,1:3)=L_p7+(L_p8-L_p7)*(t-DEF_DESCRETE_POINT*0.7)/(DEF_DESCRETE_POINT*0.1);
-        Red_can(t,1:3)=RedCan1;
-        Green_can(t,1:3)=L_p7+(L_p8-L_p7)*(t-DEF_DESCRETE_POINT*0.7)/(DEF_DESCRETE_POINT*0.1);
-        Blue_can(t,1:3)=BlueCan1;
-        handle_top(t,1:3)=R_p8+rR8*[cos(0.5*pi*(t-DEF_DESCRETE_POINT*0.7)/(DEF_DESCRETE_POINT*0.1)+pi) sin(0.5*pi*(t-DEF_DESCRETE_POINT*0.7)/(DEF_DESCRETE_POINT*0.1)) 0];
-        handle_bottom(t,1:3)=R_p8+rR8*[cos(0.5*pi*(t-DEF_DESCRETE_POINT*0.7)/(DEF_DESCRETE_POINT*0.1)+pi) sin(0.5*pi*(t-DEF_DESCRETE_POINT*0.7)/(DEF_DESCRETE_POINT*0.1)) 0];
-        refri_R1_top(t,1:3)=Refri_R1_top;
-        refri_L1_top(t,1:3)=R_p8+rR8*[cos(0.5*pi*(t-DEF_DESCRETE_POINT*0.7)/(DEF_DESCRETE_POINT*0.1)+pi) sin(0.5*pi*(t-DEF_DESCRETE_POINT*0.7)/(DEF_DESCRETE_POINT*0.1)) 0];
-        refri_R1_bottom(t,1:3)=Refri_R1_bottom;
-        refri_L1_bottom(t,1:3)=R_p8+rR8*[cos(0.5*pi*(t-DEF_DESCRETE_POINT*0.7)/(DEF_DESCRETE_POINT*0.1)+pi) sin(0.5*pi*(t-DEF_DESCRETE_POINT*0.7)/(DEF_DESCRETE_POINT*0.1)) 0];
 
-    elseif t<=DEF_DESCRETE_POINT*0.9
-        Path_R(t,1:3)=R_pp8+(R_p9-R_pp8)*(t-DEF_DESCRETE_POINT*0.8)/(DEF_DESCRETE_POINT*0.1);
-        Path_L(t,1:3)=L_p8+(L_p9-L_p8)*(t-DEF_DESCRETE_POINT*0.8)/(DEF_DESCRETE_POINT*0.1);
+for t=1:1:TotalPt
+    if t<=BonPt(1)%右手移動到冰箱門把
+        Path_R(t,1:3)=R_p0+(R_p1-R_p0)*t/SegPt(1);
+        Path_L(t,1:3)=L_p0+(L_p1-L_p0)*t/SegPt(1);
         Red_can(t,1:3)=RedCan1;
-        Green_can(t,1:3)=L_p8+(L_p9-L_p8)*(t-DEF_DESCRETE_POINT*0.8)/(DEF_DESCRETE_POINT*0.1);
+        Green_can(t,1:3)=GreenCan1;
         Blue_can(t,1:3)=BlueCan1;
         handle_top(t,1:3)=handleTop;
         handle_bottom(t,1:3)=handleBottom;
@@ -249,11 +154,117 @@ for t=1:1:DEF_DESCRETE_POINT
         refri_R1_bottom(t,1:3)=Refri_R1_bottom;
         refri_L1_bottom(t,1:3)=Refri_L1_bottom;
         
-    elseif t<=DEF_DESCRETE_POINT
-        Path_R(t,1:3)=R_p9+(R_p10-R_p9)*(t-DEF_DESCRETE_POINT*0.9)/(DEF_DESCRETE_POINT*0.1);
-        Path_L(t,1:3)=L_p9+(L_p10-L_p9)*(t-DEF_DESCRETE_POINT*0.9)/(DEF_DESCRETE_POINT*0.1);
+    elseif t<=BonPt(2)%右手開冰箱門
+        Path_R(t,1:3)=R_p2+rR2*[sin(0.5*pi*(t-BonPt(1))/SegPt(2)+ pi) cos(0.5*pi*(t-BonPt(1))/SegPt(2)) 0];
+%         Path_R(t,1:3)=R_p1+(R_pp2-R_p1)*(t-BonPt(1))/SegPt(2);
+        Path_L(t,1:3)=L_p1+(L_p2-L_p1)*(t-BonPt(1))/SegPt(2);
         Red_can(t,1:3)=RedCan1;
-        Green_can(t,1:3)=L_p9+(L_p10-L_p9)*(t-DEF_DESCRETE_POINT*0.9)/(DEF_DESCRETE_POINT*0.1);
+        Green_can(t,1:3)=GreenCan1;
+        Blue_can(t,1:3)=BlueCan1;
+        handle_top(t,1:3)=R_p2+rR2*[sin(0.5*pi*(t-BonPt(1))/SegPt(2)+ pi) cos(0.5*pi*(t-BonPt(1))/SegPt(2)) 0];
+        handle_bottom(t,1:3)=R_p2+rR2*[sin(0.5*pi*(t-BonPt(1))/SegPt(2)+ pi) cos(0.5*pi*(t-BonPt(1))/SegPt(2)) 0];
+        refri_R1_top(t,1:3)=Refri_R1_top;
+        refri_L1_top(t,1:3)=R_p2+rR2*[sin(0.5*pi*(t-BonPt(1))/SegPt(2)+ pi) cos(0.5*pi*(t-BonPt(1))/SegPt(2)) 0];
+        refri_R1_bottom(t,1:3)=Refri_R1_bottom;
+        refri_L1_bottom(t,1:3)=R_p2+rR2*[sin(0.5*pi*(t-BonPt(1))/SegPt(2)+ pi) cos(0.5*pi*(t-BonPt(1))/SegPt(2)) 0];
+        
+    elseif t<=BonPt(3) %左手往x移動100
+        Path_R(t,1:3)=R_pp2+(R_p3-R_pp2)*(t-BonPt(2))/SegPt(3);
+        Path_L(t,1:3)=L_p2+(L_p3-L_p2)*(t-BonPt(2))/SegPt(3);
+        Red_can(t,1:3)=RedCan1;
+        Green_can(t,1:3)=GreenCan1;
+        Blue_can(t,1:3)=BlueCan1;
+        handle_top(t,1:3)=R_pp2+(R_p3-R_pp2)*(t-BonPt(2))/SegPt(3);
+        handle_bottom(t,1:3)=R_pp2+(R_p3-R_pp2)*(t-BonPt(2))/SegPt(3);
+        refri_R1_top(t,1:3)=Refri_R1_top;
+        refri_L1_top(t,1:3)=R_pp2+(R_p3-R_pp2)*(t-BonPt(2))/SegPt(3);
+        refri_R1_bottom(t,1:3)=Refri_R1_bottom;
+        refri_L1_bottom(t,1:3)=R_pp2+(R_p3-R_pp2)*(t-BonPt(2))/SegPt(3);
+        
+    elseif t<=BonPt(4)%左手往y移動-100
+        Path_R(t,1:3)=R_p3+(R_p4-R_p3)*(t-BonPt(3))/SegPt(4);
+        Path_L(t,1:3)=L_p3+(L_p4-L_p3)*(t-BonPt(3))/SegPt(4);
+        Red_can(t,1:3)=RedCan1;
+        Green_can(t,1:3)=GreenCan1;
+        Blue_can(t,1:3)=BlueCan1;
+        handle_top(t,1:3)=R_p3+(R_p4-R_p3)*(t-BonPt(3))/SegPt(4);
+        handle_bottom(t,1:3)=R_p3+(R_p4-R_p3)*(t-BonPt(3))/SegPt(4);
+        refri_R1_top(t,1:3)=Refri_R1_top;
+        refri_L1_top(t,1:3)=R_p3+(R_p4-R_p3)*(t-BonPt(3))/SegPt(4);
+        refri_R1_bottom(t,1:3)=Refri_R1_bottom;
+        refri_L1_bottom(t,1:3)=R_p3+(R_p4-R_p3)*(t-BonPt(3))/SegPt(4);
+        
+    elseif t<=BonPt(5)%左手移動到飲料點
+        Path_R(t,1:3)=R_p4+(R_p5-R_p4)*(t-BonPt(4))/SegPt(5);
+        Path_L(t,1:3)=L_p4+(L_p5-L_p4)*(t-BonPt(4))/SegPt(5);
+        Red_can(t,1:3)=RedCan1;
+        Green_can(t,1:3)=GreenCan1;
+        Blue_can(t,1:3)=BlueCan1;
+        handle_top(t,1:3)=R_p4+(R_p5-R_p4)*(t-BonPt(4))/SegPt(5);
+        handle_bottom(t,1:3)=R_p4+(R_p5-R_p4)*(t-BonPt(4))/SegPt(5);
+        refri_R1_top(t,1:3)=Refri_R1_top;
+        refri_L1_top(t,1:3)=R_p4+(R_p5-R_p4)*(t-BonPt(4))/SegPt(5);
+        refri_R1_bottom(t,1:3)=Refri_R1_bottom;
+        refri_L1_bottom(t,1:3)=R_p4+(R_p5-R_p4)*(t-BonPt(4))/SegPt(5);
+        
+    elseif t<=BonPt(6)%左手退回
+        Path_R(t,1:3)=R_p5+(R_p6-R_p5)*(t-BonPt(5))/SegPt(6);
+        Path_L(t,1:3)=L_p5+(L_p6-L_p5)*(t-BonPt(5))/SegPt(6);
+        Red_can(t,1:3)=RedCan1;
+        Green_can(t,1:3)=L_p5+(L_p6-L_p5)*(t-BonPt(5))/SegPt(6);
+        Blue_can(t,1:3)=BlueCan1;
+        handle_top(t,1:3)=R_p5+(R_p6-R_p5)*(t-BonPt(5))/SegPt(6);
+        handle_bottom(t,1:3)=R_p5+(R_p6-R_p5)*(t-BonPt(5))/SegPt(6);
+        refri_R1_top(t,1:3)=Refri_R1_top;
+        refri_L1_top(t,1:3)=R_p5+(R_p6-R_p5)*(t-BonPt(5))/SegPt(6);
+        refri_R1_bottom(t,1:3)=Refri_R1_bottom;
+        refri_L1_bottom(t,1:3)=R_p5+(R_p6-R_p5)*(t-BonPt(5))/SegPt(6);
+        
+    elseif t<=BonPt(7)%左手往z移動-10
+        Path_R(t,1:3)=R_p6+(R_p7-R_p6)*(t-BonPt(6))/SegPt(7);
+        Path_L(t,1:3)=L_p6+(L_p7-L_p6)*(t-BonPt(6))/SegPt(7);
+        Red_can(t,1:3)=RedCan1;
+        Green_can(t,1:3)= L_p6+(L_p7-L_p6)*(t-BonPt(6))/SegPt(7);
+        Blue_can(t,1:3)=BlueCan1;
+        handle_top(t,1:3)=R_p6+(R_p7-R_p6)*(t-BonPt(6))/SegPt(7);
+        handle_bottom(t,1:3)=R_p6+(R_p7-R_p6)*(t-BonPt(6))/SegPt(7);
+        refri_R1_top(t,1:3)=Refri_R1_top;
+        refri_L1_top(t,1:3)=R_p6+(R_p7-R_p6)*(t-BonPt(6))/SegPt(7);
+        refri_R1_bottom(t,1:3)=Refri_R1_bottom;
+        refri_L1_bottom(t,1:3)=R_p6+(R_p7-R_p6)*(t-BonPt(6))/SegPt(7);
+        
+    elseif t<=BonPt(8)%右手關冰箱門
+        Path_R(t,1:3)=R_p8+rR8*[cos(0.5*pi*(t-BonPt(7))/SegPt(8)+pi) sin(0.5*pi*(t-BonPt(7))/SegPt(8)) 0];
+%         Path_R(t,1:3)=R_p7+(R_pp8-R_p7)*(t-BonPt(7))/SegPt(8);
+        Path_L(t,1:3)=L_p7+(L_p8-L_p7)*(t-BonPt(7))/SegPt(8);
+        Red_can(t,1:3)=RedCan1;
+        Green_can(t,1:3)=L_p7+(L_p8-L_p7)*(t-BonPt(7))/SegPt(8);
+        Blue_can(t,1:3)=BlueCan1;
+        handle_top(t,1:3)=R_p8+rR8*[cos(0.5*pi*(t-BonPt(7))/SegPt(8)+pi) sin(0.5*pi*(t-BonPt(7))/SegPt(8)) 0];
+        handle_bottom(t,1:3)=R_p8+rR8*[cos(0.5*pi*(t-BonPt(7))/SegPt(8)+pi) sin(0.5*pi*(t-BonPt(7))/SegPt(8)) 0];
+        refri_R1_top(t,1:3)=Refri_R1_top;
+        refri_L1_top(t,1:3)=R_p8+rR8*[cos(0.5*pi*(t-BonPt(7))/SegPt(8)+pi) sin(0.5*pi*(t-BonPt(7))/SegPt(8)) 0];
+        refri_R1_bottom(t,1:3)=Refri_R1_bottom;
+        refri_L1_bottom(t,1:3)=R_p8+rR8*[cos(0.5*pi*(t-BonPt(7))/SegPt(8)+pi) sin(0.5*pi*(t-BonPt(7))/SegPt(8)) 0];
+
+    elseif t<=BonPt(9)%左手往x移動-100
+        Path_R(t,1:3)=R_pp8+(R_p9-R_pp8)*(t-BonPt(8))/SegPt(9);
+        Path_L(t,1:3)=L_p8+(L_p9-L_p8)*(t-BonPt(8))/SegPt(9);
+        Red_can(t,1:3)=RedCan1;
+        Green_can(t,1:3)=L_p8+(L_p9-L_p8)*(t-BonPt(8))/SegPt(9);
+        Blue_can(t,1:3)=BlueCan1;
+        handle_top(t,1:3)=handleTop;
+        handle_bottom(t,1:3)=handleBottom;
+        refri_R1_top(t,1:3)=Refri_R1_top;
+        refri_L1_top(t,1:3)=Refri_L1_top;
+        refri_R1_bottom(t,1:3)=Refri_R1_bottom;
+        refri_L1_bottom(t,1:3)=Refri_L1_bottom;
+        
+    elseif t<=BonPt(10)
+        Path_R(t,1:3)=R_p9+(R_p10-R_p9)*(t-BonPt(9))/SegPt(10);
+        Path_L(t,1:3)=L_p9+(L_p10-L_p9)*(t-BonPt(9))/SegPt(10);
+        Red_can(t,1:3)=RedCan1;
+        Green_can(t,1:3)=L_p9+(L_p10-L_p9)*(t-BonPt(9))/SegPt(10);
         Blue_can(t,1:3)=BlueCan1;
         handle_top(t,1:3)=handleTop;
         handle_bottom(t,1:3)=handleBottom;
@@ -269,7 +280,7 @@ end
 
 
 %畫正方形做IK FK測試
-% for t=1:1:DEF_DESCRETE_POINT
+% for t=1:1:TotalPt
 %     if t<=25
 %         Path_R(t,1:3)=O_R+(Q_R-O_R)*t/25;
 %         Path_L(t,1:3)=O_L+(Q_L-O_L)*t/25;
@@ -285,7 +296,7 @@ end
 %     end
 % end
 
-for t=1:1:DEF_DESCRETE_POINT
+for t=1:1:TotalPt
  
     %輸入參數
     in_x_end_R=Path_R(t,1);
@@ -297,12 +308,12 @@ for t=1:1:DEF_DESCRETE_POINT
     in_z_end_L=Path_L(t,3);
    
     in_alpha_R=60*(pi/180);
-    in_beta_R=0*(t/DEF_DESCRETE_POINT)*(pi/180);
-    in_gamma_R=0*(t/DEF_DESCRETE_POINT)*(pi/180);
+    in_beta_R=0*(t/TotalPt)*(pi/180);
+    in_gamma_R=0*(t/TotalPt)*(pi/180);
     
     in_alpha_L=-50*(pi/180);
-    in_beta_L=0*(t/DEF_DESCRETE_POINT)*(pi/180);
-    in_gamma_L=0*(t/DEF_DESCRETE_POINT)*(pi/180);
+    in_beta_L=0*(t/TotalPt)*(pi/180);
+    in_gamma_L=0*(t/TotalPt)*(pi/180);
 
     Rednt_alpha_R=-60*(pi/180);
     Rednt_alpha_L=30*(pi/180);
@@ -388,9 +399,9 @@ for t=1:1:DEF_DESCRETE_POINT
 end
 
  %畫JointAngle
-% figure(2)
-% Draw_7DOF_JointAnglePath(PathTheta_R);
-% hold on; grid on; 
+figure(2)
+Draw_7DOF_JointAnglePath(PathTheta_R);
+ hold on; grid on; 
 % title('Trajectory Planning of Joint Space for Right-Arm');
 % figure(2)
 % Draw_7DOF_JointAnglePath(PathTheta_L)
