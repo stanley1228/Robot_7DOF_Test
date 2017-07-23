@@ -41,12 +41,12 @@ SeqAcc_R=zeros(size(SeqPt_R,1),3);
 SeqVel_L=zeros(size(SeqPt_L,1)+1,3);
 SeqAcc_L=zeros(size(SeqPt_L,1),3);
    
-Seqt_R=[0 5 15 20 40];%絕對時間標計 
-TotalTime_R=40;
+Seqt_R=[0 5 15 20 25];%絕對時間標計 
+TotalTime_R=25;
 tk_R=1.5;%二次曲線的時間
 
-Seqt_L=[0 5 15 20 40];
-TotalTime_L=40;
+Seqt_L=[0 5 15 20 25];
+TotalTime_L=25;
 tk_L=1.5;
 
 %==計算Cartesian Space下各段速度==%
@@ -89,7 +89,8 @@ end
 
 %==使用linear fuction 規劃方形各段軌跡  共5點  4段直線斷  5段二次段==%
 %right
-DEF_CYCLE_TIME=0.025;
+%DEF_CYCLE_TIME=0.053;
+DEF_CYCLE_TIME=0.056;
 Pcnt_R=0;%輸出總點數
 for t=0:DEF_CYCLE_TIME:TotalTime_R
     if t<tk_R                  %%parabolic
@@ -342,6 +343,7 @@ for t=1:1:DEF_DESCRETE_POINT
     in_base=[0;-L0;0];%header0 座標系偏移到shoulder0 座標系 差Y方向的L0
     in_end=[in_x_end_R;in_y_end_R;in_z_end_R];
     in_PoseAngle=[in_alpha_R;in_beta_R;in_gamma_R];
+    
     theta_R=IK_7DOF_FB7roll(DEF_RIGHT_HAND,in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha_R);
     
     %AngleConstrain
@@ -391,7 +393,7 @@ end
 
 
 
-%==畫JointAngle==%
+%% ==畫JointAngle== %%
 %right
 figure(6); hold on; grid on; title('right hand joint angle'); xlabel('t'); ylabel('deg');
 t=0:DEF_CYCLE_TIME:TotalTime_R; 
@@ -408,7 +410,7 @@ for i=1:1:7
 end
 legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
 
-%==畫JointVel==%
+%% ==畫JointVel== %%
 %right
 PathVel_R=zeros(size(PathTheta_R,1),7);
 for i=1:1:size(PathTheta_R,1)
@@ -434,14 +436,14 @@ for i=1:1:size(PathTheta_L,1)
          PathVel_L(i,:)=(PathTheta_L(i,:)-PathTheta_L(i-1,:))/DEF_CYCLE_TIME;
     end
 end
-figure(9); hold on; grid on; title('left hand joint rotation speed'); xlabel('t'); ylabel('angle/t');
+figure(9); hold on; grid on; title('left hand joint rotation speed'); xlabel('t'); ylabel('angle/s');
 t=0:DEF_CYCLE_TIME:TotalTime_L; 
 for i=1:1:7
     plot(t,PathVel_L(:,i),'LineWidth',2); 
 end
 legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
 
-%==畫JointAcc==%
+%% ==畫JointAcc== %%
 %right
 PathAcc_R=zeros(size(PathVel_R,1),7);
 for i=1:1:size(PathVel_R,1)
@@ -452,7 +454,7 @@ for i=1:1:size(PathVel_R,1)
     end
 end
 
-figure(10); hold on; grid on; title('right hand acc'); xlabel('t'); ylabel('angle/t^2');
+figure(10); hold on; grid on; title('right hand acc'); xlabel('t'); ylabel('angle/s^2');
 t=0:DEF_CYCLE_TIME:TotalTime_R; 
 for i=1:1:7
     plot(t,PathAcc_R(:,i),'LineWidth',2); 
@@ -473,5 +475,43 @@ figure(11); hold on; grid on; title('left hand acc'); xlabel('t'); ylabel('angle
 t=0:DEF_CYCLE_TIME:TotalTime_L; 
 for i=1:1:7
     plot(t,PathAcc_L(:,i),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+
+%% == 和feedback做比較角度==%% 
+%畫feed back JointAngle 和誤差
+%right 
+figure(12); hold on; grid on; title('right hand feedback joint angle'); xlabel('t'); ylabel('angle');
+PathTheta_R_Read = csvread('D://Rec_Linear_fun_R.csv'); 
+t=0:DEF_CYCLE_TIME:TotalTime_R; 
+for i=1:1:7
+    plot(t,PathTheta_R_Read(:,i+1),'LineWidth',2); 
+end
+hold off
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+figure(13); hold on; grid on; title('right hand command vs feedback joint angle'); xlabel('t'); ylabel('abs(command-feedback) deg');
+PathTheta_R_Err=abs(PathTheta_R-PathTheta_R_Read(:,2:8));
+t=0:DEF_CYCLE_TIME:TotalTime_R; 
+for i=1:1:7
+    plot(t,PathTheta_R_Err(:,i),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+%left
+figure(14); hold on; grid on; title('left hand feedback joint angle'); xlabel('t'); ylabel('angle');
+PathTheta_L_Read = csvread('D://Rec_Linear_fun_L.csv'); 
+t=0:DEF_CYCLE_TIME:TotalTime_L; 
+for i=1:1:7
+    plot(t,PathTheta_L_Read(:,i+1),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+figure(15); hold on; grid on; title('left hand command vs feedback joint angle'); xlabel('t'); ylabel('abs(command-feedback) deg');
+PathTheta_L_Err=abs(PathTheta_L-PathTheta_L_Read(:,2:8));
+t=0:DEF_CYCLE_TIME:TotalTime_L; 
+for i=1:1:7
+    plot(t,PathTheta_L_Err(:,i),'LineWidth',2); 
 end
 legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
