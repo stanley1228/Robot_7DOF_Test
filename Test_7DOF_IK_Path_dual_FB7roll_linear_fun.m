@@ -41,13 +41,13 @@ SeqAcc_R=zeros(size(SeqPt_R,1),3);
 SeqVel_L=zeros(size(SeqPt_L,1)+1,3);
 SeqAcc_L=zeros(size(SeqPt_L,1),3);
    
-Seqt_R=[0 2 4 6 8];%絕對時間標計 
-TotalTime_R=8;
-tk_R=0.5;%二次曲線的時間
+Seqt_R=[0 5 15 20 40];%絕對時間標計 
+TotalTime_R=40;
+tk_R=1.5;%二次曲線的時間
 
-Seqt_L=[0 2 4 6 8];
-TotalTime_L=8;
-tk_L=0.5;
+Seqt_L=[0 5 15 20 40];
+TotalTime_L=40;
+tk_L=1.5;
 
 %==計算Cartesian Space下各段速度==%
 %right
@@ -89,7 +89,7 @@ end
 
 %==使用linear fuction 規劃方形各段軌跡  共5點  4段直線斷  5段二次段==%
 %right
-DEF_CYCLE_TIME=0.1;
+DEF_CYCLE_TIME=0.025;
 Pcnt_R=0;%輸出總點數
 for t=0:DEF_CYCLE_TIME:TotalTime_R
     if t<tk_R                  %%parabolic
@@ -138,6 +138,9 @@ for t=0:DEF_CYCLE_TIME:TotalTime_R
             VSeg=5;   
             ASeg=5;
             P=SeqPt_R(Pseg,1:3)+SeqVel_R(VSeg,1:3)*(t-Seqt_R(4))+0.5*SeqAcc_R(ASeg,1:3)*(t-(Seqt_R(5)-tk_R))^2;  
+     elseif t==TotalTime_R
+            Pseg=5;
+            P=SeqPt_R(Pseg,1:3);
     end
     
     Pcnt_R=Pcnt_R+1;       
@@ -194,6 +197,9 @@ for t=0:DEF_CYCLE_TIME:TotalTime_L
             VSeg=5;   
             ASeg=5;
             P=SeqPt_L(Pseg,1:3)+SeqVel_L(VSeg,1:3)*(t-Seqt_L(4))+0.5*SeqAcc_L(ASeg,1:3)*(t-(Seqt_L(5)-tk_L))^2;  
+    elseif t==TotalTime_L
+            Pseg=5;
+            P=SeqPt_L(Pseg,1:3)
     end
     
     Pcnt_L=Pcnt_L+1;       
@@ -202,98 +208,98 @@ end
 
 %==畫linear fuction 在cartesian space下各自由度(x,y,z)的規劃
 %right hand
-t=1:1:Pcnt_R; 
+t=0:DEF_CYCLE_TIME:TotalTime_R; 
 figure(2);
 subplot(2,2,1),plot(t,Path_R(:,1),'LineWidth',2); 
 grid on;
 xlabel('t');
-ylabel('x');
+ylabel('x (mm)');
 title('right hand t versus x') ; 
 
 subplot(2,2,2),plot(t,Path_R(:,2),'LineWidth',2); 
 grid on;
 xlabel('t');
-ylabel('y');
+ylabel('y (mm)');
 title('right hand t versus y') ; 
 
 subplot(2,2,3),plot(t,Path_R(:,3),'LineWidth',2); 
 grid on;
 xlabel('t');
-ylabel('z');
+ylabel('z (mm)');
 title('right hand t versus z') ; 
 
 %left hand
-t=1:1:Pcnt_L; 
-figure(2);
+t=0:DEF_CYCLE_TIME:TotalTime_L; 
+figure(3);
 subplot(2,2,1),plot(t,Path_L(:,1),'LineWidth',2); 
 grid on;
 xlabel('t');
-ylabel('x');
+ylabel('x (mm)');
 title('left hand t versus x') ; 
 
 subplot(2,2,2),plot(t,Path_L(:,2),'LineWidth',2); 
 grid on;
 xlabel('t');
-ylabel('y');
+ylabel('y (mm)');
 title('left hand t versus y') ; 
 
 subplot(2,2,3),plot(t,Path_L(:,3),'LineWidth',2); 
 grid on;
 xlabel('t');
-ylabel('z');
+ylabel('z (mm)');
 title('left hand t versus z') ; 
 
 %==計算並畫各自由度(x,y,z)的速度
 %right hand
 for i=1:1:Pcnt_R-1
-   Path_vel_R(i,:)=Path_R(i+1,:)-Path_R(i,:);
+   Path_vel_R(i,:)=(Path_R(i+1,:)-Path_R(i,:))/DEF_CYCLE_TIME;
 end
 
-t=1:1:size(Path_vel_R,1);  
+t=0:DEF_CYCLE_TIME:TotalTime_R-DEF_CYCLE_TIME; %因為速度會少一筆資料
 
-figure(3);
+figure(4);
 subplot(2,2,1),plot(t,Path_vel_R(:,1),'LineWidth',2); 
 grid on;
 xlabel('t');
-ylabel('x/t');
+ylabel('x/t (mm/s)');
 title('right hand t versus x/t') ;   
  
 subplot(2,2,2),plot(t,Path_vel_R(:,2),'LineWidth',2); 
 grid on;
 xlabel('t');
-ylabel('y/t');
+ylabel('y/t (mm/s)');
 title('right hand t versus y/t') ; 
 
 subplot(2,2,3),plot(t,Path_vel_R(:,3),'LineWidth',2); 
 grid on;
 xlabel('t');
-ylabel('z/t');
+ylabel('z/t (mm/s)');
 title('right hand t versus z/t') ;
 
 %left hand
 for i=1:1:Pcnt_L-1
-   Path_vel_L(i,:)=Path_L(i+1,:)-Path_L(i,:);
+   Path_vel_L(i,:)=(Path_L(i+1,:)-Path_L(i,:))/DEF_CYCLE_TIME;
 end
 
-t=1:1:size(Path_vel_L,1);  
+t=0:DEF_CYCLE_TIME:TotalTime_L-DEF_CYCLE_TIME; %因為速度會少一筆資料
 
-figure(3);
+figure(5);
 subplot(2,2,1),plot(t,Path_vel_L(:,1),'LineWidth',2); 
 grid on;
 xlabel('t');
-ylabel('x/t');
+ylabel('x/t (mm/s)');
 title('left hand t versus x/t') ;   
  
 subplot(2,2,2),plot(t,Path_vel_L(:,2),'LineWidth',2); 
 grid on;
 xlabel('t');
-ylabel('y/t');
+ylabel('y/t (mm/s)');
 title('left hand t versus y/t') ; 
 
 subplot(2,2,3),plot(t,Path_vel_L(:,3),'LineWidth',2); 
 grid on;
 xlabel('t');
-ylabel('z/t');
+ylabel('z/t (mm/s)');
 title('left hand t versus z/t') ;
 
 
@@ -367,7 +373,7 @@ for t=1:1:DEF_DESCRETE_POINT
     
     
     %畫關節點圖
-    Draw_7DOF_FB7roll_point_dual(P_R,RotationM_R,PathPoint_R,P_L,RotationM_L,PathPoint_L);
+    %Draw_7DOF_FB7roll_point_dual(P_R,RotationM_R,PathPoint_R,P_L,RotationM_L,PathPoint_L);
    
     %記錄每軸角度變化
     PathTheta_R(t,1:7)=theta_R*(180/pi);
@@ -380,50 +386,92 @@ for t=1:1:DEF_DESCRETE_POINT
     Out_L=[out_x_end_L out_y_end_L out_z_end_L out_alpha_L out_beta_L out_gamma_L]
     
    
-    pause(0.001);
+    %pause(DEF_CYCLE_TIME);
 end
 
 
 
-%畫JointAngle
-figure(4);
-Draw_7DOF_JointAnglePath(PathTheta_R);
-xlabel('t');
-ylabel('angle');
-title('right hand t versus angle') ;
+%==畫JointAngle==%
+%right
+figure(6); hold on; grid on; title('right hand joint angle'); xlabel('t'); ylabel('deg');
+t=0:DEF_CYCLE_TIME:TotalTime_R; 
+for i=1:1:7
+    plot(t,PathTheta_R(:,i),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
 
-figure(5);
-Draw_7DOF_JointAnglePath(PathTheta_L);
-xlabel('t');
-ylabel('angle');
-title('left hand t versus angle') ;
+%left
+figure(7); hold on; grid on; title('left hand joint angle'); xlabel('t'); ylabel('deg');
+t=0:DEF_CYCLE_TIME:TotalTime_L; 
+for i=1:1:7
+    plot(t,PathTheta_L(:,i),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
 
-
+%==畫JointVel==%
+%right
 PathVel_R=zeros(size(PathTheta_R,1),7);
 for i=1:1:size(PathTheta_R,1)
     if(i==1)
-         PathVel_R(i,:)= PathVel_R(i,:);
+         PathVel_R(i,:)=[0 0 0 0 0 0 0];
     else
-         PathVel_R(i,:)=PathTheta_R(i,:)-PathTheta_R(i-1,:);
+         PathVel_R(i,:)=(PathTheta_R(i,:)-PathTheta_R(i-1,:))/DEF_CYCLE_TIME;
     end
 end
-figure(6);
-Draw_7DOF_JointVelPath(PathVel_R);
-xlabel('t');
-ylabel('angle/t');
-title('right hand t versus angle/t') ;
+figure(8); hold on; grid on; title('right hand joint rotation speed'); xlabel('t'); ylabel('deg/s');
+t=0:DEF_CYCLE_TIME:TotalTime_R; 
+for i=1:1:7
+    plot(t,PathVel_R(:,i),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
 
-
+%left
 PathVel_L=zeros(size(PathTheta_L,1),7);
 for i=1:1:size(PathTheta_L,1)
     if(i==1)
-         PathVel_L(i,:)= PathVel_L(i,:);
+         PathVel_L(i,:)=[0 0 0 0 0 0 0];
     else
-         PathVel_L(i,:)=PathTheta_L(i,:)-PathTheta_L(i-1,:);
+         PathVel_L(i,:)=(PathTheta_L(i,:)-PathTheta_L(i-1,:))/DEF_CYCLE_TIME;
     end
 end
-figure(7);
-Draw_7DOF_JointVelPath(PathVel_L);
-xlabel('t');
-ylabel('angle/t');
-title('left hand t versus angle/t') ;
+figure(9); hold on; grid on; title('left hand joint rotation speed'); xlabel('t'); ylabel('angle/t');
+t=0:DEF_CYCLE_TIME:TotalTime_L; 
+for i=1:1:7
+    plot(t,PathVel_L(:,i),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+%==畫JointAcc==%
+%right
+PathAcc_R=zeros(size(PathVel_R,1),7);
+for i=1:1:size(PathVel_R,1)
+    if(i==1)
+         PathAcc_R(i,:)=[0 0 0 0 0 0 0];
+    else
+         PathAcc_R(i,:)=(PathVel_R(i,:)-PathVel_R(i-1,:))/DEF_CYCLE_TIME;
+    end
+end
+
+figure(10); hold on; grid on; title('right hand acc'); xlabel('t'); ylabel('angle/t^2');
+t=0:DEF_CYCLE_TIME:TotalTime_R; 
+for i=1:1:7
+    plot(t,PathAcc_R(:,i),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+%left
+PathAcc_L=zeros(size(PathVel_L,1),7);
+for i=1:1:size(PathVel_L,1)
+    if(i==1)
+         PathAcc_L(i,:)=[0 0 0 0 0 0 0];
+    else
+         PathAcc_L(i,:)=(PathVel_L(i,:)-PathVel_L(i-1,:))/DEF_CYCLE_TIME;
+    end
+end
+
+figure(11); hold on; grid on; title('left hand acc'); xlabel('t'); ylabel('angle/t^2');
+t=0:DEF_CYCLE_TIME:TotalTime_L; 
+for i=1:1:7
+    plot(t,PathAcc_L(:,i),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
