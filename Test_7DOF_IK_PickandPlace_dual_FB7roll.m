@@ -26,21 +26,52 @@ z_base_L=0;
 
 
 %DEF_DESCRETE_POINT=5000;
-Seqt_R= [0 6 26 29 31 39 47 50 54 58 65]%絕對時間標計 
-TotalTime_R=65
-SeqItv_R=zeros(1, size(Seqt_R,2)-1);
+Seqt= zeros(1,14);
+%絕對時間標計 
+i=1;
+Seqt(i)=0;
+i=i+1;
+Seqt(i)=20;%右手往門把關門狀態位置移動
+i=i+1;
+Seqt(i)=24;%右手夾爪hold
+i=i+1;
+Seqt(i)=58;%右手往門把開門狀態位置移動
+i=i+1;
+Seqt(i)=60;%左手往綠飲料點前進中途1
+i=i+1;
+Seqt(i)=75;%左手往綠飲料點前進中途2
+i=i+1;
+Seqt(i)=90;%左手往綠飲料點
+i=i+1;
+Seqt(i)=95;%左手夾爪hold
+i=i+1;
+Seqt(i)=110;%左手從綠飲料點退回中途1
+i=i+1;
+Seqt(i)=120;%左手從綠飲料點退回中途2
+i=i+1;
+Seqt(i)=150;%右手往門把關門狀態位置移動
+i=i+1;
+Seqt(i)=155;%右手夾爪rlease
+i=i+1;
+Seqt(i)=160;%左手從綠飲料點退回中途3
+i=i+1;
+Seqt(i)=170;%左右手回到最後雙手握飲料位置
 
-for i=1:1:size(SeqItv_R,2)
-    SeqItv_R(i)=Seqt_R(i+1)-Seqt_R(i);
+TotalTime=170;
+
+SeqItv=zeros(1, size(Seqt,2)-1);
+
+for i=1:1:size(SeqItv,2)
+    SeqItv(i)=Seqt(i+1)-Seqt(i);
 end    
 
-Seqt_L= [0 6 26 29 31 39 47 50 54 58 65]%絕對時間標計 
-TotalTime_L=65;
-SeqItv_L=zeros(1, size(Seqt_L,2)-1);
-
-for i=1:1:size(SeqItv_L,2)
-    SeqItv_L(i)=Seqt_L(i+1)-Seqt_L(i);
-end    
+% Seqt_L= [0 6 26 29 31 39 47 50 54 58 65]%絕對時間標計 
+% TotalTime_L=65;
+% SeqItv_L=zeros(1, size(Seqt_L,2)-1);
+% 
+% for i=1:1:size(SeqItv_L,2)
+%     SeqItv_L(i)=Seqt_L(i+1)-Seqt_L(i);
+% end    
 
 %各段點數
 %BonPt=[0 0 0 0 0 0 0 0 0 0];%BonPt=boundary point	區段分界點		
@@ -63,49 +94,24 @@ end
 
 
 %% 路徑規劃
-R_p0 = [300 -300 -200];%起始點
-L_p0 = [300 200 -200];%起始點
+R_p=[   300 -300 -200;%起始點
+        500 50 -210;%門把關門狀態位置
+        150 -300 -210;%門把開門狀態位置
+        500 50 -210;%門把關門狀態位置
+        200 0 -300];%最後雙手握飲料位置
+    
+L_p=[   300 200 -200;%起始點
+        400 200 -200;%左手往綠飲料點前進中途1
+        400 100 -200;%左手往綠飲料點前進中途2
+        520  -60 -200;%綠飲料點
+        400 100 -200;%左手從綠飲料點退回中途1
+        400 200 -210;%左手從綠飲料點退回中途2
+        300 200 -210;%左手從綠飲料點退回中途3
+        200 0 -300];%最後雙手握飲料位置
+   
+rDoorPath = 50-(50-650)*0.5;
+Cen_DoorPath = [500 (50-650)*0.5 -210]; %拉門半徑圓心 center of open door path
 
-R_p1 = [500 50 -210];%門把位置
-L_p1 = [300 200 -200];%左手不動
-
-Rp2x = 500;
-Rp2y = (50-650)*0.5;
-Rp2z = -210;
-rR2 = 50-Rp2y;
-R_p2 = [Rp2x Rp2y Rp2z]; %拉門半徑圓心
-R_pp2 = [150 -300 -210]; %拉門到最開的點
-L_p2 = [300 200 -200];%左手不動
-
-R_p3 = [150 -300 -210];%右手不動
-L_p3 = [400 200 -200];%左手往前
-
-R_p4 = [150 -300 -210];%右手不動
-L_p4 = [400 100 -200];%左手往右
-
-R_p5 = [150 -300 -210];%右手不動
-L_p5 = [520  -60 -200];%左手移動到綠色飲料  % pick the object
-%====================
-R_p6 = [150 -300 -210];%右手不動
-L_p6 = [400 100 -200];%左手退回
-
-R_p7 = [150 -300 -210];%右手不動
-L_p7 = [400 200 -210];%左手
-
-
-Rp8x = 500;
-Rp8y = (50-650)*0.5;
-Rp8z = -210;
-rR8 = 50-Rp8y;
-R_p8 = [Rp8x Rp8y Rp8z];
-R_pp8 =  [500 50 -210];%門把位置
-L_p8 = [400 200 -210];%左手不動
-
-R_p9 =  [500 50 -210];
-L_p9 = [300 200 -210];%左手退回
-
-R_p10 = [200 0 -300];%右手最後靠上去拿飲料
-L_p10 = [200 0 -300];
 
 %% planning cans and refrigerator and handle
 % RedCan1 = [520 50 -200];
@@ -130,121 +136,21 @@ P_Refri_R1_bottom=[500 -350 -210];%point3     y-50  z+190
 P_Refri_L1_top=[500 50 -210];%point5     y-50  z-210
 P_Refri_L1_bottom=[500 50 -210];%point7    y-50  z+190
 
-DEF_CYCLE_TIME=0.02;
+DEF_CYCLE_TIME=0.022;
 Pcnt_R=0;%輸出總點數
 Pcnt_L=0;%目前和右手共用 未來想辦法兩手拆開
-for t=0:DEF_CYCLE_TIME:TotalTime_R
-    if t<=Seqt_R(2)%右手移動到冰箱門把
-        P_R=R_p0+(R_p1-R_p0)*t/SeqItv_R(1);
-        P_L=L_p0+(L_p1-L_p0)*t/SeqItv_R(1);
-        P_Red_can=P_RedCan1;
-        P_Green_can=P_GreenCan1;
-        P_Blue_can=P_BlueCan1;
-        P_handle_top=handleTop;
-        P_handle_bottom=handleBottom;
-        P_refri_R1_top=P_Refri_R1_top;
-        P_refri_L1_top=P_Refri_L1_top;
-        P_refri_R1_bottom=P_Refri_R1_bottom;
-        P_refri_L1_bottom=P_Refri_L1_bottom;
-        
-    elseif t<=Seqt_R(3)%右手開冰箱門
-        P_R=R_p2+rR2*[sin(0.5*pi*(t-Seqt_R(2))/SeqItv_R(2)+ pi) cos(0.5*pi*(t-Seqt_R(2))/SeqItv_R(2)) 0];
-%         P_R=R_p1+(R_pp2-R_p1)*(t-Seqt_R(2))/SeqItv_R(2);
-        P_L=L_p1+(L_p2-L_p1)*(t-Seqt_R(2))/SeqItv_R(2);
-        P_Red_can=P_RedCan1;
-        P_Green_can=P_GreenCan1;
-        P_Blue_can=P_BlueCan1;
-        P_handle_top=R_p2+rR2*[sin(0.5*pi*(t-Seqt_R(2))/SeqItv_R(2)+ pi) cos(0.5*pi*(t-Seqt_R(2))/SeqItv_R(2)) 0];
-        P_handle_bottom=R_p2+rR2*[sin(0.5*pi*(t-Seqt_R(2))/SeqItv_R(2)+ pi) cos(0.5*pi*(t-Seqt_R(2))/SeqItv_R(2)) 0];
-        P_refri_R1_top=P_Refri_R1_top;
-        P_refri_L1_top=R_p2+rR2*[sin(0.5*pi*(t-Seqt_R(2))/SeqItv_R(2)+ pi) cos(0.5*pi*(t-Seqt_R(2))/SeqItv_R(2)) 0];
-        P_refri_R1_bottom=P_Refri_R1_bottom;
-        P_refri_L1_bottom=R_p2+rR2*[sin(0.5*pi*(t-Seqt_R(2))/SeqItv_R(2)+ pi) cos(0.5*pi*(t-Seqt_R(2))/SeqItv_R(2)) 0];
-        
-    elseif t<=Seqt_R(4) %左手往x移動100
-        P_R=R_pp2+(R_p3-R_pp2)*(t-Seqt_R(3))/SeqItv_R(3);
-        P_L=L_p2+(L_p3-L_p2)*(t-Seqt_R(3))/SeqItv_R(3);
-        P_Red_can=P_RedCan1;
-        P_Green_can=P_GreenCan1;
-        P_Blue_can=P_BlueCan1;
-        P_handle_top=R_pp2+(R_p3-R_pp2)*(t-Seqt_R(3))/SeqItv_R(3);
-        P_handle_bottom=R_pp2+(R_p3-R_pp2)*(t-Seqt_R(3))/SeqItv_R(3);
-        P_refri_R1_top=P_Refri_R1_top;
-        P_refri_L1_top=R_pp2+(R_p3-R_pp2)*(t-Seqt_R(3))/SeqItv_R(3);
-        P_refri_R1_bottom=P_Refri_R1_bottom;
-        P_refri_L1_bottom=R_pp2+(R_p3-R_pp2)*(t-Seqt_R(3))/SeqItv_R(3);
-        
-    elseif t<=Seqt_R(5)%左手往y移動-100
-        P_R=R_p3+(R_p4-R_p3)*(t-Seqt_R(4))/SeqItv_R(4);
-        P_L=L_p3+(L_p4-L_p3)*(t-Seqt_R(4))/SeqItv_R(4);
-        P_Red_can=P_RedCan1;
-        P_Green_can=P_GreenCan1;
-        P_Blue_can=P_BlueCan1;
-        P_handle_top=R_p3+(R_p4-R_p3)*(t-Seqt_R(4))/SeqItv_R(4);
-        P_handle_bottom=R_p3+(R_p4-R_p3)*(t-Seqt_R(4))/SeqItv_R(4);
-        P_refri_R1_top=P_Refri_R1_top;
-        P_refri_L1_top=R_p3+(R_p4-R_p3)*(t-Seqt_R(4))/SeqItv_R(4);
-        P_refri_R1_bottom=P_Refri_R1_bottom;
-        P_refri_L1_bottom=R_p3+(R_p4-R_p3)*(t-Seqt_R(4))/SeqItv_R(4);
-        
-    elseif t<=Seqt_R(6)%左手移動到飲料點
-        P_R=R_p4+(R_p5-R_p4)*(t-Seqt_R(5))/SeqItv_R(5);
-        P_L=L_p4+(L_p5-L_p4)*(t-Seqt_R(5))/SeqItv_R(5);
-        P_Red_can=P_RedCan1;
-        P_Green_can=P_GreenCan1;
-        P_Blue_can=P_BlueCan1;
-        P_handle_top=R_p4+(R_p5-R_p4)*(t-Seqt_R(5))/SeqItv_R(5);
-        P_handle_bottom=R_p4+(R_p5-R_p4)*(t-Seqt_R(5))/SeqItv_R(5);
-        P_refri_R1_top=P_Refri_R1_top;
-        P_refri_L1_top=R_p4+(R_p5-R_p4)*(t-Seqt_R(5))/SeqItv_R(5);
-        P_refri_R1_bottom=P_Refri_R1_bottom;
-        P_refri_L1_bottom=R_p4+(R_p5-R_p4)*(t-Seqt_R(5))/SeqItv_R(5);
-        
-    elseif t<=Seqt_R(7)%左手退回
-        P_R=R_p5+(R_p6-R_p5)*(t-Seqt_R(6))/SeqItv_R(6);
-        P_L=L_p5+(L_p6-L_p5)*(t-Seqt_R(6))/SeqItv_R(6);
-        P_Red_can=P_RedCan1;
-        P_Green_can=L_p5+(L_p6-L_p5)*(t-Seqt_R(6))/SeqItv_R(6);
-        P_Blue_can=P_BlueCan1;
-        P_handle_top=R_p5+(R_p6-R_p5)*(t-Seqt_R(6))/SeqItv_R(6);
-        P_handle_bottom=R_p5+(R_p6-R_p5)*(t-Seqt_R(6))/SeqItv_R(6);
-        P_refri_R1_top=P_Refri_R1_top;
-        P_refri_L1_top=R_p5+(R_p6-R_p5)*(t-Seqt_R(6))/SeqItv_R(6);
-        P_refri_R1_bottom=P_Refri_R1_bottom;
-        P_refri_L1_bottom=R_p5+(R_p6-R_p5)*(t-Seqt_R(6))/SeqItv_R(6);
-        
-    elseif t<=Seqt_R(8)%左手往z移動-10
-        P_R=R_p6+(R_p7-R_p6)*(t-Seqt_R(7))/SeqItv_R(7);
-        P_L=L_p6+(L_p7-L_p6)*(t-Seqt_R(7))/SeqItv_R(7);
-        P_Red_can=P_RedCan1;
-        P_Green_can= L_p6+(L_p7-L_p6)*(t-Seqt_R(7))/SeqItv_R(7);
-        P_Blue_can=P_BlueCan1;
-        P_handle_top=R_p6+(R_p7-R_p6)*(t-Seqt_R(7))/SeqItv_R(7);
-        P_handle_bottom=R_p6+(R_p7-R_p6)*(t-Seqt_R(7))/SeqItv_R(7);
-        P_refri_R1_top=P_Refri_R1_top;
-        P_refri_L1_top=R_p6+(R_p7-R_p6)*(t-Seqt_R(7))/SeqItv_R(7);
-        P_refri_R1_bottom=P_Refri_R1_bottom;
-        P_refri_L1_bottom=R_p6+(R_p7-R_p6)*(t-Seqt_R(7))/SeqItv_R(7);
-        
-    elseif t<=Seqt_R(9)%右手關冰箱門
-        P_R=R_p8+rR8*[cos(0.5*pi*(t-Seqt_R(8))/SeqItv_R(8)+pi) sin(0.5*pi*(t-Seqt_R(8))/SeqItv_R(8)) 0];
-%         P_R=R_p7+(R_pp8-R_p7)*(t-Seqt_R(8))/SeqItv_R(8);
-        P_L=L_p7+(L_p8-L_p7)*(t-Seqt_R(8))/SeqItv_R(8);
-        P_Red_can=P_RedCan1;
-        P_Green_can=L_p7+(L_p8-L_p7)*(t-Seqt_R(8))/SeqItv_R(8);
-        P_Blue_can=P_BlueCan1;
-        P_handle_top=R_p8+rR8*[cos(0.5*pi*(t-Seqt_R(8))/SeqItv_R(8)+pi) sin(0.5*pi*(t-Seqt_R(8))/SeqItv_R(8)) 0];
-        P_handle_bottom=R_p8+rR8*[cos(0.5*pi*(t-Seqt_R(8))/SeqItv_R(8)+pi) sin(0.5*pi*(t-Seqt_R(8))/SeqItv_R(8)) 0];
-        P_refri_R1_top=P_Refri_R1_top;
-        P_refri_L1_top=R_p8+rR8*[cos(0.5*pi*(t-Seqt_R(8))/SeqItv_R(8)+pi) sin(0.5*pi*(t-Seqt_R(8))/SeqItv_R(8)) 0];
-        P_refri_R1_bottom=P_Refri_R1_bottom;
-        P_refri_L1_bottom=R_p8+rR8*[cos(0.5*pi*(t-Seqt_R(8))/SeqItv_R(8)+pi) sin(0.5*pi*(t-Seqt_R(8))/SeqItv_R(8)) 0];
 
-    elseif t<=Seqt_R(10)%左手往x移動-100
-        P_R=R_pp8+(R_p9-R_pp8)*(t-Seqt_R(9))/SeqItv_R(9);
-        P_L=L_p8+(L_p9-L_p8)*(t-Seqt_R(9))/SeqItv_R(9);
+for abst=0:DEF_CYCLE_TIME:TotalTime
+    if abst<=Seqt(2)%右手往門把關門狀態位置移動
+        Itv=SeqItv(1);
+        t=abst-Seqt(1);
+        
+        P_R=R_p(1,:)+(R_p(2,:)-R_p(1,:))*t/Itv;
+        P_L=L_p(1,:);
+        
+        %紀錄點用
         P_Red_can=P_RedCan1;
-        P_Green_can=L_p8+(L_p9-L_p8)*(t-Seqt_R(9))/SeqItv_R(9);
+        P_Green_can=P_GreenCan1;
         P_Blue_can=P_BlueCan1;
         P_handle_top=handleTop;
         P_handle_bottom=handleBottom;
@@ -253,11 +159,205 @@ for t=0:DEF_CYCLE_TIME:TotalTime_R
         P_refri_R1_bottom=P_Refri_R1_bottom;
         P_refri_L1_bottom=P_Refri_L1_bottom;
         
-    elseif t<Seqt_R(11)%右手靠上去拿飲料
-        P_R=R_p9+(R_p10-R_p9)*(t-Seqt_R(10))/SeqItv_R(10);
-        P_L=L_p9+(L_p10-L_p9)*(t-Seqt_R(10))/SeqItv_R(10);
+    elseif abst<=Seqt(3)%右手夾爪hold
+        Itv=SeqItv(2);
+        t=abst-Seqt(2);
+        
+        P_R=R_p(2,:);
+        P_L=L_p(1,:);
+        
+    elseif abst<=Seqt(4)%右手往門把開門狀態位置移動
+        Itv=SeqItv(3);
+        t=abst-Seqt(3);
+        
+        P_R=Cen_DoorPath+rDoorPath*[sin(0.5*pi*t/Itv+ pi) cos(0.5*pi*t/Itv) 0];
+        P_L=L_p(1,:);
+        
+        %紀錄點用
         P_Red_can=P_RedCan1;
-        P_Green_can=L_p9+(L_p10-L_p9)*(t-Seqt_R(10))/SeqItv_R(10);
+        P_Green_can=P_GreenCan1;
+        P_Blue_can=P_BlueCan1;
+        P_handle_top=P_R;
+        P_handle_bottom=P_R;
+        P_refri_R1_top=P_Refri_R1_top;
+        P_refri_L1_top=P_R;
+        P_refri_R1_bottom=P_Refri_R1_bottom;
+        P_refri_L1_bottom=P_R;
+        
+    elseif abst<=Seqt(5) %左手往綠飲料點前進中途1 %左手往x移動100
+        Itv=SeqItv(4);
+        t=abst-Seqt(4);
+        
+        P_R=R_p(3,:);
+        P_L=L_p(1,:)+(L_p(2,:)-L_p(1,:))*t/Itv;
+
+        %紀錄點用
+        P_Red_can=P_RedCan1;
+        P_Green_can=P_GreenCan1;
+        P_Blue_can=P_BlueCan1;
+        P_handle_top=P_R;
+        P_handle_bottom=P_R;
+        P_refri_R1_top=P_Refri_R1_top;
+        P_refri_L1_top=P_R;
+        P_refri_R1_bottom=P_Refri_R1_bottom;
+        P_refri_L1_bottom=P_R;
+        
+            
+        
+    elseif abst<=Seqt(6)%左手往綠飲料點前進中途2 左手往y移動-100
+        Itv=SeqItv(5);
+        t=abst-Seqt(5);
+        
+        P_R=R_p(3,:);
+        P_L=L_p(2,:)+(L_p(3,:)-L_p(2,:))*t/Itv;
+        
+        %紀錄點用
+        P_Red_can=P_RedCan1;
+        P_Green_can=P_GreenCan1;
+        P_Blue_can=P_BlueCan1;
+        P_handle_top=P_R;
+        P_handle_bottom=P_R;
+        P_refri_R1_top=P_Refri_R1_top;
+        P_refri_L1_top=P_R;
+        P_refri_R1_bottom=P_Refri_R1_bottom;
+        P_refri_L1_bottom=P_R;
+        
+    elseif abst<=Seqt(7)%左手移動到綠飲料點
+        Itv=SeqItv(6);
+        t=abst-Seqt(6);
+        
+        P_R=R_p(3,:);
+        P_L=L_p(3,:)+(L_p(4,:)-L_p(3,:))*t/Itv;
+     
+        %紀錄點用
+        P_Red_can=P_RedCan1;
+        P_Green_can=P_GreenCan1;
+        P_Blue_can=P_BlueCan1;
+        P_handle_top=P_R;
+        P_handle_bottom=P_R;
+        P_refri_R1_top=P_Refri_R1_top;
+        P_refri_L1_top=P_R;
+        P_refri_R1_bottom=P_Refri_R1_bottom;
+        P_refri_L1_bottom=P_R;
+        
+    elseif abst<=Seqt(8)%左手夾爪hold
+        Itv=SeqItv(7);
+        t=abst-Seqt(7);
+        
+        P_R=R_p(3,:);
+        P_L=L_p(4,:);
+     
+        %紀錄點用
+        P_Red_can=P_RedCan1;
+        P_Green_can=P_GreenCan1;
+        P_Blue_can=P_BlueCan1;
+        P_handle_top=P_R;
+        P_handle_bottom=P_R;
+        P_refri_R1_top=P_Refri_R1_top;
+        P_refri_L1_top=P_R;
+        P_refri_R1_bottom=P_Refri_R1_bottom;
+        P_refri_L1_bottom=P_R;
+        
+    elseif abst<=Seqt(9)%左手從綠飲料點退回中途1
+        Itv=SeqItv(8);
+        t=abst-Seqt(8);
+        
+        P_R=R_p(3,:);
+        P_L=L_p(4,:)+(L_p(5,:)-L_p(4,:))*t/Itv;
+        
+        %紀錄點用
+        P_Red_can=P_RedCan1;
+        P_Green_can=L_p(4,:)+(L_p(5,:)-L_p(4,:))*t/Itv;
+        P_Blue_can=P_BlueCan1;
+        P_handle_top=P_R;
+        P_handle_bottom=P_R;
+        P_refri_R1_top=P_Refri_R1_top;
+        P_refri_L1_top=P_R;
+        P_refri_R1_bottom=P_Refri_R1_bottom;
+        P_refri_L1_bottom=P_R;
+        
+    elseif abst<=Seqt(10)%左手從綠飲料點退回中途2 %左手往z移動-10
+        Itv=SeqItv(9);
+        t=abst-Seqt(9);
+        
+        P_R=R_p(3,:);
+        P_L=L_p(5,:)+(L_p(6,:)-L_p(5,:))*t/Itv;
+        
+        %紀錄點用
+        P_Red_can=P_RedCan1;
+        P_Green_can= P_L;
+        P_Blue_can=P_BlueCan1;
+        P_handle_top=P_R;
+        P_handle_bottom=P_R;
+        P_refri_R1_top=P_Refri_R1_top;
+        P_refri_L1_top=P_R;
+        P_refri_R1_bottom=P_Refri_R1_bottom;
+        P_refri_L1_bottom=P_R;
+        
+    elseif abst<=Seqt(11)%右手往門把關門狀態位置移動
+        Itv=SeqItv(10);
+        t=abst-Seqt(10);
+        
+        P_R=Cen_DoorPath+rDoorPath*[cos(0.5*pi*t/Itv+pi) sin(0.5*pi*t/Itv) 0];
+        P_L=L_p(6,:);
+        
+        %紀錄點用
+        P_Red_can=P_RedCan1;
+        P_Green_can=L_p(6,:);
+        P_Blue_can=P_BlueCan1;
+        P_handle_top=P_R;
+        P_handle_bottom=P_R;
+        P_refri_R1_top=P_Refri_R1_top;
+        P_refri_L1_top=P_R;
+        P_refri_R1_bottom=P_Refri_R1_bottom;
+        P_refri_L1_bottom=P_R;
+    elseif abst<=Seqt(12)%右手夾爪rlease
+        Itv=SeqItv(11);
+        t=abst-Seqt(11);
+        
+        P_R=R_p(4,:);
+        P_L=L_p(6,:);
+        
+        %紀錄點用
+        P_Red_can=P_RedCan1;
+        P_Green_can=L_p(6,:);
+        P_Blue_can=P_BlueCan1;
+        P_handle_top=P_R;
+        P_handle_bottom=P_R;
+        P_refri_R1_top=P_Refri_R1_top;
+        P_refri_L1_top=P_R;
+        P_refri_R1_bottom=P_Refri_R1_bottom;
+        P_refri_L1_bottom=P_R;
+        
+        
+    elseif abst<=Seqt(13)%左手從綠飲料點退回中途3 %左手往x移動-100
+        Itv=SeqItv(12);
+        t=abst-Seqt(12);
+        
+        P_R=R_p(4,:);
+        P_L=L_p(6,:)+(L_p(7,:)-L_p(6,:))*t/Itv;
+        
+        %紀錄點用
+        P_Red_can=P_RedCan1;
+        P_Green_can=P_L;
+        P_Blue_can=P_BlueCan1;
+        P_handle_top=handleTop;
+        P_handle_bottom=handleBottom;
+        P_refri_R1_top=P_Refri_R1_top;
+        P_refri_L1_top=P_Refri_L1_top;
+        P_refri_R1_bottom=P_Refri_R1_bottom;
+        P_refri_L1_bottom=P_Refri_L1_bottom;
+        
+    elseif abst<Seqt(14)%左右手回到最後雙手握飲料位置
+        Itv=SeqItv(13);
+        t=abst-Seqt(13);
+        
+        P_R=R_p(4,:)+(R_p(5,:)-R_p(4,:))*t/Itv;
+        P_L=L_p(7,:)+(L_p(8,:)-L_p(7,:))*t/Itv;
+        
+        %紀錄點用
+        P_Red_can=P_RedCan1;
+        P_Green_can=P_L;
         P_Blue_can=P_BlueCan1;
         P_handle_top=handleTop;
         P_handle_bottom=handleBottom;
@@ -266,8 +366,8 @@ for t=0:DEF_CYCLE_TIME:TotalTime_R
         P_refri_R1_bottom=P_Refri_R1_bottom;
         P_refri_L1_bottom=P_Refri_L1_bottom;
     else 
-        P_R=R_p10;
-        P_L=L_p10;
+        P_R=R_p(5,:);
+        P_L=L_p(8,:);
     end
     
     Pcnt_R=Pcnt_R+1;    
@@ -290,7 +390,7 @@ end
 
 %==畫拿飲料路徑 在cartesian space下各自由度(x,y,z)的規劃
 %right hand
-t=0:DEF_CYCLE_TIME:TotalTime_R; 
+t=0:DEF_CYCLE_TIME:TotalTime; 
 figure(2);
 subplot(2,2,1),plot(t,Path_R(:,1),'LineWidth',2); 
 grid on;
@@ -311,7 +411,7 @@ ylabel('z (mm)');
 title('right hand t versus z') ; 
 
 %left hand
-t=0:DEF_CYCLE_TIME:TotalTime_L; 
+t=0:DEF_CYCLE_TIME:TotalTime; 
 figure(3);
 subplot(2,2,1),plot(t,Path_L(:,1),'LineWidth',2); 
 grid on;
@@ -350,7 +450,7 @@ PathTheta_L=zeros(Pcnt_L,7);%記錄每軸角度，畫圖使用
 % refri_L1_top=zeros(Pcnt_R,3);
 % refri_R1_bottom=zeros(Pcnt_R,3);
 % refri_L1_bottom=zeros(Pcnt_R,3);
-
+cnt=0;
 %% ==軌跡點=>IK=>FK模擬== %%
 DEF_DESCRETE_POINT=Pcnt_R;  %若雙手點數不同會有問題
 for t=1:1:DEF_DESCRETE_POINT
@@ -382,7 +482,8 @@ for t=1:1:DEF_DESCRETE_POINT
     in_linkL=[L0;L1;L2;L3;L4;L5];
     in_base=[0;-L0;0];%header0 座標系偏移到shoulder0 座標系 差Y方向的L0
     in_end=[in_x_end_R;in_y_end_R;in_z_end_R];
-    in_PoseAngle=[in_alpha_R;in_beta_R;in_gamma_R];
+    in_PoseAngle=[in_alpha_R;in_beta_R;in_gamma_R];   
+    
     theta_R=IK_7DOF_FB7roll(DEF_RIGHT_HAND,in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha_R);
     
     %AngleConstrain
@@ -442,13 +543,13 @@ for t=1:1:DEF_DESCRETE_POINT
 %     plot3([refri_L1_bottom(t,1), refri_R1_bottom(t,1)],[refri_L1_bottom(t,2)+50, refri_R1_bottom(t,2)+50],[refri_L1_bottom(t,3)-190, refri_R1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line11
     
     
-    %pause(0.001);
+    pause(0.001);
 end
 
 %% ==畫JointAngle== %%
 %right
 figure(6); hold on; grid on; title('right hand joint angle'); xlabel('t'); ylabel('deg');
-t=0:DEF_CYCLE_TIME:TotalTime_R; 
+t=0:DEF_CYCLE_TIME:TotalTime; 
 for i=1:1:7
     plot(t,PathTheta_R(:,i),'LineWidth',2); 
 end
@@ -456,7 +557,7 @@ legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
 
 %left
 figure(7); hold on; grid on; title('left hand joint angle'); xlabel('t'); ylabel('deg');
-t=0:DEF_CYCLE_TIME:TotalTime_L; 
+t=0:DEF_CYCLE_TIME:TotalTime; 
 for i=1:1:7
     plot(t,PathTheta_L(:,i),'LineWidth',2); 
 end
@@ -473,7 +574,7 @@ for i=1:1:size(PathTheta_R,1)
     end
 end
 figure(8); hold on; grid on; title('right hand joint rotation speed'); xlabel('t'); ylabel('deg/s');
-t=0:DEF_CYCLE_TIME:TotalTime_R; 
+t=0:DEF_CYCLE_TIME:TotalTime; 
 for i=1:1:7
     plot(t,PathVel_R(:,i),'LineWidth',2); 
 end
@@ -488,8 +589,8 @@ for i=1:1:size(PathTheta_L,1)
          PathVel_L(i,:)=(PathTheta_L(i,:)-PathTheta_L(i-1,:))/DEF_CYCLE_TIME;
     end
 end
-figure(9); hold on; grid on; title('left hand joint rotation speed'); xlabel('t'); ylabel('angle/s');
-t=0:DEF_CYCLE_TIME:TotalTime_L; 
+figure(9); hold on; grid on; title('left hand joint rotation speed'); xlabel('t'); ylabel('deg/s');
+t=0:DEF_CYCLE_TIME:TotalTime; 
 for i=1:1:7
     plot(t,PathVel_L(:,i),'LineWidth',2); 
 end
@@ -506,8 +607,8 @@ for i=1:1:size(PathVel_R,1)
     end
 end
 
-figure(10); hold on; grid on; title('right hand acc'); xlabel('t'); ylabel('angle/s^2');
-t=0:DEF_CYCLE_TIME:TotalTime_R; 
+figure(10); hold on; grid on; title('right hand acc'); xlabel('t'); ylabel('deg/s^2');
+t=0:DEF_CYCLE_TIME:TotalTime; 
 for i=1:1:7
     plot(t,PathAcc_R(:,i),'LineWidth',2); 
 end
@@ -523,8 +624,8 @@ for i=1:1:size(PathVel_L,1)
     end
 end
 
-figure(11); hold on; grid on; title('left hand acc'); xlabel('t'); ylabel('angle/t^2');
-t=0:DEF_CYCLE_TIME:TotalTime_L; 
+figure(11); hold on; grid on; title('left hand acc'); xlabel('t'); ylabel('deg/t^2');
+t=0:DEF_CYCLE_TIME:TotalTime; 
 for i=1:1:7
     plot(t,PathAcc_L(:,i),'LineWidth',2); 
 end
