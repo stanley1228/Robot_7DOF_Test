@@ -1,5 +1,5 @@
 %第七軸為roll軸
-
+%使用tic toc 計時，目前需花0.25ms~0.3ms
 function theta = IK_7DOF_FB7roll(RLHand,linkL,base,Pend,PoseAngle,Rednt_alpha)
     
     %define 
@@ -82,6 +82,15 @@ function theta = IK_7DOF_FB7roll(RLHand,linkL,base,Pend,PoseAngle,Rednt_alpha)
 
     temp=V_n_yrot12'*Vn_u_f/norm(V_n_yrot12)/norm(Vn_u_f); 
 
+    %防止在acos(1.000000.....)的時候會出現虛部的情況
+    if abs(temp-1)<1.e-7 
+       if temp >0
+           temp=1;
+       else
+           temp=-1;
+       end
+    end
+    
     %Vn_u_f 和 V_n_yrot12的法向量   與 V_ru_l1同方向 theta(3)需要加負號
     if norm(Vn_nuf_nyrot12 - V_ru_l1/norm(V_ru_l1)) < 1.e-7
         theta(3)=-acos(temp);
@@ -154,11 +163,20 @@ function theta = IK_7DOF_FB7roll(RLHand,linkL,base,Pend,PoseAngle,Rednt_alpha)
     Vn_xrot1to6_VHhatz=Vn_xrot1to6_VHhatz/norm(Vn_xrot1to6_VHhatz);
     
     %V_shx經過123456軸旋轉後和末點座標系的Z軸還差幾度
-    theta(7)=acos(V_x_rot1to6'*V_H_hat_z/norm(V_x_rot1to6)/norm(V_H_hat_z));
+    %防止在acos(1.000000.....)的時候會出現虛部的情況
+    temp=V_x_rot1to6'*V_H_hat_z/norm(V_x_rot1to6)/norm(V_H_hat_z);
+    if abs(temp-1)<1.e-7 
+       if temp>0
+           temp=1;
+       else
+           temp=-1;
+       end
+    end
+    
     if norm(Vn_xrot1to6_VHhatz - V_H_hat_x) <  1.e-7
-        theta(7)=theta(7);
+        theta(7)=acos(temp);
     else
-        theta(7)=-theta(7);
+        theta(7)=-acos(temp);
     end
     
    
