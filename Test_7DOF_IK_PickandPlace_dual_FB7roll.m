@@ -95,10 +95,10 @@ end
 
 %% 路徑規劃
 R_p=[   300 -300 -200;%起始點
-        500 50 -210;%門把關門狀態位置
-        150 -300 -210;%門把開門狀態位置
-        500 50 -210;%門把關門狀態位置
-        200 0 -300];%最後雙手握飲料位置
+        500 50 -100;%門把關門狀態位置
+        150 -300 -100;%門把開門狀態位置
+        500 50 -100;%門把關門狀態位置
+        200 -100 -300];%最後雙手握飲料位置
     
 L_p=[   300 200 -200;%起始點
         400 200 -200;%左手往綠飲料點前進中途1
@@ -110,7 +110,7 @@ L_p=[   300 200 -200;%起始點
         200 0 -300];%最後雙手握飲料位置
    
 rDoorPath = 50-(50-650)*0.5;
-Cen_DoorPath = [500 (50-650)*0.5 -210]; %拉門半徑圓心 center of open door path
+Cen_DoorPath = [500 (50-650)*0.5 -100]; %拉門半徑圓心 center of open door path
 
 
 %% planning cans and refrigerator and handle
@@ -122,8 +122,8 @@ P_GreenCan1 = [520 -60 -200];
 P_BlueCan1 = [520 -170 -200];
 
 %% plot the handle
- handleTop=[500 50 -210]; %[400 50 -50]
- handleBottom=[500 50 -210]; %[400 50 -150]
+ handleTop=[500 50 -100]; %[400 50 -50]
+ handleBottom=[500 50 -100]; %[400 50 -150]
  
  %% plot the door of the refrigerator
  
@@ -131,16 +131,17 @@ P_BlueCan1 = [520 -170 -200];
 %  Refri_R1_bottom=[400 -80 -200];%point3
 %  Refri_L1_Up=[400 80 0];%point5
 %  Refri_L1_bottom=[400 80 -200];%point7
-P_Refri_R1_top=[500 -350 -210];%point1    y-50  z-210
-P_Refri_R1_bottom=[500 -350 -210];%point3     y-50  z+190
-P_Refri_L1_top=[500 50 -210];%point5     y-50  z-210
-P_Refri_L1_bottom=[500 50 -210];%point7    y-50  z+190
+P_Refri_R1_top=[500 -350 -100];%point1    y-50  z-210
+P_Refri_R1_bottom=[500 -350 -100];%point3     y-50  z+190
+P_Refri_L1_top=[500 50 -100];%point5     y-50  z-210
+P_Refri_L1_bottom=[500 50 -100];%point7    y-50  z+190
 
-DEF_CYCLE_TIME=0.022;
+DEF_CYCLE_TIME=2;
 Pcnt_R=0;%輸出總點數
 Pcnt_L=0;%目前和右手共用 未來想辦法兩手拆開
 
 for abst=0:DEF_CYCLE_TIME:TotalTime
+  
     if abst<=Seqt(2)%右手往門把關門狀態位置移動
         Itv=SeqItv(1);
         t=abst-Seqt(1);
@@ -365,7 +366,7 @@ for abst=0:DEF_CYCLE_TIME:TotalTime
         P_refri_L1_top=P_Refri_L1_top;
         P_refri_R1_bottom=P_Refri_R1_bottom;
         P_refri_L1_bottom=P_Refri_L1_bottom;
-    else 
+    elseif abst==TotalTime
         P_R=R_p(5,:);
         P_L=L_p(8,:);
     end
@@ -517,7 +518,7 @@ for t=1:1:DEF_DESCRETE_POINT
     
     
     %畫關節點圖
-    %Draw_7DOF_FB7roll_point_dual(P_R,RotationM_R,PathPoint_R,P_L,RotationM_L,PathPoint_L);
+    Draw_7DOF_FB7roll_point_dual(P_R,RotationM_R,PathPoint_R,P_L,RotationM_L,PathPoint_L);
    
     %記錄每軸角度變化
     PathTheta_R(t,1:7)=theta_R*(180/pi);
@@ -529,18 +530,18 @@ for t=1:1:DEF_DESCRETE_POINT
     In_L=[in_x_end_L in_y_end_L in_z_end_L in_alpha_L in_beta_L in_gamma_L]
     Out_L=[out_x_end_L out_y_end_L out_z_end_L out_alpha_L out_beta_L out_gamma_L]
     
-%      plot3( Red_can(t,1), Red_can(t,2), Red_can(t,3),'ro','MarkerFaceColor','r','MarkerSize',20,'Linewidth',4);
-% %     text(525,120,-70,'Red can') 
-%     plot3( Green_can(t,1), Green_can(t,2), Green_can(t,3),'go','MarkerFaceColor','g','MarkerSize',20,'Linewidth',4);
-% %     text(525,20,-70,'Green can')
-%     plot3( Blue_can(t,1), Blue_can(t,2), Blue_can(t,3),'bo','MarkerFaceColor','b','MarkerSize',20,'Linewidth',4);
-% %     text(525,-80,-70,'Blue can')
-%     plot3([handle_top(t,1), handle_bottom(t,1)], [handle_top(t,2), handle_bottom(t,2)], [handle_top(t,3)+60, handle_bottom(t,3)-60], '-','Color',[0 0 0],'Linewidth',8); 
-% 
-%     plot3([refri_L1_top(t,1), refri_L1_bottom(t,1)],[refri_L1_top(t,2)+50, refri_L1_bottom(t,2)+50],[refri_L1_top(t,3)+210, refri_L1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line2
-%     plot3([refri_R1_top(t,1), refri_R1_bottom(t,1)],[refri_R1_top(t,2)+50, refri_R1_bottom(t,2)+50],[refri_R1_top(t,3)+210, refri_R1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line6
-%     plot3([refri_L1_top(t,1), refri_R1_top(t,1)],[refri_L1_top(t,2)+50, refri_R1_top(t,2)+50],[refri_L1_top(t,3)+210, refri_R1_top(t,3)+210],'-','Color',[0 0 0],'Linewidth',4); %Line9
-%     plot3([refri_L1_bottom(t,1), refri_R1_bottom(t,1)],[refri_L1_bottom(t,2)+50, refri_R1_bottom(t,2)+50],[refri_L1_bottom(t,3)-190, refri_R1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line11
+     plot3( Red_can(t,1), Red_can(t,2), Red_can(t,3),'ro','MarkerFaceColor','r','MarkerSize',20,'Linewidth',4);
+%     text(525,120,-70,'Red can') 
+    plot3( Green_can(t,1), Green_can(t,2), Green_can(t,3),'go','MarkerFaceColor','g','MarkerSize',20,'Linewidth',4);
+%     text(525,20,-70,'Green can')
+    plot3( Blue_can(t,1), Blue_can(t,2), Blue_can(t,3),'bo','MarkerFaceColor','b','MarkerSize',20,'Linewidth',4);
+%     text(525,-80,-70,'Blue can')
+    plot3([handle_top(t,1), handle_bottom(t,1)], [handle_top(t,2), handle_bottom(t,2)], [handle_top(t,3)+60, handle_bottom(t,3)-60], '-','Color',[0 0 0],'Linewidth',8); 
+
+    plot3([refri_L1_top(t,1), refri_L1_bottom(t,1)],[refri_L1_top(t,2)+50, refri_L1_bottom(t,2)+50],[refri_L1_top(t,3)+210, refri_L1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line2
+    plot3([refri_R1_top(t,1), refri_R1_bottom(t,1)],[refri_R1_top(t,2)+50, refri_R1_bottom(t,2)+50],[refri_R1_top(t,3)+210, refri_R1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line6
+    plot3([refri_L1_top(t,1), refri_R1_top(t,1)],[refri_L1_top(t,2)+50, refri_R1_top(t,2)+50],[refri_L1_top(t,3)+210, refri_R1_top(t,3)+210],'-','Color',[0 0 0],'Linewidth',4); %Line9
+    plot3([refri_L1_bottom(t,1), refri_R1_bottom(t,1)],[refri_L1_bottom(t,2)+50, refri_R1_bottom(t,2)+50],[refri_L1_bottom(t,3)-190, refri_R1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line11
     
     
     pause(0.001);
