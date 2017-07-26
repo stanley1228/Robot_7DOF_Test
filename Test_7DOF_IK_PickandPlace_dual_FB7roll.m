@@ -53,11 +53,15 @@ Seqt(i)=150;%右手往門把關門狀態位置移動
 i=i+1;
 Seqt(i)=155;%右手夾爪rlease
 i=i+1;
-Seqt(i)=160;%左手從綠飲料點退回中途3
+Seqt(i)=175;%右手從門把關門狀態位置退回中途1
 i=i+1;
-Seqt(i)=170;%左右手回到最後雙手握飲料位置
+Seqt(i)=195;%右手從門把關門狀態位置退回中途2
+i=i+1;
+Seqt(i)=215;%左手從綠飲料點退回中途3
+i=i+1;
+Seqt(i)=230;%左右手回到最後雙手握飲料位置
 
-TotalTime=170;
+TotalTime=230;
 
 SeqItv=zeros(1, size(Seqt,2)-1);
 
@@ -95,19 +99,21 @@ end
 
 %% 路徑規劃
 R_p=[   300 -300 -200;%起始點
-        500 50 -100;%門把關門狀態位置
-        150 -300 -100;%門把開門狀態位置
-        500 50 -100;%門把關門狀態位置
-        200 -100 -300];%最後雙手握飲料位置
+        480 80 -100;%門把關門狀態位置
+        130 -270 -100;%門把開門狀態位置
+        480 80 -100;%門把關門狀態位置
+        410 0  -80;%右手從門把關門狀態位置退回中途1
+        350 0  -80;%右手從門把關門狀態位置退回中途2
+        200 -100 -200];%最後雙手握飲料位置
     
 L_p=[   300 200 -200;%起始點
-        400 200 -200;%左手往綠飲料點前進中途1
-        400 100 -200;%左手往綠飲料點前進中途2
-        520  -60 -200;%綠飲料點
-        400 100 -200;%左手從綠飲料點退回中途1
-        400 200 -210;%左手從綠飲料點退回中途2
-        300 200 -210;%左手從綠飲料點退回中途3
-        200 0 -300];%最後雙手握飲料位置
+        350 150 -150;%左手往綠飲料點前進中途1
+        400 30 -80;%左手往綠飲料點前進中途2
+        570  -60 -40;%綠飲料點
+        430 30 -40;%左手從綠飲料點退回中途1
+        300 150 -200;%左手從綠飲料點退回中途2
+        300 200 -200;%左手從綠飲料點退回中途3
+        200 100 -200];%最後雙手握飲料位置
    
 rDoorPath = 50-(50-650)*0.5;
 Cen_DoorPath = [500 (50-650)*0.5 -100]; %拉門半徑圓心 center of open door path
@@ -118,12 +124,12 @@ Cen_DoorPath = [500 (50-650)*0.5 -100]; %拉門半徑圓心 center of open door path
 % GreenCan1 = [520 -100 -200];
 % BlueCan1 = [520 -250 -200];
 P_RedCan1 = [520 50 -200];
-P_GreenCan1 = [520 -60 -200];
+P_GreenCan1 = [570 -60 -60];
 P_BlueCan1 = [520 -170 -200];
 
 %% plot the handle
- handleTop=[500 50 -100]; %[400 50 -50]
- handleBottom=[500 50 -100]; %[400 50 -150]
+ handleTop=[480 50 -100]; %[400 50 -50]
+ handleBottom=[480 50 -100]; %[400 50 -150]
  
  %% plot the door of the refrigerator
  
@@ -136,7 +142,7 @@ P_Refri_R1_bottom=[500 -350 -100];%point3     y-50  z+190
 P_Refri_L1_top=[500 50 -100];%point5     y-50  z-210
 P_Refri_L1_bottom=[500 50 -100];%point7    y-50  z+190
 
-DEF_CYCLE_TIME=2;
+DEF_CYCLE_TIME=1;
 Pcnt_R=0;%輸出總點數
 Pcnt_L=0;%目前和右手共用 未來想辦法兩手拆開
 
@@ -326,16 +332,54 @@ for abst=0:DEF_CYCLE_TIME:TotalTime
         P_handle_top=P_R;
         P_handle_bottom=P_R;
         P_refri_R1_top=P_Refri_R1_top;
-        P_refri_L1_top=P_R;
+        P_refri_L1_top=P_Refri_L1_top;
         P_refri_R1_bottom=P_Refri_R1_bottom;
-        P_refri_L1_bottom=P_R;
-        
-        
-    elseif abst<=Seqt(13)%左手從綠飲料點退回中途3 %左手往x移動-100
+        P_refri_L1_bottom=P_Refri_L1_bottom;   
+     
+    elseif abst<=Seqt(13)%右手從門把關門狀態位置退回中途1
         Itv=SeqItv(12);
         t=abst-Seqt(12);
         
-        P_R=R_p(4,:);
+        P_R=R_p(4,:)+(R_p(5,:)-R_p(4,:))*t/Itv;
+        P_L=L_p(6,:);
+        
+        %紀錄點用
+        P_Red_can=P_RedCan1;
+        P_Green_can=L_p(6,:);
+        P_Blue_can=P_BlueCan1;
+        P_handle_top=handleTop;
+        P_handle_bottom=handleBottom;
+        P_refri_R1_top=P_Refri_R1_top;
+        P_refri_L1_top=P_Refri_L1_top;
+        P_refri_R1_bottom=P_Refri_R1_bottom;
+        P_refri_L1_bottom=P_Refri_L1_bottom;
+       
+    elseif abst<=Seqt(14)%右手從門把關門狀態位置退回中途2
+        Itv=SeqItv(13);
+        t=abst-Seqt(13);
+        
+        P_R=R_p(5,:)+(R_p(6,:)-R_p(5,:))*t/Itv;
+        P_L=L_p(6,:);
+        
+         %紀錄點用
+        P_Red_can=P_RedCan1;
+        P_Green_can=L_p(6,:);
+        P_Blue_can=P_BlueCan1;
+        P_handle_top=handleTop;
+        P_handle_bottom=handleBottom;
+        P_refri_R1_top=P_Refri_R1_top;
+        P_refri_L1_top=P_Refri_L1_top;
+        P_refri_R1_bottom=P_Refri_R1_bottom;
+        P_refri_L1_bottom=P_Refri_L1_bottom;
+        
+   
+        
+        
+    elseif abst<=Seqt(15)%左手從綠飲料點退回中途3 %左手往x移動-100
+        Itv=SeqItv(14);
+        t=abst-Seqt(14);
+        
+        P_R=R_p(6,:);
         P_L=L_p(6,:)+(L_p(7,:)-L_p(6,:))*t/Itv;
         
         %紀錄點用
@@ -349,11 +393,11 @@ for abst=0:DEF_CYCLE_TIME:TotalTime
         P_refri_R1_bottom=P_Refri_R1_bottom;
         P_refri_L1_bottom=P_Refri_L1_bottom;
         
-    elseif abst<Seqt(14)%左右手回到最後雙手握飲料位置
-        Itv=SeqItv(13);
-        t=abst-Seqt(13);
+    elseif abst<Seqt(16)%左右手回到最後雙手握飲料位置
+        Itv=SeqItv(15);
+        t=abst-Seqt(15);
         
-        P_R=R_p(4,:)+(R_p(5,:)-R_p(4,:))*t/Itv;
+        P_R=R_p(6,:)+(R_p(7,:)-R_p(6,:))*t/Itv;
         P_L=L_p(7,:)+(L_p(8,:)-L_p(7,:))*t/Itv;
         
         %紀錄點用
@@ -367,7 +411,7 @@ for abst=0:DEF_CYCLE_TIME:TotalTime
         P_refri_R1_bottom=P_Refri_R1_bottom;
         P_refri_L1_bottom=P_Refri_L1_bottom;
     elseif abst==TotalTime
-        P_R=R_p(5,:);
+        P_R=R_p(7,:);
         P_L=L_p(8,:);
     end
     
@@ -389,7 +433,7 @@ end
 
 
 
-%==畫拿飲料路徑 在cartesian space下各自由度(x,y,z)的規劃
+%% ==畫拿飲料路徑 在cartesian space下各自由度(x,y,z)的規劃 ==%%
 %right hand
 t=0:DEF_CYCLE_TIME:TotalTime; 
 figure(2);
@@ -474,7 +518,7 @@ for t=1:1:DEF_DESCRETE_POINT
     in_gamma_L=0*(t/DEF_DESCRETE_POINT)*(pi/180);
 
     Rednt_alpha_R=-60*(pi/180);
-    Rednt_alpha_L=30*(pi/180);
+    Rednt_alpha_L=50*(pi/180);
   
     
   
