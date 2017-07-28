@@ -142,7 +142,7 @@ P_Refri_R1_bottom=[500 -350 -100];%point3     y-50  z+190
 P_Refri_L1_top=[500 50 -100];%point5     y-50  z-210
 P_Refri_L1_bottom=[500 50 -100];%point7    y-50  z+190
 
-DEF_CYCLE_TIME=1;
+DEF_CYCLE_TIME=0.1;
 Pcnt_R=0;%輸出總點數
 Pcnt_L=0;%目前和右手共用 未來想辦法兩手拆開
 
@@ -562,7 +562,7 @@ for t=1:1:DEF_DESCRETE_POINT
     
     
     %畫關節點圖
-    Draw_7DOF_FB7roll_point_dual(P_R,RotationM_R,PathPoint_R,P_L,RotationM_L,PathPoint_L);
+    %Draw_7DOF_FB7roll_point_dual(P_R,RotationM_R,PathPoint_R,P_L,RotationM_L,PathPoint_L);
    
     %記錄每軸角度變化
     PathTheta_R(t,1:7)=theta_R*(180/pi);
@@ -574,21 +574,21 @@ for t=1:1:DEF_DESCRETE_POINT
     In_L=[in_x_end_L in_y_end_L in_z_end_L in_alpha_L in_beta_L in_gamma_L]
     Out_L=[out_x_end_L out_y_end_L out_z_end_L out_alpha_L out_beta_L out_gamma_L]
     
-     plot3( Red_can(t,1), Red_can(t,2), Red_can(t,3),'ro','MarkerFaceColor','r','MarkerSize',20,'Linewidth',4);
-%     text(525,120,-70,'Red can') 
-    plot3( Green_can(t,1), Green_can(t,2), Green_can(t,3),'go','MarkerFaceColor','g','MarkerSize',20,'Linewidth',4);
-%     text(525,20,-70,'Green can')
-    plot3( Blue_can(t,1), Blue_can(t,2), Blue_can(t,3),'bo','MarkerFaceColor','b','MarkerSize',20,'Linewidth',4);
-%     text(525,-80,-70,'Blue can')
-    plot3([handle_top(t,1), handle_bottom(t,1)], [handle_top(t,2), handle_bottom(t,2)], [handle_top(t,3)+60, handle_bottom(t,3)-60], '-','Color',[0 0 0],'Linewidth',8); 
-
-    plot3([refri_L1_top(t,1), refri_L1_bottom(t,1)],[refri_L1_top(t,2)+50, refri_L1_bottom(t,2)+50],[refri_L1_top(t,3)+210, refri_L1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line2
-    plot3([refri_R1_top(t,1), refri_R1_bottom(t,1)],[refri_R1_top(t,2)+50, refri_R1_bottom(t,2)+50],[refri_R1_top(t,3)+210, refri_R1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line6
-    plot3([refri_L1_top(t,1), refri_R1_top(t,1)],[refri_L1_top(t,2)+50, refri_R1_top(t,2)+50],[refri_L1_top(t,3)+210, refri_R1_top(t,3)+210],'-','Color',[0 0 0],'Linewidth',4); %Line9
-    plot3([refri_L1_bottom(t,1), refri_R1_bottom(t,1)],[refri_L1_bottom(t,2)+50, refri_R1_bottom(t,2)+50],[refri_L1_bottom(t,3)-190, refri_R1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line11
+%     plot3( Red_can(t,1), Red_can(t,2), Red_can(t,3),'ro','MarkerFaceColor','r','MarkerSize',20,'Linewidth',4);
+% %     text(525,120,-70,'Red can') 
+%     plot3( Green_can(t,1), Green_can(t,2), Green_can(t,3),'go','MarkerFaceColor','g','MarkerSize',20,'Linewidth',4);
+% %     text(525,20,-70,'Green can')
+%     plot3( Blue_can(t,1), Blue_can(t,2), Blue_can(t,3),'bo','MarkerFaceColor','b','MarkerSize',20,'Linewidth',4);
+% %     text(525,-80,-70,'Blue can')
+%     plot3([handle_top(t,1), handle_bottom(t,1)], [handle_top(t,2), handle_bottom(t,2)], [handle_top(t,3)+60, handle_bottom(t,3)-60], '-','Color',[0 0 0],'Linewidth',8); 
+% 
+%     plot3([refri_L1_top(t,1), refri_L1_bottom(t,1)],[refri_L1_top(t,2)+50, refri_L1_bottom(t,2)+50],[refri_L1_top(t,3)+210, refri_L1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line2
+%     plot3([refri_R1_top(t,1), refri_R1_bottom(t,1)],[refri_R1_top(t,2)+50, refri_R1_bottom(t,2)+50],[refri_R1_top(t,3)+210, refri_R1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line6
+%     plot3([refri_L1_top(t,1), refri_R1_top(t,1)],[refri_L1_top(t,2)+50, refri_R1_top(t,2)+50],[refri_L1_top(t,3)+210, refri_R1_top(t,3)+210],'-','Color',[0 0 0],'Linewidth',4); %Line9
+%     plot3([refri_L1_bottom(t,1), refri_R1_bottom(t,1)],[refri_L1_bottom(t,2)+50, refri_R1_bottom(t,2)+50],[refri_L1_bottom(t,3)-190, refri_R1_bottom(t,3)-190],'-','Color',[0 0 0],'Linewidth',4); %Line11
     
     
-    pause(0.001);
+%     pause(0.001);
 end
 
 %% ==畫JointAngle== %%
@@ -675,3 +675,40 @@ for i=1:1:7
     plot(t,PathAcc_L(:,i),'LineWidth',2); 
 end
 legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7')
+
+%% == 和feedback做比較角度==%% 
+%畫feed back JointAngle 和誤差
+%right 
+figure(12); hold on; grid on; title('right hand feedback joint angle'); xlabel('t'); ylabel('angle');
+PathTheta_R_Read = csvread('D://GetDrinkJointAngle_R.csv'); 
+t=0:DEF_CYCLE_TIME:TotalTime; 
+for i=1:1:7
+    plot(t,PathTheta_R_Read(:,i+1),'LineWidth',2); 
+end
+hold off
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+figure(13); hold on; grid on; title('right hand command vs feedback joint angle'); xlabel('t'); ylabel('abs(command-feedback) deg');
+PathTheta_R_Err=abs(PathTheta_R-PathTheta_R_Read(:,2:8));
+t=0:DEF_CYCLE_TIME:TotalTime; 
+for i=1:1:7
+    plot(t,PathTheta_R_Err(:,i),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+%left
+figure(14); hold on; grid on; title('left hand feedback joint angle'); xlabel('t'); ylabel('angle');
+PathTheta_L_Read = csvread('D://GetDrinkJointAngle_L.csv'); 
+t=0:DEF_CYCLE_TIME:TotalTime; 
+for i=1:1:7
+    plot(t,PathTheta_L_Read(:,i+1),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+figure(15); hold on; grid on; title('left hand command vs feedback joint angle'); xlabel('t'); ylabel('abs(command-feedback) deg');
+PathTheta_L_Err=abs(PathTheta_L-PathTheta_L_Read(:,2:8));
+t=0:DEF_CYCLE_TIME:TotalTime; 
+for i=1:1:7
+    plot(t,PathTheta_L_Err(:,i),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
