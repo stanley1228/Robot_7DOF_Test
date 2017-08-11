@@ -29,31 +29,51 @@ z_base_L=0;
 
 %% ==由起始點往前進100進行右邊線的縫紉   布料大小200x200  邊緣10==%%
 R_p=[   300 -10 0;
-        500 -10 0;%右手往前200
-        300 -10 0;%右手鬆開後 x往後退200 
-        500 -10 0;%右手x 圓周往前200   
-        300 -10 0;%右手鬆開x往後200
-        500 -10 0];%右手x往前200
+        300 -10 0;%左右手夾緊1
+        500 -10 0%右手往前200 %左手往前200
+        500 -10 0;%右手鬆開1
+        300 -10 0;%右手x往後退200 %左手不動
+        300 -10 0;%右手夾緊1
+        500 -10 0;%右手x 圓周往前200 %左手x圓周往後200  
+        500 -10 0;%右手鬆開2
+        300 -10 0;%右手x往後200 %左手不動
+        300 -10 0;%右手夾緊2
+        500 -10 0];%右手x往前200 %左手x往前200
     
 L_p=[   300 90 0;
-        500 90 0;%左手往前200
-        500 90 0;%左手不動
-        300 90 0;%左手x 圓周往後200  
-        300 90 0;%左手不動
-        500 90 0];%左手x往前200
+        300 90 0;%左右手夾緊1
+        500 90 0;%右手往前200 %左手x往前200
+        500 90 0;%右手鬆開1
+        500 90 0;%右手x往後退200 %左手不動
+        500 90 0;%右手夾緊1
+        300 90 0;%右手x 圓周往前200 %左手x圓周往後200  
+        300 90 0;%右手鬆開2
+        300 90 0;%右手x往後200 %左手不動
+        300 90 0;%右手夾緊2
+        500 90 0];%右手x往前200 %左手x往前200
 
 
 %% ==分段標計== %% 
 i=1;
 S_INITIAL=i;
 i=i+1;
+S_RL_HOLD_1=i;
+i=i+1;
 S_RL_F_200=i;%右手往前200 %左手往前200
 i=i+1;
-S_R_X_B_200_S1=i;%右手鬆開後 x往後退200 %左手不動
+S_R_REL_1=i;%右手鬆開1
+i=i+1;
+S_R_X_B_200_S1=i;%右手x往後退200 %左手不動
+i=i+1;
+S_R_HOLD_1=i;%右手夾緊1
 i=i+1;
 S_R_X_CIRF_200_L_X_CIRB_200=i;%右手x 圓周往前200 %左手x圓周往後200  
 i=i+1;
-S_R_X_B_200_S2=i;%右手鬆開x往後200 %左手不動
+S_R_REL_2=i;%右手鬆開2
+i=i+1;
+S_R_X_B_200_S2=i;%右手x往後200 %左手不動
+i=i+1;
+S_R_HOLD_2=i;%右手夾緊2
 i=i+1;
 S_R_X_F_200_L_X_F_200=i;%右手x往前200 %左手x往前200
 
@@ -68,13 +88,18 @@ S_R_X_F_200_L_X_F_200=6;
 
 
 %% ==各段花費時間== %% 
-SeqItv=zeros(1,6);
+SeqItv=zeros(1,i);
 
 SeqItv(S_INITIAL)=0;
+SeqItv(S_RL_HOLD_1)=2;%左右手夾緊1
 SeqItv(S_RL_F_200)=10;%右手往前200 %左手往前200
-SeqItv(S_R_X_B_200_S1)=5;%右手鬆開後 x往後退200 %左手不動
+SeqItv(S_R_REL_1)=2;%右手鬆開1
+SeqItv(S_R_X_B_200_S1)=5;%右手x往後退200 %左手不動
+SeqItv(S_R_HOLD_1)=2;%右手夾緊1
 SeqItv(S_R_X_CIRF_200_L_X_CIRB_200)=10;%右手x 圓周往前200 %左手x圓周往後200  
-SeqItv(S_R_X_B_200_S2)=5;%右手鬆開x往後200 %左手不動
+SeqItv(S_R_REL_2)=2;%右手鬆開2
+SeqItv(S_R_X_B_200_S2)=5;%右手x往後200 %左手不動
+SeqItv(S_R_HOLD_2)=2;%右手夾緊2
 SeqItv(S_R_X_F_200_L_X_F_200)=10;%右手x往前200 %左手x往前200
 
 
@@ -88,26 +113,46 @@ for i=1:1:size(SeqItv,2)
 end    
 
 TotalTime=CurT;
-DEF_CYCLE_TIME=1;
+DEF_CYCLE_TIME=0.01;
 
 %% ==trajectory generator== %% 
 Pcnt=0;%輸出總點數
 for abst=0:DEF_CYCLE_TIME:TotalTime
-    if abst<=Seqt(S_RL_F_200)%右手往前200 %左手往前200
-        Itv=SeqItv(S_RL_F_200);
+    if abst<=Seqt(S_RL_HOLD_1)%左右手夾緊
+        Itv=SeqItv(S_RL_HOLD_1);
         t=abst-Seqt(S_INITIAL);
+        
+        P_R=R_p(S_INITIAL,:);
+        P_L=L_p(S_INITIAL,:);
+    elseif abst<=Seqt(S_RL_F_200)%右手往前200 %左手往前200
+        Itv=SeqItv(S_RL_F_200);
+        t=abst-Seqt(S_RL_HOLD_1);
 
-        P_R=R_p(S_INITIAL,:)+(R_p(S_RL_F_200,:)-R_p(S_INITIAL,:))*t/Itv;
-        P_L=L_p(S_INITIAL,:)+(L_p(S_RL_F_200,:)-L_p(S_INITIAL,:))*t/Itv;
-    elseif abst<=Seqt(S_R_X_B_200_S1)%右手鬆開後 x往後退200 %左手不動
-        Itv=SeqItv(S_R_X_B_200_S1);
+        P_R=R_p(S_RL_HOLD_1,:)+(R_p(S_R_REL_1,:)-R_p(S_RL_HOLD_1,:))*t/Itv;
+        P_L=L_p(S_RL_HOLD_1,:)+(L_p(S_R_REL_1,:)-L_p(S_RL_HOLD_1,:))*t/Itv;
+    elseif abst<=Seqt(S_R_REL_1)%右手鬆開1
+        Itv=SeqItv(S_R_REL_1);
         t=abst-Seqt(S_RL_F_200);
+        
+        P_R=R_p(S_R_REL_1,:);
+        P_L=L_p(S_R_REL_1,:);
+        
+    elseif abst<=Seqt(S_R_X_B_200_S1)%右手x往後退200 %左手不動
+        Itv=SeqItv(S_R_X_B_200_S1);
+        t=abst-Seqt(S_R_REL_1);
 
-        P_R=R_p(S_RL_F_200,:)+(R_p(S_R_X_B_200_S1,:)-R_p(S_RL_F_200,:))*t/Itv;
-        P_L=L_p(S_RL_F_200,:);
+        P_R=R_p(S_R_REL_1,:)+(R_p(S_R_X_B_200_S1,:)-R_p(S_R_REL_1,:))*t/Itv;
+        P_L=L_p(S_R_REL_1,:);
+   elseif abst<=Seqt(S_R_HOLD_1)%右手夾緊1
+       Itv=SeqItv(S_R_HOLD_1);
+       t=abst-Seqt(S_R_X_B_200_S1);
+       
+       P_R=R_p(S_R_X_B_200_S1,:);
+       P_L=L_p(S_R_X_B_200_S1,:);
+    
     elseif abst<=Seqt(S_R_X_CIRF_200_L_X_CIRB_200)%右手x 圓周往前200 %左手x圓周往後200  
         Itv=SeqItv(S_R_X_CIRF_200_L_X_CIRB_200);
-        t=abst-Seqt(S_R_X_B_200_S1);
+        t=abst-Seqt(S_R_HOLD_1);
         
         xcR=(500+300)*0.5;
         ycR=-10;
@@ -121,18 +166,34 @@ for abst=0:DEF_CYCLE_TIME:TotalTime
               
         P_R=[xcR ycR zcR]+rR*[cos( pi*t/Itv + pi) sin(pi*t/Itv + pi) 0]; %右手下到上弧形
         P_L=[xcL ycL zcL]+rL*[cos( pi*t/Itv) sin(pi*t/Itv) 0]; %左手上到下弧形
-    elseif abst<=Seqt(S_R_X_B_200_S2) %右手鬆開x往後200 %左手不動
-        Itv=SeqItv(S_R_X_B_200_S2);
+    
+    elseif abst<=Seqt(S_R_REL_2) %右手鬆開2
+        Itv=SeqItv(S_R_REL_2);
         t=abst-Seqt(S_R_X_CIRF_200_L_X_CIRB_200);
         
-        P_R=R_p(S_R_X_CIRF_200_L_X_CIRB_200,:)+(R_p(S_R_X_B_200_S2,:)-R_p(S_R_X_CIRF_200_L_X_CIRB_200,:))*t/Itv;
-        P_L=L_p(S_R_X_CIRF_200_L_X_CIRB_200,:)+(L_p(S_R_X_B_200_S2,:)-L_p(S_R_X_CIRF_200_L_X_CIRB_200,:))*t/Itv;
-    elseif abst<=Seqt(S_R_X_F_200_L_X_F_200)
-        Itv=SeqItv(S_R_X_F_200_L_X_F_200);
+        P_R=R_p(S_R_X_CIRF_200_L_X_CIRB_200,:);
+        P_L=L_p(S_R_X_CIRF_200_L_X_CIRB_200,:);
+        
+    elseif abst<=Seqt(S_R_X_B_200_S2) %右手x往後200 %左手不動
+        Itv=SeqItv(S_R_X_B_200_S2);
+        t=abst-Seqt(S_R_REL_2);
+        
+        P_R=R_p(S_R_REL_2,:)+(R_p(S_R_X_B_200_S2,:)-R_p(S_R_REL_2,:))*t/Itv;
+        P_L=L_p(S_R_REL_2,:)+(L_p(S_R_X_B_200_S2,:)-L_p(S_R_REL_2,:))*t/Itv;
+    
+    elseif abst<=Seqt(S_R_HOLD_2) %右手夾緊2
+        Itv=SeqItv(S_R_HOLD_2);
         t=abst-Seqt(S_R_X_B_200_S2);
         
-        P_R=R_p(S_R_X_B_200_S2,:)+(R_p(S_R_X_F_200_L_X_F_200,:)-R_p(S_R_X_F_200_L_X_F_200,:))*t/Itv;
-        P_L=L_p(S_R_X_B_200_S2,:)+(L_p(S_R_X_F_200_L_X_F_200,:)-L_p(S_R_X_F_200_L_X_F_200,:))*t/Itv;
+        P_R=R_p(S_R_X_B_200_S2,:);
+        P_L=L_p(S_R_X_B_200_S2,:);
+
+    elseif abst<=Seqt(S_R_X_F_200_L_X_F_200)%右手x往前200 %左手x往前200
+        Itv=SeqItv(S_R_X_F_200_L_X_F_200);
+        t=abst-Seqt(S_R_HOLD_2);
+        
+        P_R=R_p(S_R_HOLD_2,:)+(R_p(S_R_X_F_200_L_X_F_200,:)-R_p(S_R_HOLD_2,:))*t/Itv;
+        P_L=L_p(S_R_HOLD_2,:)+(L_p(S_R_X_F_200_L_X_F_200,:)-L_p(S_R_HOLD_2,:))*t/Itv;
 
     end
     
@@ -305,7 +366,7 @@ for t=1:1:Pcnt
     PathPoint_L(t,1:3)=[out_x_end_L out_y_end_L out_z_end_L];
     
     %畫關節點圖
-    Draw_7DOF_FB7roll_point_dual(P_R,RotationM_R,PathPoint_R,P_L,RotationM_L,PathPoint_L);
+    %Draw_7DOF_FB7roll_point_dual(P_R,RotationM_R,PathPoint_R,P_L,RotationM_L,PathPoint_L);
    
     %記錄每軸角度變化
     PathTheta_R(t,1:7)=theta_R*(180/pi);
@@ -317,7 +378,7 @@ for t=1:1:Pcnt
     In_L=[in_x_end_L in_y_end_L in_z_end_L in_alpha_L in_beta_L in_gamma_L]
     Out_L=[out_x_end_L out_y_end_L out_z_end_L out_alpha_L out_beta_L out_gamma_L]
    
-    pause(0.1);
+    %pause(0.1);
 end
 
 %% ==畫JointAngle== %%
@@ -441,3 +502,28 @@ legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7')
 %     plot(t,PathTheta_L_Err(:,i),'LineWidth',2); 
 % end
 % legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+%% == Test  GetSewCartesian_L==%% 
+
+%right hand
+Pend_R = csvread('D://GetSewCartesian_R.csv'); 
+t=Pend_R(:,1);  
+figure(20);
+subplot(2,2,1),plot(t,Pend_R(:,2),'LineWidth',2); title('right hand t versus x'); xlabel('t'); ylabel('Pend-R x'); grid on;   
+
+subplot(2,2,2),plot(t,Pend_R(:,3),'LineWidth',2); title('right hand t versus y'); xlabel('t'); ylabel('Pend-R y'); grid on;   
+
+subplot(2,2,3),plot(t,Pend_R(:,4),'LineWidth',2); title('right hand t versus z'); xlabel('t'); ylabel('Pend-R z'); grid on;   
+
+%left hand 
+Pend_L = csvread('D://GetSewCartesian_L.csv');
+t=Pend_L(:,1);  
+
+figure(21);
+
+subplot(2,2,1),plot(t,Pend_L(:,2),'LineWidth',2); title('left hand t versus x'); xlabel('t'); ylabel('Pend-L x'); grid on;   
+
+subplot(2,2,2),plot(t,Pend_L(:,3),'LineWidth',2); title('left hand t versus y'); xlabel('t'); ylabel('Pend-L y'); grid on;   
+
+subplot(2,2,3),plot(t,Pend_L(:,4),'LineWidth',2); title('left hand t versus z'); xlabel('t'); ylabel('Pend-L z'); grid on;   
+
