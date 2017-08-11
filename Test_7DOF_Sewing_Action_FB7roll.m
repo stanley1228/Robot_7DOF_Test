@@ -9,7 +9,7 @@ clc
 DEF_RIGHT_HAND=1;
 DEF_LEFT_HAND=2;
 
-%固定參數
+%% ==機構固定參數==%
 L0=225;   %頭到肩膀
 L1=250;   %L型 長邊
 L2=25;    %L型 短邊
@@ -26,47 +26,89 @@ y_base_L=0;
 z_base_L=0;
 
 
-DEF_DESCRETE_POINT=90;
 
-Path_R=zeros(DEF_DESCRETE_POINT,3);%規畫的路徑點
-PathPoint_R=zeros(DEF_DESCRETE_POINT,3);%記錄實際上的點，畫圖使用
-PathTheta_R=zeros(DEF_DESCRETE_POINT,7);%記錄每軸角度，畫圖使用
- 
-Path_L=zeros(DEF_DESCRETE_POINT,3);%規畫的路徑點
-PathPoint_L=zeros(DEF_DESCRETE_POINT,3);%記錄實際上的點，畫圖使用
-PathTheta_L=zeros(DEF_DESCRETE_POINT,7);%記錄每軸角度，畫圖使用
-
-%% 由起始點往前進100進行右邊線的縫紉   布料大小200x200  邊緣10
-R_point1 = [300 -10 0];
-L_point1 = [300 90 0];
-
-R_point2 = [500 -10 0]; %往前200
-L_point2 = [500 90 0]; %往前200
-
-%%進行旋轉90度
-R_point3 = [300 -10 0]; %右手鬆開後 x往後退200 
-L_point3 = [500 90 0]; %左手不動
-
-R_point4 = [500 -10 0]; %右手x 圓周往前200   
-L_point4 = [300 90 0];  %左手x 圓周往後200  
+%% ==由起始點往前進100進行右邊線的縫紉   布料大小200x200  邊緣10==%%
+R_p=[   300 -10 0;
+        500 -10 0;%右手往前200
+        300 -10 0;%右手鬆開後 x往後退200 
+        500 -10 0;%右手x 圓周往前200   
+        300 -10 0;%右手鬆開x往後200
+        500 -10 0];%右手x往前200
+    
+L_p=[   300 90 0;
+        500 90 0;%左手往前200
+        500 90 0;%左手不動
+        300 90 0;%左手x 圓周往後200  
+        300 90 0;%左手不動
+        500 90 0];%左手x往前200
 
 
-R_point5 = [300 -10 0]; %右手鬆開x往後200
-L_point5 = [300 90 0]; %左手不動
+%% ==分段標計== %% 
+i=1;
+S_INITIAL=i;
+i=i+1;
+S_RL_F_200=i;%右手往前200 %左手往前200
+i=i+1;
+S_R_X_B_200_S1=i;%右手鬆開後 x往後退200 %左手不動
+i=i+1;
+S_R_X_CIRF_200_L_X_CIRB_200=i;%右手x 圓周往前200 %左手x圓周往後200  
+i=i+1;
+S_R_X_B_200_S2=i;%右手鬆開x往後200 %左手不動
+i=i+1;
+S_R_X_F_200_L_X_F_200=i;%右手x往前200 %左手x往前200
 
-%%往前200進行縫紉
-R_point6 = [500 -10 0]; %右手x往前200
-L_point6 = [500 90 0];  %左手x往前200
+%{
+S_INITIAL=1;
+S_RL_F_200=2;
+S_R_X_B_200_S1=3;
+S_R_X_CIRF_200_L_X_CIRB_200=4;
+S_R_X_B_200_S2=5;
+S_R_X_F_200_L_X_F_200=6;
+%}
 
 
-for t=1:1:DEF_DESCRETE_POINT
-    if t<=DEF_DESCRETE_POINT*0.2
-        Path_R(t,1:3)=R_point1+(R_point2-R_point1)*t/(DEF_DESCRETE_POINT*0.2);%往前200
-        Path_L(t,1:3)=L_point1+(L_point2-L_point1)*t/(DEF_DESCRETE_POINT*0.2);%往前200
-    elseif t<=DEF_DESCRETE_POINT*0.4
-        Path_R(t,1:3)=R_point2+(R_point3-R_point2)*(t-DEF_DESCRETE_POINT*0.2)/(DEF_DESCRETE_POINT*0.2);%右手鬆開後 x往後退200
-        Path_L(t,1:3)=L_point2+(L_point3-L_point2)*(t-DEF_DESCRETE_POINT*0.2)/(DEF_DESCRETE_POINT*0.2);%左手不動
-    elseif t<=DEF_DESCRETE_POINT*0.6
+%% ==各段花費時間== %% 
+SeqItv=zeros(1,6);
+
+SeqItv(S_INITIAL)=0;
+SeqItv(S_RL_F_200)=10;%右手往前200 %左手往前200
+SeqItv(S_R_X_B_200_S1)=5;%右手鬆開後 x往後退200 %左手不動
+SeqItv(S_R_X_CIRF_200_L_X_CIRB_200)=10;%右手x 圓周往前200 %左手x圓周往後200  
+SeqItv(S_R_X_B_200_S2)=5;%右手鬆開x往後200 %左手不動
+SeqItv(S_R_X_F_200_L_X_F_200)=10;%右手x往前200 %左手x往前200
+
+
+%% ==絕對時間標計== %% 
+Seqt=zeros(1,i);
+
+CurT=0;
+for i=1:1:size(SeqItv,2)
+    CurT=CurT+SeqItv(i);
+    Seqt(i)=CurT;
+end    
+
+TotalTime=CurT;
+DEF_CYCLE_TIME=1;
+
+%% ==trajectory generator== %% 
+Pcnt=0;%輸出總點數
+for abst=0:DEF_CYCLE_TIME:TotalTime
+    if abst<=Seqt(S_RL_F_200)%右手往前200 %左手往前200
+        Itv=SeqItv(S_RL_F_200);
+        t=abst-Seqt(S_INITIAL);
+
+        P_R=R_p(S_INITIAL,:)+(R_p(S_RL_F_200,:)-R_p(S_INITIAL,:))*t/Itv;
+        P_L=L_p(S_INITIAL,:)+(L_p(S_RL_F_200,:)-L_p(S_INITIAL,:))*t/Itv;
+    elseif abst<=Seqt(S_R_X_B_200_S1)%右手鬆開後 x往後退200 %左手不動
+        Itv=SeqItv(S_R_X_B_200_S1);
+        t=abst-Seqt(S_RL_F_200);
+
+        P_R=R_p(S_RL_F_200,:)+(R_p(S_R_X_B_200_S1,:)-R_p(S_RL_F_200,:))*t/Itv;
+        P_L=L_p(S_RL_F_200,:);
+    elseif abst<=Seqt(S_R_X_CIRF_200_L_X_CIRB_200)%右手x 圓周往前200 %左手x圓周往後200  
+        Itv=SeqItv(S_R_X_CIRF_200_L_X_CIRB_200);
+        t=abst-Seqt(S_R_X_B_200_S1);
+        
         xcR=(500+300)*0.5;
         ycR=-10;
         zcR=0;
@@ -77,20 +119,136 @@ for t=1:1:DEF_DESCRETE_POINT
         zcL=0;
         rL=500-xcL;
               
-        Path_R(t,1:3)=[xcR ycR zcR]+rR*[cos( pi*(t-DEF_DESCRETE_POINT*0.4)/(DEF_DESCRETE_POINT*0.2) + pi) sin(pi*(t-DEF_DESCRETE_POINT*0.4)/(DEF_DESCRETE_POINT*0.2) + pi) 0]; %右手下到上弧形
-        Path_L(t,1:3)=[xcL ycL zcL]+rL*[cos( pi*(t-DEF_DESCRETE_POINT*0.4)/(DEF_DESCRETE_POINT*0.2)) sin(pi*(t-DEF_DESCRETE_POINT*0.4)/(DEF_DESCRETE_POINT*0.2)) 0]; %左手上到下弧形
- 
-    elseif t<=DEF_DESCRETE_POINT*0.8
-        Path_R(t,1:3)=R_point4+(R_point5-R_point4)*(t-DEF_DESCRETE_POINT*0.6)/(DEF_DESCRETE_POINT*0.2);
-        Path_L(t,1:3)=L_point4+(L_point5-L_point4)*(t-DEF_DESCRETE_POINT*0.6)/(DEF_DESCRETE_POINT*0.2);
-    elseif t<=DEF_DESCRETE_POINT
-        Path_R(t,1:3)=R_point5+(R_point6-R_point5)*(t-DEF_DESCRETE_POINT*0.8)/(DEF_DESCRETE_POINT*0.2);
-        Path_L(t,1:3)=L_point5+(L_point6-L_point5)*(t-DEF_DESCRETE_POINT*0.8)/(DEF_DESCRETE_POINT*0.2);
+        P_R=[xcR ycR zcR]+rR*[cos( pi*t/Itv + pi) sin(pi*t/Itv + pi) 0]; %右手下到上弧形
+        P_L=[xcL ycL zcL]+rL*[cos( pi*t/Itv) sin(pi*t/Itv) 0]; %左手上到下弧形
+    elseif abst<=Seqt(S_R_X_B_200_S2) %右手鬆開x往後200 %左手不動
+        Itv=SeqItv(S_R_X_B_200_S2);
+        t=abst-Seqt(S_R_X_CIRF_200_L_X_CIRB_200);
+        
+        P_R=R_p(S_R_X_CIRF_200_L_X_CIRB_200,:)+(R_p(S_R_X_B_200_S2,:)-R_p(S_R_X_CIRF_200_L_X_CIRB_200,:))*t/Itv;
+        P_L=L_p(S_R_X_CIRF_200_L_X_CIRB_200,:)+(L_p(S_R_X_B_200_S2,:)-L_p(S_R_X_CIRF_200_L_X_CIRB_200,:))*t/Itv;
+    elseif abst<=Seqt(S_R_X_F_200_L_X_F_200)
+        Itv=SeqItv(S_R_X_F_200_L_X_F_200);
+        t=abst-Seqt(S_R_X_B_200_S2);
+        
+        P_R=R_p(S_R_X_B_200_S2,:)+(R_p(S_R_X_F_200_L_X_F_200,:)-R_p(S_R_X_F_200_L_X_F_200,:))*t/Itv;
+        P_L=L_p(S_R_X_B_200_S2,:)+(L_p(S_R_X_F_200_L_X_F_200,:)-L_p(S_R_X_F_200_L_X_F_200,:))*t/Itv;
+
     end
+    
+    Pcnt=Pcnt+1;    
+    Path_R(Pcnt,1:3)=P_R;  %規畫的路徑點
+    Path_L(Pcnt,1:3)=P_L;  %規畫的路徑點
     
 end
 
-for t=1:1:DEF_DESCRETE_POINT
+%==畫在cartesian space下各自由度(x,y,z)的規劃
+%right hand
+t=0:DEF_CYCLE_TIME:TotalTime; 
+figure(2);
+subplot(2,2,1),plot(t,Path_R(:,1),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('x (mm)');
+title('right hand t versus x') ; 
+
+subplot(2,2,2),plot(t,Path_R(:,2),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('y (mm)');
+title('right hand t versus y') ; 
+
+subplot(2,2,3),plot(t,Path_R(:,3),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('z (mm)');
+title('right hand t versus z') ; 
+
+%left hand
+t=0:DEF_CYCLE_TIME:TotalTime; 
+figure(3);
+subplot(2,2,1),plot(t,Path_L(:,1),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('x (mm)');
+title('left hand t versus x') ; 
+
+subplot(2,2,2),plot(t,Path_L(:,2),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('y (mm)');
+title('left hand t versus y') ; 
+
+subplot(2,2,3),plot(t,Path_L(:,3),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('z (mm)');
+title('left hand t versus z') ; 
+
+%==計算並畫各自由度(x,y,z)的速度
+%right hand
+for i=1:1:Pcnt-1
+   Path_vel_R(i,:)=(Path_R(i+1,:)-Path_R(i,:))/DEF_CYCLE_TIME;
+end
+
+t=0:DEF_CYCLE_TIME:TotalTime-DEF_CYCLE_TIME; %因為速度會少一筆資料
+
+figure(4);
+subplot(2,2,1),plot(t,Path_vel_R(:,1),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('x/t (mm/s)');
+title('right hand t versus x/t') ;   
+ 
+subplot(2,2,2),plot(t,Path_vel_R(:,2),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('y/t (mm/s)');
+title('right hand t versus y/t') ; 
+
+subplot(2,2,3),plot(t,Path_vel_R(:,3),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('z/t (mm/s)');
+title('right hand t versus z/t') ;
+
+%left hand
+for i=1:1:Pcnt-1
+   Path_vel_L(i,:)=(Path_L(i+1,:)-Path_L(i,:))/DEF_CYCLE_TIME;
+end
+
+t=0:DEF_CYCLE_TIME:TotalTime-DEF_CYCLE_TIME; %因為速度會少一筆資料
+
+figure(5);
+subplot(2,2,1),plot(t,Path_vel_L(:,1),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('x/t (mm/s)');
+title('left hand t versus x/t') ;   
+ 
+subplot(2,2,2),plot(t,Path_vel_L(:,2),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('y/t (mm/s)');
+title('left hand t versus y/t') ; 
+
+subplot(2,2,3),plot(t,Path_vel_L(:,3),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('z/t (mm/s)');
+title('left hand t versus z/t') ;
+
+
+%% ==計錄點記憶體宣告==%%
+PathPoint_R=zeros(Pcnt,3);%記錄實際上的點，畫圖使用
+PathTheta_R=zeros(Pcnt,7);%記錄每軸角度，畫圖使用
+
+PathPoint_L=zeros(Pcnt,3);%記錄實際上的點，畫圖使用
+PathTheta_L=zeros(Pcnt,7);%記錄每軸角度，畫圖使用
+
+
+%% ==Dual arm IK==%%
+for t=1:1:Pcnt
  
     %輸入參數
     in_x_end_R=Path_R(t,1);
@@ -101,13 +259,13 @@ for t=1:1:DEF_DESCRETE_POINT
     in_y_end_L=Path_L(t,2);
     in_z_end_L=Path_L(t,3);
    
-    in_alpha_R=60*(pi/180);
-    in_beta_R=0*(pi/180);
-    in_gamma_R=0*(t/DEF_DESCRETE_POINT)*(pi/180);
+    in_alpha_R=70*(pi/180);
+    in_beta_R=-90*(pi/180);
+    in_gamma_R=0*(t/Pcnt)*(pi/180);
     
     in_alpha_L=-60*(pi/180);
-    in_beta_L=0*(pi/180);
-    in_gamma_L=0*(t/DEF_DESCRETE_POINT)*(pi/180);
+    in_beta_L=90*(pi/180);
+    in_gamma_L=0*(t/Pcnt)*(pi/180);
 
     Rednt_alpha_R=-90*(pi/180);
     Rednt_alpha_L=90*(pi/180);
@@ -118,7 +276,7 @@ for t=1:1:DEF_DESCRETE_POINT
     in_base=[0;-L0;0];%header0 座標系偏移到shoulder0 座標系 差Y方向的L0
     in_end=[in_x_end_R;in_y_end_R;in_z_end_R];
     in_PoseAngle=[in_alpha_R;in_beta_R;in_gamma_R];
-   theta_R=IK_7DOF_FB7roll(DEF_RIGHT_HAND,in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha_R);
+    theta_R=IK_7DOF_FB7roll(DEF_RIGHT_HAND,in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha_R);
   	
     %AngleConstrain
     bover=AngleOverConstrain(DEF_RIGHT_HAND,theta_R);
@@ -161,3 +319,125 @@ for t=1:1:DEF_DESCRETE_POINT
    
     pause(0.1);
 end
+
+%% ==畫JointAngle== %%
+%right
+figure(6); hold on; grid on; title('right hand joint angle'); xlabel('t'); ylabel('deg');
+t=0:DEF_CYCLE_TIME:TotalTime; 
+for i=1:1:7
+    plot(t,PathTheta_R(:,i),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+%left
+figure(7); hold on; grid on; title('left hand joint angle'); xlabel('t'); ylabel('deg');
+t=0:DEF_CYCLE_TIME:TotalTime; 
+for i=1:1:7
+    plot(t,PathTheta_L(:,i),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+%% ==畫JointVel== %%
+%right
+PathVel_R=zeros(size(PathTheta_R,1),7);
+for i=1:1:size(PathTheta_R,1)
+    if(i==1)
+         PathVel_R(i,:)=[0 0 0 0 0 0 0];
+    else
+         PathVel_R(i,:)=(PathTheta_R(i,:)-PathTheta_R(i-1,:))/DEF_CYCLE_TIME;
+    end
+end
+figure(8); hold on; grid on; title('right hand joint rotation speed'); xlabel('t'); ylabel('deg/s');
+t=0:DEF_CYCLE_TIME:TotalTime; 
+for i=1:1:7
+    plot(t,PathVel_R(:,i),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+%left
+PathVel_L=zeros(size(PathTheta_L,1),7);
+for i=1:1:size(PathTheta_L,1)
+    if(i==1)
+         PathVel_L(i,:)=[0 0 0 0 0 0 0];
+    else
+         PathVel_L(i,:)=(PathTheta_L(i,:)-PathTheta_L(i-1,:))/DEF_CYCLE_TIME;
+    end
+end
+figure(9); hold on; grid on; title('left hand joint rotation speed'); xlabel('t'); ylabel('deg/s');
+t=0:DEF_CYCLE_TIME:TotalTime; 
+for i=1:1:7
+    plot(t,PathVel_L(:,i),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+%% ==畫JointAcc== %%
+%right
+PathAcc_R=zeros(size(PathVel_R,1),7);
+for i=1:1:size(PathVel_R,1)
+    if(i==1)
+         PathAcc_R(i,:)=[0 0 0 0 0 0 0];
+    else
+         PathAcc_R(i,:)=(PathVel_R(i,:)-PathVel_R(i-1,:))/DEF_CYCLE_TIME;
+    end
+end
+
+figure(10); hold on; grid on; title('right hand acc'); xlabel('t'); ylabel('deg/s^2');
+t=0:DEF_CYCLE_TIME:TotalTime; 
+for i=1:1:7
+    plot(t,PathAcc_R(:,i),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+%left
+PathAcc_L=zeros(size(PathVel_L,1),7);
+for i=1:1:size(PathVel_L,1)
+    if(i==1)
+         PathAcc_L(i,:)=[0 0 0 0 0 0 0];
+    else
+         PathAcc_L(i,:)=(PathVel_L(i,:)-PathVel_L(i-1,:))/DEF_CYCLE_TIME;
+    end
+end
+
+figure(11); hold on; grid on; title('left hand acc'); xlabel('t'); ylabel('deg/t^2');
+t=0:DEF_CYCLE_TIME:TotalTime; 
+for i=1:1:7
+    plot(t,PathAcc_L(:,i),'LineWidth',2); 
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7')
+
+%% == 和feedback做比較角度==%% 
+%畫feed back JointAngle 和誤差
+%right 
+% figure(12); hold on; grid on; title('right hand feedback joint angle'); xlabel('t'); ylabel('angle');
+% PathTheta_R_Read = csvread('D://GetDrinkJointAngle_R.csv'); 
+% t=0:DEF_CYCLE_TIME:TotalTime; 
+% for i=1:1:7
+%     plot(t,PathTheta_R_Read(:,i+1),'LineWidth',2); 
+% end
+% hold off
+% legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+% 
+% figure(13); hold on; grid on; title('right hand command vs feedback joint angle'); xlabel('t'); ylabel('abs(command-feedback) deg');
+% PathTheta_R_Err=abs(PathTheta_R-PathTheta_R_Read(:,2:8));
+% t=0:DEF_CYCLE_TIME:TotalTime; 
+% for i=1:1:7
+%     plot(t,PathTheta_R_Err(:,i),'LineWidth',2); 
+% end
+% legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+% 
+% %left
+% figure(14); hold on; grid on; title('left hand feedback joint angle'); xlabel('t'); ylabel('angle');
+% PathTheta_L_Read = csvread('D://GetDrinkJointAngle_L.csv'); 
+% t=0:DEF_CYCLE_TIME:TotalTime; 
+% for i=1:1:7
+%     plot(t,PathTheta_L_Read(:,i+1),'LineWidth',2); 
+% end
+% legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+% 
+% figure(15); hold on; grid on; title('left hand command vs feedback joint angle'); xlabel('t'); ylabel('abs(command-feedback) deg');
+% PathTheta_L_Err=abs(PathTheta_L-PathTheta_L_Read(:,2:8));
+% t=0:DEF_CYCLE_TIME:TotalTime; 
+% for i=1:1:7
+%     plot(t,PathTheta_L_Err(:,i),'LineWidth',2); 
+% end
+% legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
