@@ -9,6 +9,10 @@ clc
 DEF_RIGHT_HAND=1;
 DEF_LEFT_HAND=2;
 
+DEF_X=1;
+DEF_Y=2;
+DEF_Z=3;
+
 %% ==機構固定參數==%
 L0=225;   %頭到肩膀
 L1=250;   %L型 長邊
@@ -52,6 +56,21 @@ L_p=[   300 90 0;
         300 90 0;%右手夾緊2
         500 90 0];%右手x往前200 %左手x往前200
 
+    
+%右手圓周路徑
+% xcR=(500+300)*0.5;
+% ycR=-10;
+% zcR=0;
+Cen_Path_R=[(500+300)*0.5 -10 0];
+rR=500-Cen_Path_R(DEF_X);
+
+%左手圓周路徑
+% xcL=(500+300)*0.5;
+% ycL=90;
+% zcL=0;
+Cen_Path_L=[(500+300)*0.5 90 0];
+rL=500-Cen_Path_R(DEF_X);    
+
 
 %% ==分段標計== %% 
 i=1;
@@ -94,11 +113,11 @@ SeqItv(S_INITIAL)=0;
 SeqItv(S_RL_HOLD_1)=2;%左右手夾緊1
 SeqItv(S_RL_F_200)=10;%右手往前200 %左手往前200
 SeqItv(S_R_REL_1)=2;%右手鬆開1
-SeqItv(S_R_X_B_200_S1)=5;%右手x往後退200 %左手不動
+SeqItv(S_R_X_B_200_S1)=10;%右手x往後退200 %左手不動
 SeqItv(S_R_HOLD_1)=2;%右手夾緊1
 SeqItv(S_R_X_CIRF_200_L_X_CIRB_200)=10;%右手x 圓周往前200 %左手x圓周往後200  
 SeqItv(S_R_REL_2)=2;%右手鬆開2
-SeqItv(S_R_X_B_200_S2)=5;%右手x往後200 %左手不動
+SeqItv(S_R_X_B_200_S2)=10;%右手x往後200 %左手不動
 SeqItv(S_R_HOLD_2)=2;%右手夾緊2
 SeqItv(S_R_X_F_200_L_X_F_200)=10;%右手x往前200 %左手x往前200
 
@@ -113,7 +132,7 @@ for i=1:1:size(SeqItv,2)
 end    
 
 TotalTime=CurT;
-DEF_CYCLE_TIME=0.01;
+DEF_CYCLE_TIME=1;
 
 %% ==trajectory generator== %% 
 Pcnt=0;%輸出總點數
@@ -153,19 +172,9 @@ for abst=0:DEF_CYCLE_TIME:TotalTime
     elseif abst<=Seqt(S_R_X_CIRF_200_L_X_CIRB_200)%右手x 圓周往前200 %左手x圓周往後200  
         Itv=SeqItv(S_R_X_CIRF_200_L_X_CIRB_200);
         t=abst-Seqt(S_R_HOLD_1);
-        
-        xcR=(500+300)*0.5;
-        ycR=-10;
-        zcR=0;
-        rR=500-xcR;
-        
-        xcL=(500+300)*0.5;
-        ycL=90;
-        zcL=0;
-        rL=500-xcL;
-              
-        P_R=[xcR ycR zcR]+rR*[cos( pi*t/Itv + pi) sin(pi*t/Itv + pi) 0]; %右手下到上弧形
-        P_L=[xcL ycL zcL]+rL*[cos( pi*t/Itv) sin(pi*t/Itv) 0]; %左手上到下弧形
+             
+        P_R=Cen_Path_R+rR*[cos( pi*t/Itv + pi) sin(pi*t/Itv + pi) 0]; %右手下到上弧形
+        P_L=Cen_Path_L+rL*[cos( pi*t/Itv) sin(pi*t/Itv) 0]; %左手上到下弧形
     
     elseif abst<=Seqt(S_R_REL_2) %右手鬆開2
         Itv=SeqItv(S_R_REL_2);
@@ -366,7 +375,7 @@ for t=1:1:Pcnt
     PathPoint_L(t,1:3)=[out_x_end_L out_y_end_L out_z_end_L];
     
     %畫關節點圖
-    %Draw_7DOF_FB7roll_point_dual(P_R,RotationM_R,PathPoint_R,P_L,RotationM_L,PathPoint_L);
+    Draw_7DOF_FB7roll_point_dual(P_R,RotationM_R,PathPoint_R,P_L,RotationM_L,PathPoint_L);
    
     %記錄每軸角度變化
     PathTheta_R(t,1:7)=theta_R*(180/pi);
@@ -378,7 +387,7 @@ for t=1:1:Pcnt
     In_L=[in_x_end_L in_y_end_L in_z_end_L in_alpha_L in_beta_L in_gamma_L]
     Out_L=[out_x_end_L out_y_end_L out_z_end_L out_alpha_L out_beta_L out_gamma_L]
    
-    %pause(0.1);
+    pause(0.1);
 end
 
 %% ==畫JointAngle== %%
@@ -504,26 +513,45 @@ legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7')
 % legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
 
 %% == Test  GetSewCartesian_L==%% 
-
 %right hand
-Pend_R = csvread('D://GetSewCartesian_R.csv'); 
-t=Pend_R(:,1);  
-figure(20);
-subplot(2,2,1),plot(t,Pend_R(:,2),'LineWidth',2); title('right hand t versus x'); xlabel('t'); ylabel('Pend-R x'); grid on;   
-
-subplot(2,2,2),plot(t,Pend_R(:,3),'LineWidth',2); title('right hand t versus y'); xlabel('t'); ylabel('Pend-R y'); grid on;   
-
-subplot(2,2,3),plot(t,Pend_R(:,4),'LineWidth',2); title('right hand t versus z'); xlabel('t'); ylabel('Pend-R z'); grid on;   
-
-%left hand 
-Pend_L = csvread('D://GetSewCartesian_L.csv');
-t=Pend_L(:,1);  
-
-figure(21);
-
-subplot(2,2,1),plot(t,Pend_L(:,2),'LineWidth',2); title('left hand t versus x'); xlabel('t'); ylabel('Pend-L x'); grid on;   
-
-subplot(2,2,2),plot(t,Pend_L(:,3),'LineWidth',2); title('left hand t versus y'); xlabel('t'); ylabel('Pend-L y'); grid on;   
-
-subplot(2,2,3),plot(t,Pend_L(:,4),'LineWidth',2); title('left hand t versus z'); xlabel('t'); ylabel('Pend-L z'); grid on;   
-
+% Pend_R = csvread('D://GetSewCartesian_R.csv'); 
+% t=Pend_R(:,1);  
+% figure(20);
+% subplot(2,2,1),plot(t,Pend_R(:,2),'LineWidth',2); title('right hand t versus x'); xlabel('t'); ylabel('Pend-R x'); grid on;   
+% 
+% subplot(2,2,2),plot(t,Pend_R(:,3),'LineWidth',2); title('right hand t versus y'); xlabel('t'); ylabel('Pend-R y'); grid on;   
+% 
+% subplot(2,2,3),plot(t,Pend_R(:,4),'LineWidth',2); title('right hand t versus z'); xlabel('t'); ylabel('Pend-R z'); grid on;   
+% 
+% %left hand 
+% Pend_L = csvread('D://GetSewCartesian_L.csv');
+% t=Pend_L(:,1);  
+% 
+% figure(21);
+% 
+% subplot(2,2,1),plot(t,Pend_L(:,2),'LineWidth',2); title('left hand t versus x'); xlabel('t'); ylabel('Pend-L x'); grid on;   
+% 
+% subplot(2,2,2),plot(t,Pend_L(:,3),'LineWidth',2); title('left hand t versus y'); xlabel('t'); ylabel('Pend-L y'); grid on;   
+% 
+% subplot(2,2,3),plot(t,Pend_L(:,4),'LineWidth',2); title('left hand t versus z'); xlabel('t'); ylabel('Pend-L z'); grid on;   
+%% == Test  IK CMD==%% 
+%right hand cmd
+% figure(22); hold on; grid on;title('c++ right hand t versus x'); xlabel('t'); ylabel('Pend-R x'); grid on;   
+% IK_CMD_R=csvread('D://IK_CMD_R.csv');
+% 
+% t=1:1:size(IK_CMD_R,1);
+% for i=1:1:7
+%     plot(t,IK_CMD_R(:,i),'LineWidth',2)
+%     
+% end
+% legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+% 
+% %left hand cmd
+% figure(23); hold on; grid on;title('c++ left hand t versus x'); xlabel('t'); ylabel('Pend-L x'); grid on;   
+% IK_CMD_L=csvread('D://IK_CMD_L.csv');
+% t=1:1:size(IK_CMD_L,1);
+% for i=1:1:7
+%     plot(t,IK_CMD_L(:,i),'LineWidth',2)
+%     
+% end
+% legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
