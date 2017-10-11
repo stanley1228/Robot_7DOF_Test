@@ -138,6 +138,22 @@ for abst=0:DEF_CYCLE_TIME:TotalTime
 %         Path_L(t,1:3)=S_L+(O_L-S_L)*(t-0.75*DEF_DESCRETE_POINT)/(0.25*DEF_DESCRETE_POINT);
     end
     
+    in_x_end_R=P_R(1);
+    in_y_end_R=P_R(2);
+    in_z_end_R=P_R(3);
+    
+    in_x_end_L=P_L(1);
+    in_y_end_L=P_L(2);
+    in_z_end_L=P_L(3);
+    
+    in_alpha_R=P_R(4)*(pi/180);
+    in_beta_R=P_R(5)*(pi/180);
+    in_gamma_R=P_R(6)*(pi/180);
+    
+    in_alpha_L=P_L(4)*(pi/180);
+    in_beta_L=P_L(5)*(pi/180);
+    in_gamma_L=P_L(6)*(pi/180);
+    
      Pcnt=Pcnt+1;      
      Path_R(Pcnt,1:7)=P_R;  %規畫的路徑點
      Path_L(Pcnt,1:7)=P_L;  %規畫的路徑點
