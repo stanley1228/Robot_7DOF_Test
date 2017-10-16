@@ -83,223 +83,100 @@ for i=1:1:size(SeqItv,2)
     SeqItv(i)=Seqt(i+1)-Seqt(i);
 end    
 
-Pcnt=0;%輸出總點數
+Pcnt=1;%輸出總點數
 
-%% ==產生方形軌跡 不考慮速度連續== %%
+HoldLen_L=[180 0 0];%左手抓取點間距
+HoldLen_R=[180 0 0];%左手抓取點間距
 
+%% ==產生縫紉流程路徑 不考慮速度連續== %%
 for abst=0:DEF_CYCLE_TIME:TotalTime
-    if abst<Seqt(2)
+    if abst<=Seqt(2) %兩手抓住後端往前推
         Itv=SeqItv(1);
         t=abst-Seqt(1);
         
-        P_R=R_p(1,:)+(R_p(2,:)-R_p(1,:))*t/Itv;
-        P_L=L_p(1,:)+(L_p(2,:)-L_p(1,:))*t/Itv;
+        PathPlanPoint_R=R_p(1,:)+(R_p(2,:)-R_p(1,:))*t/Itv;
+        PathPlanPoint_L=L_p(1,:)+(L_p(2,:)-L_p(1,:))*t/Itv;
         
         %alpha_R=0*(t/DEF_DESCRETE_POINT)*(pi/180);
-        
-        
         %Path_R(t,1:3)=O_R+(Q_R-O_R)*t/(0.25*DEF_DESCRETE_POINT);
         %Path_L(t,1:3)=O_L+(Q_L-O_L)*t/(0.25*DEF_DESCRETE_POINT);
-    elseif abst<Seqt(3)
+        
+        ObjCorner=[ PathPlanPoint_L(1:3)+HoldLen_L; %縫紉物四周抓取點座標
+                    PathPlanPoint_R(1:3)+HoldLen_R;
+                    PathPlanPoint_R(1:3);
+                    PathPlanPoint_L(1:3)];
+        
+    elseif abst<=Seqt(3)%左手鬆開往x方向前進
         Itv=SeqItv(2);
         t=abst-Seqt(2);
         
-        P_R=R_p(2,:)+(R_p(3,:)-R_p(2,:))*t/Itv;
-        P_L=L_p(2,:)+(L_p(3,:)-L_p(2,:))*t/Itv;
+        PathPlanPoint_R=R_p(2,:)+(R_p(3,:)-R_p(2,:))*t/Itv;
+        PathPlanPoint_L=L_p(2,:)+(L_p(3,:)-L_p(2,:))*t/Itv;
 %         Path_R(t,1:3)=Q_R+(R_R-Q_R)*(t-0.25*DEF_DESCRETE_POINT)/(0.25*DEF_DESCRETE_POINT);
 %         Path_L(t,1:3)=Q_L+(R_L-Q_L)*(t-0.25*DEF_DESCRETE_POINT)/(0.25*DEF_DESCRETE_POINT);
-    elseif abst<Seqt(4)
+    elseif abst<=Seqt(4)%繞著針做逆時鐘旋轉
         Itv=SeqItv(3);
         t=abst-Seqt(3);
         
-        %P_R=R_p(3,:)+(R_p(4,:)-R_p(3,:))*t/Itv;
-        %P_L=L_p(3,:)+(L_p(4,:)-L_p(3,:))*t/Itv;
+        %PathPoint_R=R_p(3,:)+(R_p(4,:)-R_p(3,:))*t/Itv;
+        %PathPoint_L=L_p(3,:)+(L_p(4,:)-L_p(3,:))*t/Itv;
         
-        P_R=[Needle_P 0 0 0 0] +rR*[cos(0.5*pi*t/Itv+ini_rad_R) sin(0.5*pi*t/Itv+ini_rad_R) 0 0 0 0 0]+[0 0 0 R_p(3,4:7)+(R_p(4,4:7)-R_p(3,4:7))*t/Itv]; %右手上到下弧形
-        P_L=[Needle_P 0 0 0 0] +rL*[cos(0.5*pi*t/Itv+ini_rad_L) sin(0.5*pi*t/Itv+ini_rad_L) 0 0 0 0 0]+[0 0 0 L_p(3,4:7)+(L_p(4,4:7)-L_p(3,4:7))*t/Itv]; %左手上到下弧形
-
+        PathPlanPoint_R=[Needle_P 0 0 0 0] +rR*[cos(0.5*pi*t/Itv+ini_rad_R) sin(0.5*pi*t/Itv+ini_rad_R) 0 0 0 0 0]+[0 0 0 R_p(3,4:7)+(R_p(4,4:7)-R_p(3,4:7))*t/Itv]; %右手上到下弧形
+        PathPlanPoint_L=[Needle_P 0 0 0 0] +rL*[cos(0.5*pi*t/Itv+ini_rad_L) sin(0.5*pi*t/Itv+ini_rad_L) 0 0 0 0 0]+[0 0 0 L_p(3,4:7)+(L_p(4,4:7)-L_p(3,4:7))*t/Itv]; %左手上到下弧形
+        
+        
 %         Path_R(t,1:3)=R_R+(S_R-R_R)*(t-0.5*DEF_DESCRETE_POINT)/(0.25*DEF_DESCRETE_POINT);
 %         Path_L(t,1:3)=R_L+(S_L-R_L)*(t-0.5*DEF_DESCRETE_POINT)/(0.25*DEF_DESCRETE_POINT);
+
+
+        ObjCenter=(PathPlanPoint_R(1:3)+PathPlanPoint_L(1:3))/2;%計算縫紉物四周抓取點座標
+        V_oc_lend=PathPlanPoint_L(1:3)-ObjCenter;
+        V_oc_lend_ro_p90=[V_oc_lend 1]*Rz(0.5*pi);
+        V_oc_lend_ro_n90=[V_oc_lend 1]*Rz(-0.5*pi);
+        ObjCorner=[ PathPlanPoint_L(1:3); 
+                    ObjCenter+V_oc_lend_ro_p90(1:3);
+                    PathPlanPoint_R(1:3);
+                    ObjCenter+V_oc_lend_ro_n90(1:3)];
+                
     elseif abst<=Seqt(5)
         Itv=SeqItv(4);
         t=abst-Seqt(4);
         
-        P_R=R_p(4,:)+(R_p(5,:)-R_p(4,:))*t/Itv;
-        P_L=L_p(4,:)+(L_p(5,:)-L_p(4,:))*t/Itv;
+        PathPlanPoint_R=R_p(4,:)+(R_p(5,:)-R_p(4,:))*t/Itv;
+        PathPlanPoint_L=L_p(4,:)+(L_p(5,:)-L_p(4,:))*t/Itv;
         
-        %P_R=Cen_Path_R+rR*[cos( pi*t/Itv + pi) sin(pi*t/Itv + pi) 0]; %右手下到上弧形
-        % P_R=R_p(4,:)+(R_p(5,:)-R_p(4,:))*t/Itv;
-        %P_R=[Cen_Path_R 0 0 0 0] +rR*[cos(0.5*pi*t/Itv+ini_rad_R) sin(0.5*pi*t/Itv+ini_rad_R) 0 0 0 0 0]+[0 0 0 R_p(4,4:7)+(R_p(5,4:7)-R_p(4,4:7))*t/Itv]; %右手上到下弧形
-        %P_L=[Cen_Path_L 0 0 0 0] +rL*[cos(0.5*pi*t/Itv+ini_rad_L) sin(0.5*pi*t/Itv+ini_rad_L) 0 0 0 0 0]+[0 0 0 L_p(4,4:7)+(L_p(5,4:7)-L_p(4,4:7))*t/Itv]; %左手上到下弧形
-
+        %PathPoint_R=Cen_Path_R+rR*[cos( pi*t/Itv + pi) sin(pi*t/Itv + pi) 0]; %右手下到上弧形
+        % PathPoint_R=R_p(4,:)+(R_p(5,:)-R_p(4,:))*t/Itv;
+        %PathPoint_R=[Cen_Path_R 0 0 0 0] +rR*[cos(0.5*pi*t/Itv+ini_rad_R) sin(0.5*pi*t/Itv+ini_rad_R) 0 0 0 0 0]+[0 0 0 R_p(4,4:7)+(R_p(5,4:7)-R_p(4,4:7))*t/Itv]; %右手上到下弧形
+        %PathPoint_L=[Cen_Path_L 0 0 0 0] +rL*[cos(0.5*pi*t/Itv+ini_rad_L) sin(0.5*pi*t/Itv+ini_rad_L) 0 0 0 0 0]+[0 0 0 L_p(4,4:7)+(L_p(5,4:7)-L_p(4,4:7))*t/Itv]; %左手上到下弧形
         
+       
         
 %         Path_R(t,1:3)=S_R+(O_R-S_R)*(t-0.75*DEF_DESCRETE_POINT)/(0.25*DEF_DESCRETE_POINT);
 %         Path_L(t,1:3)=S_L+(O_L-S_L)*(t-0.75*DEF_DESCRETE_POINT)/(0.25*DEF_DESCRETE_POINT);
+
+        
     end
     
-    in_x_end_R=P_R(1);
-    in_y_end_R=P_R(2);
-    in_z_end_R=P_R(3);
+    in_x_end_R=PathPlanPoint_R(1);
+    in_y_end_R=PathPlanPoint_R(2);
+    in_z_end_R=PathPlanPoint_R(3);
     
-    in_x_end_L=P_L(1);
-    in_y_end_L=P_L(2);
-    in_z_end_L=P_L(3);
+    in_x_end_L=PathPlanPoint_L(1);
+    in_y_end_L=PathPlanPoint_L(2);
+    in_z_end_L=PathPlanPoint_L(3);
+
+    in_alpha_R=PathPlanPoint_R(4)*(pi/180);
+    in_beta_R=PathPlanPoint_R(5)*(pi/180);
+    in_gamma_R=PathPlanPoint_R(6)*(pi/180);
     
-    in_alpha_R=P_R(4)*(pi/180);
-    in_beta_R=P_R(5)*(pi/180);
-    in_gamma_R=P_R(6)*(pi/180);
+    in_alpha_L=PathPlanPoint_L(4)*(pi/180);
+    in_beta_L=PathPlanPoint_L(5)*(pi/180);
+    in_gamma_L=PathPlanPoint_L(6)*(pi/180);
     
-    in_alpha_L=P_L(4)*(pi/180);
-    in_beta_L=P_L(5)*(pi/180);
-    in_gamma_L=P_L(6)*(pi/180);
+    Rednt_alpha_R=PathPlanPoint_R(7)*(pi/180);
+    Rednt_alpha_L=PathPlanPoint_L(7)*(pi/180);
     
-     Pcnt=Pcnt+1;      
-     Path_R(Pcnt,1:7)=P_R;  %規畫的路徑點
-     Path_L(Pcnt,1:7)=P_L;  %規畫的路徑點
-end
-
-
-%==畫在cartesian space下各自由度(x,y,z)的規劃
-%right hand
-t=0:DEF_CYCLE_TIME:TotalTime; 
-figure(2);
-subplot(2,2,1),plot(t,Path_R(:,1),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('x (mm)');
-title('right hand t versus x') ; 
-
-subplot(2,2,2),plot(t,Path_R(:,2),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('y (mm)');
-title('right hand t versus y') ; 
-
-subplot(2,2,3),plot(t,Path_R(:,3),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('z (mm)');
-title('right hand t versus z') ; 
-
-%left hand
-t=0:DEF_CYCLE_TIME:TotalTime; 
-figure(3);
-subplot(2,2,1),plot(t,Path_L(:,1),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('x (mm)');
-title('left hand t versus x') ; 
-
-subplot(2,2,2),plot(t,Path_L(:,2),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('y (mm)');
-title('left hand t versus y') ; 
-
-subplot(2,2,3),plot(t,Path_L(:,3),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('z (mm)');
-title('left hand t versus z') ; 
-
-%==計算並畫各自由度(x,y,z)的速度
-%right hand
-for i=1:1:Pcnt-1
-   Path_vel_R(i,:)=(Path_R(i+1,:)-Path_R(i,:))/DEF_CYCLE_TIME;
-end
-
-t=0:DEF_CYCLE_TIME:TotalTime-DEF_CYCLE_TIME; %因為速度會少一筆資料
-
-figure(4);
-subplot(2,2,1),plot(t,Path_vel_R(:,1),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('x/t (mm/s)');
-title('right hand t versus x/t') ;   
- 
-subplot(2,2,2),plot(t,Path_vel_R(:,2),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('y/t (mm/s)');
-title('right hand t versus y/t') ; 
-
-subplot(2,2,3),plot(t,Path_vel_R(:,3),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('z/t (mm/s)');
-title('right hand t versus z/t') ;
-
-%left hand
-for i=1:1:Pcnt-1
-   Path_vel_L(i,:)=(Path_L(i+1,:)-Path_L(i,:))/DEF_CYCLE_TIME;
-end
-
-t=0:DEF_CYCLE_TIME:TotalTime-DEF_CYCLE_TIME; %因為速度會少一筆資料
-
-figure(5);
-subplot(2,2,1),plot(t,Path_vel_L(:,1),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('x/t (mm/s)');
-title('left hand t versus x/t') ;   
- 
-subplot(2,2,2),plot(t,Path_vel_L(:,2),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('y/t (mm/s)');
-title('left hand t versus y/t') ; 
-
-subplot(2,2,3),plot(t,Path_vel_L(:,3),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('z/t (mm/s)');
-title('left hand t versus z/t') ;
-
-
-%% ==計錄點記憶體宣告==%%
-PathPoint_R=zeros(Pcnt,7);%記錄實際上的點，畫圖使用
-PathTheta_R=zeros(Pcnt,7);%記錄每軸角度，畫圖使用
- 
-PathPoint_L=zeros(Pcnt,7);%記錄實際上的點，畫圖使用
-PathTheta_L=zeros(Pcnt,7);%記錄每軸角度，畫圖使用
-
-%% ==軌跡點=>IK=>FK模擬== %%
-DEF_DESCRETE_POINT=Pcnt;  %若雙手點數不同會有問題
-for t=1:1:DEF_DESCRETE_POINT
- 
-    %輸入參數
-    in_x_end_R=Path_R(t,1);
-    in_y_end_R=Path_R(t,2);
-    in_z_end_R=Path_R(t,3);
-    
-    in_x_end_L=Path_L(t,1);
-    in_y_end_L=Path_L(t,2);
-    in_z_end_L=Path_L(t,3);
-   
-%   in_alpha_R=50*(pi/180);
-%   in_beta_R=-90*(pi/180);
-%   in_gamma_R=0*(t/DEF_DESCRETE_POINT)*(pi/180);
-    in_alpha_R=Path_R(t,4)*(pi/180);
-    in_beta_R=Path_R(t,5)*(pi/180);
-    in_gamma_R=Path_R(t,6)*(pi/180);
-
-
-    
-%   in_alpha_L=-90*(pi/180);
-%   in_beta_L=90*(pi/180);
-%   in_gamma_L=0*(t/DEF_DESCRETE_POINT)*(pi/180);
-    in_alpha_L=Path_L(t,4)*(pi/180);
-    in_beta_L=Path_L(t,5)*(pi/180);
-    in_gamma_L=Path_L(t,6)*(pi/180);
-
-
-%     Rednt_alpha_R=-50*(pi/180);
-%     Rednt_alpha_L=90*(pi/180);
-    Rednt_alpha_R=Path_R(t,7)*(pi/180);
-    Rednt_alpha_L=Path_L(t,7)*(pi/180);
-    
-  
     %末點位置in==>IK==>theta==>FK==>末點位置out
     %inverse kinematic
     in_linkL=[L0;L1;L2;L3;L4;L5];
@@ -317,7 +194,7 @@ for t=1:1:DEF_DESCRETE_POINT
     
     in_linkL=[L0;L1;L2;L3;L4;L5];
     in_base=[0;L0;0];
-    in_end=[in_x_end_L;in_y_end_L;in_z_end_L]
+    in_end=[in_x_end_L;in_y_end_L;in_z_end_L];
     in_PoseAngle=[in_alpha_L;in_beta_L;in_gamma_L];
     theta_L=IK_7DOF_FB7roll(DEF_LEFT_HAND,in_linkL,in_base,in_end,in_PoseAngle,Rednt_alpha_L);
     
@@ -328,31 +205,18 @@ for t=1:1:DEF_DESCRETE_POINT
     end    
     
     %forward kinematic
-    %theta=[0 0 0 0 0 0 0];
-    
-    [out_x_end_R,out_y_end_R,out_z_end_R,out_alpha_R,out_beta_R,out_gamma_R,P_R,RotationM_R] = FK_7DOF_FB7roll(DEF_RIGHT_HAND,L0,L1,L2,L3,L4,L5,x_base_R,y_base_R,z_base_R,theta_R);
-    [out_x_end_L,out_y_end_L,out_z_end_L,out_alpha_L,out_beta_L,out_gamma_L,P_L,RotationM_L] = FK_7DOF_FB7roll(DEF_LEFT_HAND,L0,L1,L2,L3,L4,L5,x_base_L,y_base_L,z_base_L,theta_L);
+    [out_x_end_R,out_y_end_R,out_z_end_R,out_alpha_R,out_beta_R,out_gamma_R,ArmJoint_R,RotationM_R] = FK_7DOF_FB7roll(DEF_RIGHT_HAND,L0,L1,L2,L3,L4,L5,x_base_R,y_base_R,z_base_R,theta_R);
+    [out_x_end_L,out_y_end_L,out_z_end_L,out_alpha_L,out_beta_L,out_gamma_L,ArmJoint_L,RotationM_L] = FK_7DOF_FB7roll(DEF_LEFT_HAND,L0,L1,L2,L3,L4,L5,x_base_L,y_base_L,z_base_L,theta_L);
 
-    
-    %記錄路徑上的點
-    PathPoint_R(t,1:3)=[out_x_end_R out_y_end_R out_z_end_R];
-    PathPoint_L(t,1:3)=[out_x_end_L out_y_end_L out_z_end_L];
-    
-    
-    %畫關節點圖
-    
-    %Draw_7DOF_FB7roll_point_dual(P_R,RotationM_R,PathPoint_R,P_L,RotationM_L,PathPoint_L);
-    Draw_7DOF_FB7roll_point_dual_script;
-    
     %記錄每軸角度變化
-    PathTheta_R(t,1:7)=theta_R*(180/pi);
-    PathTheta_L(t,1:7)=theta_L*(180/pi);
+    PathTheta_R(Pcnt,1:7)=theta_R*(180/pi);
+    PathTheta_L(Pcnt,1:7)=theta_L*(180/pi);
     
-    In_R=[in_x_end_R in_y_end_R in_z_end_R in_alpha_R in_beta_R in_gamma_R];
-    Out_R=[out_x_end_R out_y_end_R out_z_end_R out_alpha_R out_beta_R out_gamma_R];
+    PathPlanPoint_R=[in_x_end_R in_y_end_R in_z_end_R in_alpha_R in_beta_R in_gamma_R Rednt_alpha_R];
+    PathIFKPoint_R=[out_x_end_R out_y_end_R out_z_end_R out_alpha_R out_beta_R out_gamma_R Rednt_alpha_R];%Rednt_alpha_R 還不會算，直接用跟規劃的依樣
     
-    In_L=[in_x_end_L in_y_end_L in_z_end_L in_alpha_L in_beta_L in_gamma_L];
-    Out_L=[out_x_end_L out_y_end_L out_z_end_L out_alpha_L out_beta_L out_gamma_L];
+    PathPlanPoint_L=[in_x_end_L in_y_end_L in_z_end_L in_alpha_L in_beta_L in_gamma_L Rednt_alpha_L];
+    PathIFKPoint_L=[out_x_end_L out_y_end_L out_z_end_L out_alpha_L out_beta_L out_gamma_L Rednt_alpha_L];
     
     %確認FK 和IK誤差
 %     if(out_x_end-in_x_end)>1e-5 || (out_y_end-in_y_end)>1e-5 || (out_z_end-in_z_end)>1e-5 || (out_alpha-in_alpha)>1e-5 || (out_beta-in_beta)>1e-5 || (out_gamma-in_gamma)>1e-5 
@@ -365,8 +229,131 @@ for t=1:1:DEF_DESCRETE_POINT
 %         break;
 %     end
     
-    pause(0.001);
+   
+    %Path_R(Pcnt,1:7)=P_R;  %規畫的路徑點
+    %Path_L(Pcnt,1:7)=P_L;  %規畫的路徑點
+     
+    %記錄規劃路徑上的點
+    PathPlanPointRec_R(Pcnt,1:7)=PathPlanPoint_R;
+    PathPlanPointRec_L(Pcnt,1:7)=PathPlanPoint_L;
+    
+    %記錄經過IK FK運算後路徑上的點
+    PathIFKPointRec_R(Pcnt,1:7)=PathIFKPoint_R;
+    PathIFKPointRec_L(Pcnt,1:7)=PathIFKPoint_L;
+    
+    %畫關節點圖
+    %Draw_7DOF_FB7roll_point_dual(P_R,RotationM_R,PathPoint_R,PathPoint_L,RotationM_L,PathPoint_L);
+    Draw_7DOF_FB7roll_point_dual_script;
+    
+    pause(0.1);
+    Pcnt=Pcnt+1;      
 end
+
+
+%==畫在cartesian space下各自由度(x,y,z)的規劃
+%right hand
+t=0:DEF_CYCLE_TIME:TotalTime; 
+figure(2);
+subplot(2,2,1),plot(t,PathPlanPointRec_R(:,1),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('x (mm)');
+title('right hand t versus x') ; 
+
+subplot(2,2,2),plot(t,PathPlanPointRec_R(:,2),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('y (mm)');
+title('right hand t versus y') ; 
+
+subplot(2,2,3),plot(t,PathPlanPointRec_R(:,3),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('z (mm)');
+title('right hand t versus z') ; 
+
+%left hand
+t=0:DEF_CYCLE_TIME:TotalTime; 
+figure(3);
+subplot(2,2,1),plot(t,PathPlanPointRec_L(:,1),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('x (mm)');
+title('left hand t versus x') ; 
+
+subplot(2,2,2),plot(t,PathPlanPointRec_L(:,2),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('y (mm)');
+title('left hand t versus y') ; 
+
+subplot(2,2,3),plot(t,PathPlanPointRec_L(:,3),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('z (mm)');
+title('left hand t versus z') ; 
+
+%==計算並畫各自由度(x,y,z)的速度
+%right hand
+for i=1:1:size(PathPlanPointRec_R,1)-1
+PathPlanVelRec_R(i,:)=(PathPlanPointRec_R(i+1,:)-PathPlanPointRec_R(i,:))/DEF_CYCLE_TIME;
+end
+
+t=0:DEF_CYCLE_TIME:TotalTime-DEF_CYCLE_TIME; %因為速度會少一筆資料
+
+figure(4);
+subplot(2,2,1),plot(t,PathPlanVelRec_R(:,1),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('x/t (mm/s)');
+title('right hand t versus x/t') ;   
+ 
+subplot(2,2,2),plot(t,PathPlanVelRec_R(:,2),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('y/t (mm/s)');
+title('right hand t versus y/t') ; 
+
+subplot(2,2,3),plot(t,PathPlanVelRec_R(:,3),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('z/t (mm/s)');
+title('right hand t versus z/t') ;
+
+%left hand
+for i=1:1:size(PathPlanPointRec_L,1)-1
+   PathPlanVelRec_L(i,:)=(PathPlanPointRec_L(i+1,:)-PathPlanPointRec_L(i,:))/DEF_CYCLE_TIME;
+end
+
+t=0:DEF_CYCLE_TIME:TotalTime-DEF_CYCLE_TIME; %因為速度會少一筆資料
+
+figure(5);
+subplot(2,2,1),plot(t,PathPlanVelRec_L(:,1),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('x/t (mm/s)');
+title('left hand t versus x/t') ;   
+ 
+subplot(2,2,2),plot(t,PathPlanVelRec_L(:,2),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('y/t (mm/s)');
+title('left hand t versus y/t') ; 
+
+subplot(2,2,3),plot(t,PathPlanVelRec_L(:,3),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('z/t (mm/s)');
+title('left hand t versus z/t') ;
+
+
+%% ==計錄點記憶體宣告==%%
+% PathPlanPoint_R=zeros(Pcnt,7);%記錄實際上的點，畫圖使用
+% PathTheta_R=zeros(Pcnt,7);%記錄每軸角度，畫圖使用
+%  
+% PathPlanPoint_L=zeros(Pcnt,7);%記錄實際上的點，畫圖使用
+% PathTheta_L=zeros(Pcnt,7);%記錄每軸角度，畫圖使用
+
 
 %% ==畫JointAngle== %%
 %right
