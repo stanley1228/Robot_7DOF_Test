@@ -22,56 +22,32 @@ x_base_L=0;   %基準點
 y_base_L=0;
 z_base_L=0;
 
-%x = 350為針的位置
-%x=  355為抓取點
-
-%x y z alpha beta gamma
-R_p=[   210 -360 0  50 -90 0 -50;
-        350 -360 0  50 -90 0 -50;
-        350 -360 0  50 -90 0 -50;
-        390 -360 0  50 -90 0 -50
-        210 -360 0  50 -90 0 -50];
-L_p=[   210 -180 0 -90  90 0  90;
-        350 -180 0 -70  90 0  90;
-        530 -180 0 -50  90 0  90;
-        210 -180 0 -90  90 0  90;
-        210 -180 0 -90  90 0  90];
-    
-%針點位置    
-Needle_P=[370 -340 0];
-%右手圓周路徑
-
-inip_R=[350 -360 0]
-rR=sqrt((inip_R(1)-Needle_P(1))^2+(inip_R(2)-Needle_P(2))^2);
-ini_rad_R=pi+atan((inip_R(2)-Needle_P(2))/(inip_R(1)-Needle_P(1)));
-
-%左手圓周路徑
-inip_L=[530 -180 0]
-rL=sqrt((inip_L(1)-Needle_P(1))^2+(inip_L(2)-Needle_P(2))^2);
-ini_rad_L=atan((inip_L(2)-Needle_P(2))/(inip_L(1)-Needle_P(1)));
-
-    
-% O_R=[500 -50 0];
-% Q_R=[500 -200 0];
-% R_R=[500 -200 -220];
-% S_R=[500 -50 -220];
-
-% O_L=[500 50 0];
-% Q_L=[500 200 0];
-% R_L=[500 200 -200];
-% S_L=[500 50 -200];
-
 Seqt= zeros(1,14);
-%絕對時間標計 
+
+%% 絕對時間標計及起始點名稱 %%
+%起始點
 i=1;
+S_INITIAL=i;
 Seqt(i)=0;
+
+%右手往X 140 左手往X 140 
 i=i+1;
-Seqt(i)=5;%右手往門把關門狀態位置移動
+S_R_FX_L_FX=i;
+Seqt(i)=5;
+
+%右手不動 左手往X 180
 i=i+1;
+S_R_HOLD_L_FX=i;
 Seqt(i)=10;%右手夾爪hold
+
+%右手旋轉往X 左手旋轉往X
 i=i+1;
+S_R_FCIRX_L_BCIRX=i;
 Seqt(i)=15;%右手夾爪hold
+
+%右手往X負  左手不動 
 i=i+1;
+S_R_BX_L_HOLD=i;
 Seqt(i)=25;%右手夾爪hold
 
 TotalTime=25;
@@ -84,6 +60,50 @@ for i=1:1:size(SeqItv,2)
 end    
 
 Pcnt=1;%輸出總點數
+
+
+
+%% x y z alpha beta gamma %%
+R_p=zeros(5,7);
+L_p=zeros(5,7);
+
+R_p(S_INITIAL,:)=[210 -360 0  50 -90 0 -50];
+L_p(S_INITIAL,:)=[210 -180 0 -90  90 0  90];
+
+R_p(S_R_FX_L_FX,:)=[350 -360 0  50 -90 0 -50];
+L_p(S_R_FX_L_FX,:)=[350 -180 0 -70  90 0  90];
+
+R_p(S_R_HOLD_L_FX,:)=[350 -360 0  50 -90 0 -50];
+L_p(S_R_HOLD_L_FX,:)=[530 -180 0 -50  90 0  90];
+
+R_p(S_R_FCIRX_L_BCIRX,:)=[390 -360 0  50 -90 0 -50];
+L_p(S_R_FCIRX_L_BCIRX,:)=[210 -180 0 -90  90 0  90];
+
+R_p(S_R_BX_L_HOLD,:)=[210 -360 0  50 -90 0 -50];
+L_p(S_R_BX_L_HOLD,:)=[210 -180 0 -90  90 0  90];
+
+% R_p=[   210 -360 0  50 -90 0 -50;
+%         350 -360 0  50 -90 0 -50;
+%         350 -360 0  50 -90 0 -50;
+%         390 -360 0  50 -90 0 -50;
+%         210 -360 0  50 -90 0 -50];
+% L_p=[   210 -180 0 -90  90 0  90;
+%         350 -180 0 -70  90 0  90;
+%         530 -180 0 -50  90 0  90;
+%         210 -180 0 -90  90 0  90;
+%         210 -180 0 -90  90 0  90];
+    
+%針點位置    
+Needle_P=[370 -340 0];
+%右手圓周路徑
+inip_R=[350 -360 0]
+rR=sqrt((inip_R(1)-Needle_P(1))^2+(inip_R(2)-Needle_P(2))^2);
+ini_rad_R=pi+atan((inip_R(2)-Needle_P(2))/(inip_R(1)-Needle_P(1)));%旋轉時的起始旋轉角度
+
+%左手圓周路徑
+inip_L=[530 -180 0]
+rL=sqrt((inip_L(1)-Needle_P(1))^2+(inip_L(2)-Needle_P(2))^2);
+ini_rad_L=atan((inip_L(2)-Needle_P(2))/(inip_L(1)-Needle_P(1)));
 
 HoldLen_L=[180 0 0];%左手抓取點間距
 HoldLen_R=[180 0 0];%左手抓取點間距
@@ -130,7 +150,7 @@ for abst=0:DEF_CYCLE_TIME:TotalTime
 
 
         ObjCenter=(PathPlanPoint_R(1:3)+PathPlanPoint_L(1:3))/2;%計算縫紉物四周抓取點座標
-        V_oc_lend=PathPlanPoint_L(1:3)-ObjCenter;
+        V_oc_lend=PathPlanPoint_L(1:3)-ObjCenter;%縫紉物中心點到左手的向量
         V_oc_lend_ro_p90=[V_oc_lend 1]*Rz(0.5*pi);
         V_oc_lend_ro_n90=[V_oc_lend 1]*Rz(-0.5*pi);
         ObjCorner=[ PathPlanPoint_L(1:3); 
