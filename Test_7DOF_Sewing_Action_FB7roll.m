@@ -22,65 +22,98 @@ x_base_L=0;   %基準點
 y_base_L=0;
 z_base_L=0;
 
-Seqt= zeros(1,14);
 
 %% 絕對時間標計及起始點名稱 %%
 %起始點
 i=1;
 S_INITIAL=i;
-Seqt(i)=0;
+SeqItv(i)=0;
 
-%右手往X 140 左手往X 140 
+%右手夾 左手夾
+i=i+1;
+S_R_HOLD_L_HOLD_1=i;
+SeqItv(i)=2;
+
+%右手往正X 140 左手往正X 140 
 i=i+1;
 S_R_FX_L_FX=i;
-Seqt(i)=5;
+SeqItv(i)=5;
 
-%右手不動 左手往X 180
+%右手不動 左手開1
 i=i+1;
-S_R_HOLD_L_FX=i;
-Seqt(i)=10;%右手夾爪hold
+S_R_KEEP_L_REL_1=i;
+SeqItv(i)=2;
 
-%右手旋轉往X 左手旋轉往X
+%右手不動 左手往正X 180
+i=i+1;
+S_R_KEEP_L_FX=i;
+SeqItv(i)=5;
+
+%右手不動 左手夾1
+i=i+1;
+S_R_KEEP_L_HOLD_1=i;
+SeqItv(i)=2;
+
+%右手旋轉往正X 左手旋轉往負X
 i=i+1;
 S_R_FCIRX_L_BCIRX=i;
-Seqt(i)=15;%右手夾爪hold
+SeqItv(i)=5;
+
+%右手開 左手不動
+i=i+1;
+S_R_REL_L_HOLD_1=i;
+SeqItv(i)=2;
 
 %右手往X負  左手不動 
 i=i+1;
-S_R_BX_L_HOLD=i;
-Seqt(i)=25;%右手夾爪hold
+S_R_BX_L_KEEP_1=i;
+SeqItv(i)=10;
 
-TotalTime=25;
+%==絕對時間標計==
+CurT=0;
+for i=1:1:size(SeqItv,2)
+    CurT=CurT+SeqItv(i);
+    Seqt(i)=CurT;
+end
+TotalTime=CurT;
+
 DEF_CYCLE_TIME=0.5;
 
-SeqItv=zeros(1, size(Seqt,2)-1);
 
-for i=1:1:size(SeqItv,2)
-    SeqItv(i)=Seqt(i+1)-Seqt(i);
-end    
-
-Pcnt=1;%輸出總點數
+Pcnt=1;%輸出總數
 
 
 
 %% x y z alpha beta gamma %%
-R_p=zeros(5,7);
-L_p=zeros(5,7);
+R_p=zeros(size(SeqItv,2),7);
+L_p=zeros(size(SeqItv,2),7);
 
-R_p(S_INITIAL,:)=[210 -360 0  50 -90 0 -50];
+R_p(S_INITIAL,:)=[210 -360 0  50 -90 0 -50];%起始點
 L_p(S_INITIAL,:)=[210 -180 0 -90  90 0  90];
 
-R_p(S_R_FX_L_FX,:)=[350 -360 0  50 -90 0 -50];
+R_p(S_R_HOLD_L_HOLD_1,:)=[210 -360 0  50 -90 0 -50];%右手夾 左手夾
+L_p(S_R_HOLD_L_HOLD_1,:)=[210 -180 0 -90  90 0  90];
+
+R_p(S_R_FX_L_FX,:)=[350 -360 0  50 -90 0 -50];%右手往正X 140 左手往正X 140 
 L_p(S_R_FX_L_FX,:)=[350 -180 0 -70  90 0  90];
 
-R_p(S_R_HOLD_L_FX,:)=[350 -360 0  50 -90 0 -50];
-L_p(S_R_HOLD_L_FX,:)=[530 -180 0 -50  90 0  90];
+R_p(S_R_KEEP_L_REL_1,:)=[350 -360 0  50 -90 0 -50];%右手不動 左手開1
+L_p(S_R_KEEP_L_REL_1,:)=[350 -180 0 -70  90 0  90];
 
-R_p(S_R_FCIRX_L_BCIRX,:)=[390 -360 0  50 -90 0 -50];
-L_p(S_R_FCIRX_L_BCIRX,:)=[210 -180 0 -90  90 0  90];
+R_p(S_R_KEEP_L_FX,:)=[350 -360 0  50 -90 0 -50];%右手不動 左手往正X 180
+L_p(S_R_KEEP_L_FX,:)=[530 -180 0 -50  90 0  90];
 
-R_p(S_R_BX_L_HOLD,:)=[210 -360 0  50 -90 0 -50];
-L_p(S_R_BX_L_HOLD,:)=[210 -180 0 -90  90 0  90];
+R_p(S_R_KEEP_L_HOLD_1,:)=[350 -360 0  50 -90 0 -50];%右手不動 左手夾1
+L_p(S_R_KEEP_L_HOLD_1,:)=[530 -180 0 -50  90 0  90];
+
+R_p(S_R_FCIRX_L_BCIRX,:)=[390 -360 0  50 -90 0 -50];%右手旋轉往正X 左手旋轉往負X
+L_p(S_R_FCIRX_L_BCIRX,:)=[210 -180 -90  90 0  90];
+
+R_p(S_R_REL_L_HOLD_1,:)=[390 -360 0  50 -90 0 -50];%右手開 左手不動1
+L_p(S_R_REL_L_HOLD_1,:)=[210 -180 0 -90  90 0  90];
+
+R_p(S_R_BX_L_KEEP_1,:)=[210 -360 0  50 -90 0 -50];%右手往X負  左手不動1 
+L_p(S_R_BX_L_KEEP_1,:)=[210 -180 0 -90  90 0  90];
 
 % R_p=[   210 -360 0  50 -90 0 -50;
 %         350 -360 0  50 -90 0 -50;
@@ -96,12 +129,12 @@ L_p(S_R_BX_L_HOLD,:)=[210 -180 0 -90  90 0  90];
 %針點位置    
 Needle_P=[370 -340 0];
 %右手圓周路徑
-inip_R=[350 -360 0]
+inip_R=[350 -360 0];
 rR=sqrt((inip_R(1)-Needle_P(1))^2+(inip_R(2)-Needle_P(2))^2);
 ini_rad_R=pi+atan((inip_R(2)-Needle_P(2))/(inip_R(1)-Needle_P(1)));%旋轉時的起始旋轉角度
 
 %左手圓周路徑
-inip_L=[530 -180 0]
+inip_L=[530 -180 0];
 rL=sqrt((inip_L(1)-Needle_P(1))^2+(inip_L(2)-Needle_P(2))^2);
 ini_rad_L=atan((inip_L(2)-Needle_P(2))/(inip_L(1)-Needle_P(1)));
 
@@ -110,45 +143,64 @@ HoldLen_R=[180 0 0];%左手抓取點間距
 
 %% ==產生縫紉流程路徑 不考慮速度連續== %%
 for abst=0:DEF_CYCLE_TIME:TotalTime
-    if abst<=Seqt(2) %兩手抓住後端往前推
-        Itv=SeqItv(1);
-        t=abst-Seqt(1);
+    if abst<=Seqt(S_R_HOLD_L_HOLD_1)%右手夾 左手夾Seqt
+        Itv=SeqItv(S_R_HOLD_L_HOLD_1);
+        t=abst-Seqt(S_R_HOLD_L_HOLD_1-1);
         
-        PathPlanPoint_R=R_p(1,:)+(R_p(2,:)-R_p(1,:))*t/Itv;
-        PathPlanPoint_L=L_p(1,:)+(L_p(2,:)-L_p(1,:))*t/Itv;
+        PathPlanPoint_R=R_p(S_R_HOLD_L_HOLD_1,:);
+        PathPlanPoint_L=L_p(S_R_HOLD_L_HOLD_1,:);
         
-        %alpha_R=0*(t/DEF_DESCRETE_POINT)*(pi/180);
-        %Path_R(t,1:3)=O_R+(Q_R-O_R)*t/(0.25*DEF_DESCRETE_POINT);
-        %Path_L(t,1:3)=O_L+(Q_L-O_L)*t/(0.25*DEF_DESCRETE_POINT);
-        
-        ObjCorner=[ PathPlanPoint_L(1:3)+HoldLen_L; %縫紉物四周抓取點座標
+        %縫紉物四周抓取點座標
+        ObjCorner=[ PathPlanPoint_L(1:3)+HoldLen_L;
                     PathPlanPoint_R(1:3)+HoldLen_R;
                     PathPlanPoint_R(1:3);
                     PathPlanPoint_L(1:3)];
         
-    elseif abst<=Seqt(3)%左手鬆開往x方向前進
-        Itv=SeqItv(2);
-        t=abst-Seqt(2);
+    elseif abst<=Seqt(S_R_FX_L_FX) %右手往正X 140 左手往正X 140 
+        Itv=SeqItv(S_R_FX_L_FX);
+        t=abst-Seqt(S_R_FX_L_FX-1); %減上一筆的結束時間
         
-        PathPlanPoint_R=R_p(2,:)+(R_p(3,:)-R_p(2,:))*t/Itv;
-        PathPlanPoint_L=L_p(2,:)+(L_p(3,:)-L_p(2,:))*t/Itv;
-%         Path_R(t,1:3)=Q_R+(R_R-Q_R)*(t-0.25*DEF_DESCRETE_POINT)/(0.25*DEF_DESCRETE_POINT);
-%         Path_L(t,1:3)=Q_L+(R_L-Q_L)*(t-0.25*DEF_DESCRETE_POINT)/(0.25*DEF_DESCRETE_POINT);
-    elseif abst<=Seqt(4)%繞著針做逆時鐘旋轉
-        Itv=SeqItv(3);
-        t=abst-Seqt(3);
+        PathPlanPoint_R=R_p(S_R_FX_L_FX-1,:)+(R_p(S_R_FX_L_FX,:)-R_p(S_R_FX_L_FX-1,:))*t/Itv;%上一筆為起始點開始走
+        PathPlanPoint_L=L_p(S_R_FX_L_FX-1,:)+(L_p(S_R_FX_L_FX,:)-L_p(S_R_FX_L_FX-1,:))*t/Itv;
         
-        %PathPoint_R=R_p(3,:)+(R_p(4,:)-R_p(3,:))*t/Itv;
-        %PathPoint_L=L_p(3,:)+(L_p(4,:)-L_p(3,:))*t/Itv;
+       
+        ObjCorner=[ PathPlanPoint_L(1:3)+HoldLen_L;
+                    PathPlanPoint_R(1:3)+HoldLen_R;
+                    PathPlanPoint_R(1:3);
+                    PathPlanPoint_L(1:3)];
         
-        PathPlanPoint_R=[Needle_P 0 0 0 0] +rR*[cos(0.5*pi*t/Itv+ini_rad_R) sin(0.5*pi*t/Itv+ini_rad_R) 0 0 0 0 0]+[0 0 0 R_p(3,4:7)+(R_p(4,4:7)-R_p(3,4:7))*t/Itv]; %右手上到下弧形
-        PathPlanPoint_L=[Needle_P 0 0 0 0] +rL*[cos(0.5*pi*t/Itv+ini_rad_L) sin(0.5*pi*t/Itv+ini_rad_L) 0 0 0 0 0]+[0 0 0 L_p(3,4:7)+(L_p(4,4:7)-L_p(3,4:7))*t/Itv]; %左手上到下弧形
+  
+    elseif abst<=Seqt(S_R_KEEP_L_REL_1)%右手不動 左手開1
+        Itv=SeqItv(S_R_KEEP_L_REL_1);
+        t=abst-Seqt(S_R_KEEP_L_REL_1-1);
         
-        
-%         Path_R(t,1:3)=R_R+(S_R-R_R)*(t-0.5*DEF_DESCRETE_POINT)/(0.25*DEF_DESCRETE_POINT);
-%         Path_L(t,1:3)=R_L+(S_L-R_L)*(t-0.5*DEF_DESCRETE_POINT)/(0.25*DEF_DESCRETE_POINT);
+        PathPlanPoint_R=R_p(S_R_KEEP_L_REL_1,:);
+        PathPlanPoint_L=L_p(S_R_KEEP_L_REL_1,:);
 
+    elseif abst<=Seqt(S_R_KEEP_L_FX)%右手不動 左手往正X 180
+        Itv=SeqItv(S_R_KEEP_L_FX);
+        t=abst-Seqt(S_R_KEEP_L_FX-1);
+        
+        PathPlanPoint_R=R_p(S_R_KEEP_L_FX-1,:)+(R_p(S_R_KEEP_L_FX,:)-R_p(S_R_KEEP_L_FX-1,:))*t/Itv;
+        PathPlanPoint_L=L_p(S_R_KEEP_L_FX-1,:)+(L_p(S_R_KEEP_L_FX,:)-L_p(S_R_KEEP_L_FX-1,:))*t/Itv;
 
+    elseif abst<=Seqt(S_R_KEEP_L_HOLD_1)%右手不動 左手夾1   
+        Itv=SeqItv(S_R_KEEP_L_HOLD_1);
+        t=abst-Seqt(S_R_KEEP_L_HOLD_1-1);
+        
+        PathPlanPoint_R=R_p(S_R_KEEP_L_HOLD_1,:);
+        PathPlanPoint_L=L_p(S_R_KEEP_L_HOLD_1,:);
+    
+        
+     
+    elseif abst<=Seqt(S_R_FCIRX_L_BCIRX)%右手旋轉往正X 左手旋轉往負X
+        Itv=SeqItv(S_R_FCIRX_L_BCIRX);
+        t=abst-Seqt(S_R_FCIRX_L_BCIRX-1);
+        
+        PathPlanPoint_R=[Needle_P 0 0 0 0] +rR*[cos(0.5*pi*t/Itv+ini_rad_R) sin(0.5*pi*t/Itv+ini_rad_R) 0 0 0 0 0]+[0 0 0 R_p(S_R_FCIRX_L_BCIRX-1,4:7)+(R_p(S_R_FCIRX_L_BCIRX,4:7)-R_p(S_R_FCIRX_L_BCIRX-1,4:7))*t/Itv]; %右手上到下弧形
+        PathPlanPoint_L=[Needle_P 0 0 0 0] +rL*[cos(0.5*pi*t/Itv+ini_rad_L) sin(0.5*pi*t/Itv+ini_rad_L) 0 0 0 0 0]+[0 0 0 L_p(S_R_FCIRX_L_BCIRX-1,4:7)+(L_p(S_R_FCIRX_L_BCIRX,4:7)-L_p(S_R_FCIRX_L_BCIRX-1,4:7))*t/Itv]; %左手上到下弧形
+        
+     
         ObjCenter=(PathPlanPoint_R(1:3)+PathPlanPoint_L(1:3))/2;%計算縫紉物四周抓取點座標
         V_oc_lend=PathPlanPoint_L(1:3)-ObjCenter;%縫紉物中心點到左手的向量
         V_oc_lend_ro_p90=[V_oc_lend 1]*Rz(0.5*pi);
@@ -158,24 +210,19 @@ for abst=0:DEF_CYCLE_TIME:TotalTime
                     PathPlanPoint_R(1:3);
                     ObjCenter+V_oc_lend_ro_n90(1:3)];
                 
-    elseif abst<=Seqt(5)
-        Itv=SeqItv(4);
-        t=abst-Seqt(4);
+    elseif abst<=Seqt(S_R_REL_L_HOLD_1)%右手開 左手不動1
+        Itv=SeqItv(S_R_REL_L_HOLD_1);
+        t=abst-Seqt(S_R_REL_L_HOLD_1-1);
         
-        PathPlanPoint_R=R_p(4,:)+(R_p(5,:)-R_p(4,:))*t/Itv;
-        PathPlanPoint_L=L_p(4,:)+(L_p(5,:)-L_p(4,:))*t/Itv;
-        
-        %PathPoint_R=Cen_Path_R+rR*[cos( pi*t/Itv + pi) sin(pi*t/Itv + pi) 0]; %右手下到上弧形
-        % PathPoint_R=R_p(4,:)+(R_p(5,:)-R_p(4,:))*t/Itv;
-        %PathPoint_R=[Cen_Path_R 0 0 0 0] +rR*[cos(0.5*pi*t/Itv+ini_rad_R) sin(0.5*pi*t/Itv+ini_rad_R) 0 0 0 0 0]+[0 0 0 R_p(4,4:7)+(R_p(5,4:7)-R_p(4,4:7))*t/Itv]; %右手上到下弧形
-        %PathPoint_L=[Cen_Path_L 0 0 0 0] +rL*[cos(0.5*pi*t/Itv+ini_rad_L) sin(0.5*pi*t/Itv+ini_rad_L) 0 0 0 0 0]+[0 0 0 L_p(4,4:7)+(L_p(5,4:7)-L_p(4,4:7))*t/Itv]; %左手上到下弧形
-        
-       
-        
-%         Path_R(t,1:3)=S_R+(O_R-S_R)*(t-0.75*DEF_DESCRETE_POINT)/(0.25*DEF_DESCRETE_POINT);
-%         Path_L(t,1:3)=S_L+(O_L-S_L)*(t-0.75*DEF_DESCRETE_POINT)/(0.25*DEF_DESCRETE_POINT);
+        PathPlanPoint_R=R_p(S_R_REL_L_HOLD_1,:);
+        PathPlanPoint_L=L_p(S_R_REL_L_HOLD_1,:);
+    
+    elseif abst<=Seqt(S_R_BX_L_KEEP_1)%右手往X負  左手不動1 
+        Itv=SeqItv(S_R_BX_L_KEEP_1);
+        t=abst-Seqt(S_R_BX_L_KEEP_1-1);
 
-        
+        PathPlanPoint_R=R_p(S_R_BX_L_KEEP_1-1,:)+(R_p(S_R_BX_L_KEEP_1,:)-R_p(S_R_BX_L_KEEP_1-1,:))*t/Itv;
+        PathPlanPoint_L=L_p(S_R_BX_L_KEEP_1-1,:)+(L_p(S_R_BX_L_KEEP_1,:)-L_p(S_R_BX_L_KEEP_1-1,:))*t/Itv;
     end
     
     in_x_end_R=PathPlanPoint_R(1);
@@ -265,7 +312,7 @@ for abst=0:DEF_CYCLE_TIME:TotalTime
     %Draw_7DOF_FB7roll_point_dual(P_R,RotationM_R,PathPoint_R,PathPoint_L,RotationM_L,PathPoint_L);
     Draw_7DOF_FB7roll_point_dual_script;
     
-    pause(0.1);
+    pause(0.001);
     Pcnt=Pcnt+1;      
 end
 
