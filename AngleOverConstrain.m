@@ -6,7 +6,7 @@ function bover = AngleOverConstrain(RLHand,theta )
     theta_R_LOW=[-80 -180 -105 0 -100 -21 -170];
     theta_R_HIGH=[170 10 170 170 90 110 170];
     
-    theta_L_LOW=[-170 -10 -170 0 -90 -21 -170];
+    theta_L_LOW=[-170 -11 -170 0 -90 -21 -170];
     theta_L_HIGH=[80 180 105 170 100 110 170];
     axis=0;
     bover=false;
