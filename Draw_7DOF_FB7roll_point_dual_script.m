@@ -134,7 +134,7 @@ plot3([ArmJoint_L(10,1),ArmJoint_L(10,1)+V_H_hat_z(1,1)],[ArmJoint_L(10,2),ArmJo
 r=0;
 
 %% ========Á_¬÷¨Ï¥Î  ========%%
-plot3(Needle_P(1),Needle_P(2),Needle_P(3),'bo','MarkerSize',5,'Linewidth',4);
+plot3(Needle_RobotF(1),Needle_RobotF(2),Needle_RobotF(3),'bo','MarkerSize',5,'Linewidth',4);
 
 
 
