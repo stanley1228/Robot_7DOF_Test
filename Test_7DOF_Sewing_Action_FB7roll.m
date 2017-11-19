@@ -36,6 +36,11 @@ HoldLen_L=[180 0 0];%左手抓取點間距 由框決定
 HoldLen_R=[180 0 0];%左手抓取點間距 由框決定
 %% 各區段的點位  修改成一個區段運動用一個fun
 %這邊是使用架子坐標系，到LineMoveToScript裡面才做轉換
+
+TotalTime=0;
+Seg=0;
+
+
 %抬壓腳 抬
 disp('footlifter up');
 
@@ -48,12 +53,6 @@ disp('footlifter down');
 %主軸啟動
 disp('spindle on');
 
-%主軸停止
-disp('spindle off');
-
-TotalTime=0;
-Seg=0;
-LastSeg=false;
 %右手往正X SewingLenth 左手往正X 縫線長度 SewingLenth
 FRAME_UPDATE=true;%架子繪圖
 R_starP=[[-90 -90 0] [50  0 0] -50]; 
@@ -64,6 +63,10 @@ CostTime=3;
 LineMoveTo_Script;
 TotalTime=TotalTime+CostTime;
 Seg=Seg+1;
+
+%主軸停止
+disp('spindle off');
+
 %右手不動 左手開
 disp('left release');
 
@@ -77,6 +80,7 @@ CostTime=3;
 LineMoveTo_Script;
 TotalTime=TotalTime+CostTime;
 Seg=Seg+1;
+
 %右手不動 左手往正X 抓取點間隔長度(Release move length)
 R_starP=[[-90+SewingLength -90 0]  [50 0 0] -50];
 R_endP=[[-90+SewingLength -90 0]  [50 0 0] -50];
@@ -116,7 +120,7 @@ RotateMoveTo_Script;
 TotalTime=TotalTime+CostTime;
 Seg=Seg+1;
 
-%抬壓腳 壓
+%抬壓腳壓
 disp('footlifter down');
 
 %右手開 左手不動1
@@ -144,7 +148,6 @@ TotalTime=TotalTime+CostTime;
 Seg=Seg+1;
 
 %右手往X往Y正MovOutLen  左手不動1 
-LastSeg=true;
 R_starP=[[90-MovOutLen-RelMovLen -90-MovOutLen 0]  [50 0 0] -70];
 R_endP=[[90-RelMovLen -90 0]  [50 0 0] -70];
 L_starP=[[-90 90 0] -90 0 0  90];
