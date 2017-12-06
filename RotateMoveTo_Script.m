@@ -15,11 +15,11 @@ R_starP(1,1:3)=R_starP(1,1:3)+TranFrameToRobot;
 R_endP(1,1:3)=R_endP(1,1:3)+TranFrameToRobot;
 
 
-%右手圓周路徑
+%右手旋轉半徑及旋轉起始角度
 rR=sqrt((R_starP(1)-arc_cen(1))^2+(R_starP(2)-arc_cen(2))^2);%右手旋轉半徑
 ini_rad_R=pi+atan((R_starP(2)-arc_cen(2))/(R_starP(1)-arc_cen(1)));%旋轉時的起始旋轉角度
 
-%左手圓周路徑
+%左手旋轉半徑及旋轉起始角度
 rL=sqrt((L_starP(1)-arc_cen(1))^2+(L_starP(2)-arc_cen(2))^2);
 ini_rad_L=atan((L_starP(2)-arc_cen(2))/(L_starP(1)-arc_cen(1)));
 
@@ -40,5 +40,3 @@ for t=0:DEF_CYCLE_TIME:CostTime
     VerifyOutput_script;
     
 end
-
-
