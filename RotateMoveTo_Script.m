@@ -64,7 +64,7 @@ for i=1:1:7
     end
 end
 
-ccnt=0;
+
 for t=0:DEF_CYCLE_TIME:CostTime
     for i=1:1:7
         %%right
@@ -115,11 +115,6 @@ for t=0:DEF_CYCLE_TIME:CostTime
             end
         end
     end
-    
-     ccnt=ccnt+1;
-    recR(ccnt)=current_rad_R;
-    recL(ccnt)=current_rad_L;
-   
     
     PathPlanPoint_R=[arc_cen 0 0 0 0] +rR*[cos(current_rad_R) sin(current_rad_R) 0 0 0 0 0]+[0 0 0 PathPlanPoint_R(4:7)]; %右手上到下弧形
     PathPlanPoint_L=[arc_cen 0 0 0 0] +rL*[cos(current_rad_L) sin(current_rad_L) 0 0 0 0 0]+[0 0 0 PathPlanPoint_L(4:7)]; %右手上到下弧形
