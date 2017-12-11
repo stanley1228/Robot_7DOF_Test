@@ -59,7 +59,7 @@ R_starP=[[-90 -90 0] [50  0 0] -50];
 R_endP=[[-90+SewingLength -90 0]  50 0 0 -50]; 
 L_starP=[[-90  90 0] [-90  0 0]  90];
 L_endP=[[-90+SewingLength  90 0] [-90 0 0]  90];
-CostTime=3;
+CostTime=5;
 LineMoveTo_Script;
 TotalTime=TotalTime+CostTime;
 Seg=Seg+1;
@@ -76,7 +76,7 @@ R_starP=[[-90+SewingLength -90 0]  [50 0 0] -50];
 R_endP=[[-90+SewingLength -90 0]  [50 0 0] -50]; 
 L_starP=[[-90+SewingLength  90 0] [-90 0 0]  90];
 L_endP= [[-90+SewingLength  90+MovOutLen 0] [-90 0 0]  90];
-CostTime=3;
+CostTime=5;
 LineMoveTo_Script;
 TotalTime=TotalTime+CostTime;
 Seg=Seg+1;
@@ -165,44 +165,93 @@ disp('right hold');
 %right hand
 t=0:DEF_CYCLE_TIME:TotalTime+DEF_CYCLE_TIME*(Seg-1);%頭尾重複
 figure(2);
-subplot(2,2,1),plot(t,PathPlanPointRec_R(:,1),'LineWidth',2); 
+subplot(2,4,1),plot(t,PathPlanPointRec_R(:,1),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('x (mm)');
 title('right hand t versus x') ; 
 
-subplot(2,2,2),plot(t,PathPlanPointRec_R(:,2),'LineWidth',2); 
+subplot(2,4,2),plot(t,PathPlanPointRec_R(:,2),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('y (mm)');
 title('right hand t versus y') ; 
 
-subplot(2,2,3),plot(t,PathPlanPointRec_R(:,3),'LineWidth',2); 
+subplot(2,4,3),plot(t,PathPlanPointRec_R(:,3),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('z (mm)');
 title('right hand t versus z') ; 
 
+subplot(2,4,4),plot(t,PathPlanPointRec_R(:,4),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('alpha (deg)');
+title('right hand t versus alpha') ; 
+
+subplot(2,4,5),plot(t,PathPlanPointRec_R(:,5),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('beta (deg)');
+title('right hand t versus beta') ; 
+
+subplot(2,4,6),plot(t,PathPlanPointRec_R(:,6),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('gamma (deg)');
+title('right hand t versus gamma') ; 
+
+subplot(2,4,7),plot(t,PathPlanPointRec_R(:,7),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('rednt alpha (deg)');
+title('right hand t versus rednt alpha') ; 
+
 %left hand
 t=0:DEF_CYCLE_TIME:TotalTime+DEF_CYCLE_TIME*(Seg-1); 
 figure(3);
-subplot(2,2,1),plot(t,PathPlanPointRec_L(:,1),'LineWidth',2); 
+subplot(2,4,1),plot(t,PathPlanPointRec_L(:,1),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('x (mm)');
 title('left hand t versus x') ; 
 
-subplot(2,2,2),plot(t,PathPlanPointRec_L(:,2),'LineWidth',2); 
+subplot(2,4,2),plot(t,PathPlanPointRec_L(:,2),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('y (mm)');
 title('left hand t versus y') ; 
 
-subplot(2,2,3),plot(t,PathPlanPointRec_L(:,3),'LineWidth',2); 
+subplot(2,4,3),plot(t,PathPlanPointRec_L(:,3),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('z (mm)');
 title('left hand t versus z') ; 
+
+
+subplot(2,4,4),plot(t,PathPlanPointRec_L(:,4),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('alpha (deg)');
+title('left hand t versus alpha') ; 
+
+subplot(2,4,5),plot(t,PathPlanPointRec_L(:,5),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('beta (deg)');
+title('left hand t versus beta') ; 
+
+subplot(2,4,6),plot(t,PathPlanPointRec_L(:,6),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('gamma (deg)');
+title('left hand t versus gamma') ; 
+
+subplot(2,4,7),plot(t,PathPlanPointRec_L(:,7),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('rednt alpha (deg)');
+title('left hand t versus rednt alpha') ; 
 
 %==計算並畫各自由度(x,y,z)的速度
 %right hand

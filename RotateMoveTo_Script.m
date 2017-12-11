@@ -23,7 +23,7 @@ ini_rad_R=pi+atan((R_starP(2)-arc_cen(2))/(R_starP(1)-arc_cen(1)));%旋轉時的起始
 rL=sqrt((L_starP(1)-arc_cen(1))^2+(L_starP(2)-arc_cen(2))^2);
 ini_rad_L=atan((L_starP(2)-arc_cen(2))/(L_starP(1)-arc_cen(1)));
 
-acc_deg_L=5;
+acc_deg_L=5; %cartesian space旋轉的角度的角速度
 acc_deg_R=5;
 DEF_ACC_L=[acc_deg_L*(pi/180) acc_deg_L*(pi/180) acc_deg_L*(pi/180) 30 30 30 30]; %item x,y,z use the same compenet to interpolate unit is rad/s^2   the rest of item's unit is len/s^2
 DEF_ACC_R=[acc_deg_R*(pi/180) acc_deg_R*(pi/180) acc_deg_R*(pi/180) 30 30 30 30]; %
@@ -100,7 +100,7 @@ for t=0:DEF_CYCLE_TIME:CostTime
             else
                 current_rad_L=(ini_rad_L+rot_rad)-0.5*DEF_ACC_L(i)*(CostTime-t)^2;
             end
-            i=4;% 1~3 calculate the same thing current_rad_R
+            i=3;% 1~3 calculate the same thing current_rad_R
         else
             if (L_starP(i) == L_endP(i))
                 PathPlanPoint_L(i)=L_endP(i);
