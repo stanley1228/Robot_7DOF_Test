@@ -48,7 +48,6 @@ for t=0:DEF_CYCLE_TIME:CostTime
             end
         end
         
-       
         if (R_starP(i) == R_endP(i))
             PathPlanPoint_R(i)=R_endP(i);
         else  

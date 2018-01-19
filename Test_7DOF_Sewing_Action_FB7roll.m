@@ -262,23 +262,48 @@ end
 t=0:DEF_CYCLE_TIME:TotalTime+DEF_CYCLE_TIME*(Seg-2); %因為速度會少一筆資料
 
 figure(4);
-subplot(2,2,1),plot(t,PathPlanVelRec_R(:,1),'LineWidth',2); 
+subplot(2,4,1),plot(t,PathPlanVelRec_R(:,1),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('x/t (mm/s)');
 title('right hand t versus x/t') ;   
  
-subplot(2,2,2),plot(t,PathPlanVelRec_R(:,2),'LineWidth',2); 
+subplot(2,4,2),plot(t,PathPlanVelRec_R(:,2),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('y/t (mm/s)');
 title('right hand t versus y/t') ; 
 
-subplot(2,2,3),plot(t,PathPlanVelRec_R(:,3),'LineWidth',2); 
+subplot(2,4,3),plot(t,PathPlanVelRec_R(:,3),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('z/t (mm/s)');
 title('right hand t versus z/t') ;
+
+subplot(2,4,4),plot(t,PathPlanVelRec_R(:,4),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('alpha/t (deg/s)');
+title('right hand t versus alpha/t') ; 
+
+subplot(2,4,5),plot(t,PathPlanVelRec_R(:,5),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('beta/t (deg/s)');
+title('right hand t versus beta/t') ; 
+
+subplot(2,4,6),plot(t,PathPlanVelRec_R(:,6),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('gamma/t (deg/t)');
+title('right hand t versus gamma/t') ; 
+
+subplot(2,4,7),plot(t,PathPlanVelRec_R(:,7),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('rednt alpha/t (deg/t)');
+title('right hand t versus rednt alpha/t') ; 
+
 
 %left hand
 for i=1:1:size(PathPlanPointRec_L,1)-1
@@ -288,24 +313,47 @@ end
 t=0:DEF_CYCLE_TIME:TotalTime+DEF_CYCLE_TIME*(Seg-2); %因為速度會少一筆資料
 
 figure(5);
-subplot(2,2,1),plot(t,PathPlanVelRec_L(:,1),'LineWidth',2); 
+subplot(2,4,1),plot(t,PathPlanVelRec_L(:,1),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('x/t (mm/s)');
 title('left hand t versus x/t') ;   
  
-subplot(2,2,2),plot(t,PathPlanVelRec_L(:,2),'LineWidth',2); 
+subplot(2,4,2),plot(t,PathPlanVelRec_L(:,2),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('y/t (mm/s)');
 title('left hand t versus y/t') ; 
 
-subplot(2,2,3),plot(t,PathPlanVelRec_L(:,3),'LineWidth',2); 
+subplot(2,4,3),plot(t,PathPlanVelRec_L(:,3),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('z/t (mm/s)');
 title('left hand t versus z/t') ;
 
+subplot(2,4,4),plot(t,PathPlanVelRec_L(:,4),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('alpha/t (deg/s)');
+title('left hand t versus alpha/t') ; 
+
+subplot(2,4,5),plot(t,PathPlanVelRec_L(:,5),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('beta/t (deg/s)');
+title('left hand t versus beta/t') ; 
+
+subplot(2,4,6),plot(t,PathPlanVelRec_L(:,6),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('gamma/t (deg/t)');
+title('left hand t versus gamma/t') ; 
+
+subplot(2,4,7),plot(t,PathPlanVelRec_L(:,7),'LineWidth',2); 
+grid on;
+xlabel('t');
+ylabel('rednt alpha/t (deg/t)');
+title('left hand t versus rednt alpha/t') ; 
 
 %% ==畫JointAngle== %%
 %right
