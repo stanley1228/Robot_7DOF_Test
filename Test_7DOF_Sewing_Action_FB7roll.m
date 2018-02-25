@@ -5,6 +5,9 @@ clc
 %% 固定參數
 DEF_RIGHT_HAND=1;
 DEF_LEFT_HAND=2;
+DEF_ROBOT_COOR=1;
+DEF_OBJFRAME_COOR=2;
+
 
 L0=248;   %頭到肩膀
 L1=250;   %L型 長邊
@@ -53,13 +56,27 @@ disp('footlifter down');
 %主軸啟動
 disp('spindle on');
 
+%左手往下到架子邊 又賞往下到架子邊
+% FRAME_UPDATE=true;%架子繪圖
+% R_starP=[[-90 -90 0]+TranFrameToRobot [50  0 0] -60]; 
+% R_endP=[[188 -154 -273] [0 0 -50] -40]; 
+% L_starP=[[-90  90 0]+TranFrameToRobot [-90  0 0]  80];
+% L_endP=[[181 38 -273] [-90 0 0]  90];
+% CostTime=3;
+% Coordinate=DEF_ROBOT_COOR;
+% LineMoveTo_Script;
+% TotalTime=TotalTime+CostTime;
+% Seg=Seg+1;
+
+
 %右手往正X SewingLenth 左手往正X 縫線長度 SewingLenth
 FRAME_UPDATE=true;%架子繪圖
 R_starP=[[-90 -90 0] [50  0 0] -50]; 
 R_endP=[[-90+SewingLength -90 0]  50 0 0 -50]; 
 L_starP=[[-90  90 0] [-90  0 0]  90];
 L_endP=[[-90+SewingLength  90 0] [-90 0 0]  90];
-CostTime=5;
+CostTime=3;
+Coordinate=DEF_OBJFRAME_COOR;
 LineMoveTo_Script;
 TotalTime=TotalTime+CostTime;
 Seg=Seg+1;
@@ -76,7 +93,8 @@ R_starP=[[-90+SewingLength -90 0]  [50 0 0] -50];
 R_endP=[[-90+SewingLength -90 0]  [50 0 0] -50]; 
 L_starP=[[-90+SewingLength  90 0] [-90 0 0]  90];
 L_endP= [[-90+SewingLength  90+MovOutLen 0] [-90 0 0]  90];
-CostTime=5;
+CostTime=3;
+Coordinate=DEF_OBJFRAME_COOR;
 LineMoveTo_Script;
 TotalTime=TotalTime+CostTime;
 Seg=Seg+1;
@@ -86,7 +104,8 @@ R_starP=[[-90+SewingLength -90 0]  [50 0 0] -50];
 R_endP=[[-90+SewingLength -90 0]  [50 0 0] -50];
 L_starP=[[-90+SewingLength  90+MovOutLen 0] [-90 0 0]  90];
 L_endP=[[-90+SewingLength+RelMovLen  90+MovOutLen 0] [-60 0 0]  90];
-CostTime=5;
+CostTime=4;
+Coordinate=DEF_OBJFRAME_COOR;
 LineMoveTo_Script;
 TotalTime=TotalTime+CostTime;
 Seg=Seg+1;
@@ -97,6 +116,7 @@ R_endP=[[-90+SewingLength -90 0]  [50 0 0] -50];
 L_starP=[[-90+SewingLength+RelMovLen  90+MovOutLen 0] [-60 0 0]  90];
 L_endP=[[-90+SewingLength+RelMovLen  90 0] [-60 0 0]  90];
 CostTime=3;
+Coordinate=DEF_OBJFRAME_COOR;
 LineMoveTo_Script;
 TotalTime=TotalTime+CostTime;
 Seg=Seg+1;
@@ -115,7 +135,8 @@ R_endP=[[90 -90 0] [50 0 0] -50];
 L_starP=[[-90+SewingLength+RelMovLen  90 0] [-60 0 0]  90];
 L_endP=[[-90 90 0] -90 0 0  90];
 rot_rad=0.5*pi; %旋轉時的起始旋轉角度
-CostTime=10;
+CostTime=3;
+Coordinate=DEF_OBJFRAME_COOR;
 RotateMoveTo_Script;
 TotalTime=TotalTime+CostTime;
 Seg=Seg+1;
@@ -132,7 +153,8 @@ R_starP=[[90 -90 0] [50 0 0] -50  ];
 R_endP=[[90-MovOutLen -90-MovOutLen 0]  [50 0 0] -70];
 L_starP=[[-90 90 0] -90 0 0  90];
 L_endP=[[-90 90 0] -90 0 0  90];
-CostTime=5;
+CostTime=2;
+Coordinate=DEF_OBJFRAME_COOR;
 LineMoveTo_Script;
 TotalTime=TotalTime+CostTime;
 Seg=Seg+1;
@@ -142,7 +164,8 @@ R_starP=[[90-MovOutLen -90-MovOutLen 0]  [50 0 0] -70];
 R_endP=[[90-MovOutLen-RelMovLen -90-MovOutLen 0]  [50 0 0] -70];
 L_starP=[[-90 90 0] -90 0 0  90];
 L_endP=[[-90 90 0] -90 0 0  90];
-CostTime=10;
+CostTime=5;
+Coordinate=DEF_OBJFRAME_COOR;
 LineMoveTo_Script;
 TotalTime=TotalTime+CostTime;
 Seg=Seg+1;
@@ -152,7 +175,8 @@ R_starP=[[90-MovOutLen-RelMovLen -90-MovOutLen 0]  [50 0 0] -70];
 R_endP=[[90-RelMovLen -90 0]  [50 0 0] -70];
 L_starP=[[-90 90 0] -90 0 0  90];
 L_endP=[[-90 90 0] -90 0 0  90];
-CostTime=4;
+CostTime=2;
+Coordinate=DEF_OBJFRAME_COOR;
 LineMoveTo_Script;
 TotalTime=TotalTime+CostTime;
 Seg=Seg+1;
@@ -165,93 +189,44 @@ disp('right hold');
 %right hand
 t=0:DEF_CYCLE_TIME:TotalTime+DEF_CYCLE_TIME*(Seg-1);%頭尾重複
 figure(2);
-subplot(2,4,1),plot(t,PathPlanPointRec_R(:,1),'LineWidth',2); 
+subplot(2,2,1),plot(t,PathPlanPointRec_R(:,1),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('x (mm)');
 title('right hand t versus x') ; 
 
-subplot(2,4,2),plot(t,PathPlanPointRec_R(:,2),'LineWidth',2); 
+subplot(2,2,2),plot(t,PathPlanPointRec_R(:,2),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('y (mm)');
 title('right hand t versus y') ; 
 
-subplot(2,4,3),plot(t,PathPlanPointRec_R(:,3),'LineWidth',2); 
+subplot(2,2,3),plot(t,PathPlanPointRec_R(:,3),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('z (mm)');
 title('right hand t versus z') ; 
 
-subplot(2,4,4),plot(t,PathPlanPointRec_R(:,4),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('alpha (deg)');
-title('right hand t versus alpha') ; 
-
-subplot(2,4,5),plot(t,PathPlanPointRec_R(:,5),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('beta (deg)');
-title('right hand t versus beta') ; 
-
-subplot(2,4,6),plot(t,PathPlanPointRec_R(:,6),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('gamma (deg)');
-title('right hand t versus gamma') ; 
-
-subplot(2,4,7),plot(t,PathPlanPointRec_R(:,7),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('rednt alpha (deg)');
-title('right hand t versus rednt alpha') ; 
-
 %left hand
 t=0:DEF_CYCLE_TIME:TotalTime+DEF_CYCLE_TIME*(Seg-1); 
 figure(3);
-subplot(2,4,1),plot(t,PathPlanPointRec_L(:,1),'LineWidth',2); 
+subplot(2,2,1),plot(t,PathPlanPointRec_L(:,1),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('x (mm)');
 title('left hand t versus x') ; 
 
-subplot(2,4,2),plot(t,PathPlanPointRec_L(:,2),'LineWidth',2); 
+subplot(2,2,2),plot(t,PathPlanPointRec_L(:,2),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('y (mm)');
 title('left hand t versus y') ; 
 
-subplot(2,4,3),plot(t,PathPlanPointRec_L(:,3),'LineWidth',2); 
+subplot(2,2,3),plot(t,PathPlanPointRec_L(:,3),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('z (mm)');
 title('left hand t versus z') ; 
-
-
-subplot(2,4,4),plot(t,PathPlanPointRec_L(:,4),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('alpha (deg)');
-title('left hand t versus alpha') ; 
-
-subplot(2,4,5),plot(t,PathPlanPointRec_L(:,5),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('beta (deg)');
-title('left hand t versus beta') ; 
-
-subplot(2,4,6),plot(t,PathPlanPointRec_L(:,6),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('gamma (deg)');
-title('left hand t versus gamma') ; 
-
-subplot(2,4,7),plot(t,PathPlanPointRec_L(:,7),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('rednt alpha (deg)');
-title('left hand t versus rednt alpha') ; 
 
 %==計算並畫各自由度(x,y,z)的速度
 %right hand
@@ -262,48 +237,23 @@ end
 t=0:DEF_CYCLE_TIME:TotalTime+DEF_CYCLE_TIME*(Seg-2); %因為速度會少一筆資料
 
 figure(4);
-subplot(2,4,1),plot(t,PathPlanVelRec_R(:,1),'LineWidth',2); 
+subplot(2,2,1),plot(t,PathPlanVelRec_R(:,1),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('x/t (mm/s)');
 title('right hand t versus x/t') ;   
  
-subplot(2,4,2),plot(t,PathPlanVelRec_R(:,2),'LineWidth',2); 
+subplot(2,2,2),plot(t,PathPlanVelRec_R(:,2),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('y/t (mm/s)');
 title('right hand t versus y/t') ; 
 
-subplot(2,4,3),plot(t,PathPlanVelRec_R(:,3),'LineWidth',2); 
+subplot(2,2,3),plot(t,PathPlanVelRec_R(:,3),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('z/t (mm/s)');
 title('right hand t versus z/t') ;
-
-subplot(2,4,4),plot(t,PathPlanVelRec_R(:,4),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('alpha/t (deg/s)');
-title('right hand t versus alpha/t') ; 
-
-subplot(2,4,5),plot(t,PathPlanVelRec_R(:,5),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('beta/t (deg/s)');
-title('right hand t versus beta/t') ; 
-
-subplot(2,4,6),plot(t,PathPlanVelRec_R(:,6),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('gamma/t (deg/t)');
-title('right hand t versus gamma/t') ; 
-
-subplot(2,4,7),plot(t,PathPlanVelRec_R(:,7),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('rednt alpha/t (deg/t)');
-title('right hand t versus rednt alpha/t') ; 
-
 
 %left hand
 for i=1:1:size(PathPlanPointRec_L,1)-1
@@ -313,47 +263,24 @@ end
 t=0:DEF_CYCLE_TIME:TotalTime+DEF_CYCLE_TIME*(Seg-2); %因為速度會少一筆資料
 
 figure(5);
-subplot(2,4,1),plot(t,PathPlanVelRec_L(:,1),'LineWidth',2); 
+subplot(2,2,1),plot(t,PathPlanVelRec_L(:,1),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('x/t (mm/s)');
 title('left hand t versus x/t') ;   
  
-subplot(2,4,2),plot(t,PathPlanVelRec_L(:,2),'LineWidth',2); 
+subplot(2,2,2),plot(t,PathPlanVelRec_L(:,2),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('y/t (mm/s)');
 title('left hand t versus y/t') ; 
 
-subplot(2,4,3),plot(t,PathPlanVelRec_L(:,3),'LineWidth',2); 
+subplot(2,2,3),plot(t,PathPlanVelRec_L(:,3),'LineWidth',2); 
 grid on;
 xlabel('t');
 ylabel('z/t (mm/s)');
 title('left hand t versus z/t') ;
 
-subplot(2,4,4),plot(t,PathPlanVelRec_L(:,4),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('alpha/t (deg/s)');
-title('left hand t versus alpha/t') ; 
-
-subplot(2,4,5),plot(t,PathPlanVelRec_L(:,5),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('beta/t (deg/s)');
-title('left hand t versus beta/t') ; 
-
-subplot(2,4,6),plot(t,PathPlanVelRec_L(:,6),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('gamma/t (deg/t)');
-title('left hand t versus gamma/t') ; 
-
-subplot(2,4,7),plot(t,PathPlanVelRec_L(:,7),'LineWidth',2); 
-grid on;
-xlabel('t');
-ylabel('rednt alpha/t (deg/t)');
-title('left hand t versus rednt alpha/t') ; 
 
 %% ==畫JointAngle== %%
 %right
