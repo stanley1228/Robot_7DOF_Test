@@ -24,7 +24,7 @@ x_base_L=0;   %基準點
 y_base_L=0;
 z_base_L=0;
 
-DEF_CYCLE_TIME=0.5;
+DEF_CYCLE_TIME=0.2;
 Pcnt=1;%輸出總數
 
 Needle_RobotF=[350 -300 30];%針點在手臂坐標系位置   
@@ -59,7 +59,7 @@ disp('spindle on');
 %左手往下到架子邊 又賞往下到架子邊
 % FRAME_UPDATE=true;%架子繪圖
 % R_starP=[[-90 -90 0]+TranFrameToRobot [50  0 0] -60]; 
-% R_endP=[[188 -154 -273] [0 0 -50] -40]; 
+% R_endP=[[188 -154 -273] [0 0 -50] -60]; 
 % L_starP=[[-90  90 0]+TranFrameToRobot [-90  0 0]  80];
 % L_endP=[[181 38 -273] [-90 0 0]  90];
 % CostTime=3;
@@ -104,7 +104,7 @@ R_starP=[[-90+SewingLength -90 0]  [50 0 0] -50];
 R_endP=[[-90+SewingLength -90 0]  [50 0 0] -50];
 L_starP=[[-90+SewingLength  90+MovOutLen 0] [-90 0 0]  90];
 L_endP=[[-90+SewingLength+RelMovLen  90+MovOutLen 0] [-60 0 0]  90];
-CostTime=4;
+CostTime=3;
 Coordinate=DEF_OBJFRAME_COOR;
 LineMoveTo_Script;
 TotalTime=TotalTime+CostTime;
@@ -135,7 +135,7 @@ R_endP=[[90 -90 0] [50 0 0] -50];
 L_starP=[[-90+SewingLength+RelMovLen  90 0] [-60 0 0]  90];
 L_endP=[[-90 90 0] -90 0 0  90];
 rot_rad=0.5*pi; %旋轉時的起始旋轉角度
-CostTime=3;
+CostTime=4;
 Coordinate=DEF_OBJFRAME_COOR;
 RotateMoveTo_Script;
 TotalTime=TotalTime+CostTime;
@@ -153,7 +153,7 @@ R_starP=[[90 -90 0] [50 0 0] -50  ];
 R_endP=[[90-MovOutLen -90-MovOutLen 0]  [50 0 0] -70];
 L_starP=[[-90 90 0] -90 0 0  90];
 L_endP=[[-90 90 0] -90 0 0  90];
-CostTime=2;
+CostTime=3;
 Coordinate=DEF_OBJFRAME_COOR;
 LineMoveTo_Script;
 TotalTime=TotalTime+CostTime;
@@ -164,7 +164,7 @@ R_starP=[[90-MovOutLen -90-MovOutLen 0]  [50 0 0] -70];
 R_endP=[[90-MovOutLen-RelMovLen -90-MovOutLen 0]  [50 0 0] -70];
 L_starP=[[-90 90 0] -90 0 0  90];
 L_endP=[[-90 90 0] -90 0 0  90];
-CostTime=5;
+CostTime=3;
 Coordinate=DEF_OBJFRAME_COOR;
 LineMoveTo_Script;
 TotalTime=TotalTime+CostTime;
@@ -175,7 +175,7 @@ R_starP=[[90-MovOutLen-RelMovLen -90-MovOutLen 0]  [50 0 0] -70];
 R_endP=[[90-RelMovLen -90 0]  [50 0 0] -70];
 L_starP=[[-90 90 0] -90 0 0  90];
 L_endP=[[-90 90 0] -90 0 0  90];
-CostTime=2;
+CostTime=3;
 Coordinate=DEF_OBJFRAME_COOR;
 LineMoveTo_Script;
 TotalTime=TotalTime+CostTime;

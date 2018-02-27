@@ -1,8 +1,4 @@
 
-cla reset
-close all
-clear all
-clc
 
 
 % %right hand
@@ -29,47 +25,89 @@ clc
 % subplot(2,2,3),plot(t,Pend_L(:,4),'LineWidth',2); title('left hand t versus z'); xlabel('t'); ylabel('Pend-L z'); grid on;   
 
 %right hand
-% Joint_R = csvread('D://SewJoint_FeedBack_L.csv');
-% 
-% figure(10);hold on; grid on;title('right hand t versus feedback joint angle'); xlabel('t'); ylabel('angle'); grid on;   
-% 
-% abst=Joint_R(:,1);  
-% for i=1:1:7
-%     plot(abst,Joint_R(:,i+1),'LineWidth',2)
-% end
-% legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+SewJoint_CMD_R = csvread('C://stanley//SewJoint_CMD_R.csv');
+figure(20);hold on; grid on;title('right hand t versus SewJoint CMD_R'); xlabel('t'); ylabel('angle'); grid on;   
+abst=SewJoint_CMD_R(:,1);  
+for i=1:1:7
+    plot(abst,SewJoint_CMD_R(:,i+1),'LineWidth',2)
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
 %left hand hand
-CMD_L = csvread('D://SewJoint_CMD_L.csv');
+SewJoint_CMD_L = csvread('C://stanley//SewJoint_CMD_L.csv');
 
-figure(11);hold on; grid on;title('left hand t versus feedback joint angle'); xlabel('t'); ylabel('angle'); grid on;   
+figure(24);hold on; grid on;title('left hand t versusSewJoint CMD_L'); xlabel('t'); ylabel('angle'); grid on;   
 
-abst=CMD_L(:,1);  
-% for i=1:1:7
-    i=4;
-    plot(abst,CMD_L(:,i+1),'LineWidth',2)
+abst=SewJoint_CMD_L(:,1);  
+for i=1:1:7
+    plot(abst,SewJoint_CMD_L(:,i+1),'LineWidth',2)
     
-% end
+end
+
+
+%right hand
+Joint_R = csvread('C://stanley//SewJoint_FeedBack_R.csv');
+figure(20);hold on; grid on;title('right hand t versus feedback joint angle'); xlabel('t'); ylabel('angle'); grid on;   
+abst=Joint_R(:,1);  
+for i=1:1:7
+    plot(abst,Joint_R(:,i+1),'LineWidth',2)
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+Joint_L = csvread('C://stanley//SewJoint_FeedBack_L.csv');
+figure(21);hold on; grid on;title('left hand t versus feedback joint angle'); xlabel('t'); ylabel('angle'); grid on;   
+abst=Joint_L(:,1);  
+for i=1:1:7
+    plot(abst,Joint_L(:,i+1),'LineWidth',2)
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+JointVelCmd_R = csvread('C://stanley//JointVelCmdR.csv');
+figure(22);hold on; grid on;title('right hand t versus vel cmd'); xlabel('t'); ylabel('angle'); grid on;   
+abst=JointVelCmd_R(:,1);  
+for i=1:1:7
+    plot(abst,JointVelCmd_R(:,i+1),'LineWidth',2)
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
+
+JointVelCmd_L = csvread('C://stanley//JointVelCmdL.csv');
+figure(23);hold on; grid on;title('left hand t versus vel cmd'); xlabel('t'); ylabel('angle'); grid on;   
+abst=JointVelCmd_L(:,1);  
+for i=1:1:7
+    plot(abst,JointVelCmd_L(:,i+1),'LineWidth',2)
+end
+legend('axis1','axis2','axis3','axis4','axis5','axis6','axis7');
 
 %left hand hand
-Joint_L = csvread('D://SewJoint_FeedBack_L.csv');
+Joint_L = csvread('C://stanley//SewJoint_FeedBack_L.csv');
 
-figure(11);hold on; grid on;title('left hand t versus feedback joint angle'); xlabel('t'); ylabel('angle'); grid on;   
+figure(24);hold on; grid on;title('left hand t versus feedback joint angle'); xlabel('t'); ylabel('angle'); grid on;   
 
 abst=Joint_L(:,1);  
-% for i=1:1:7
-    i=4;
+for i=1:1:7
     plot(abst,Joint_L(:,i+1),'LineWidth',2)
     
+end
+
+%left hand hand
+% Joint_L = csvread('C://stanley//SewJoint_FeedBack_L.csv');
+% 
+% figure(11);hold on; grid on;title('left hand t versus feedback joint angle'); xlabel('t'); ylabel('angle'); grid on;   
+% 
+% abst=Joint_L(:,1);  
+% for i=1:1:7
+%     plot(abst,Joint_L(:,i+1),'LineWidth',2)
+%     
 % end
 
-Load_L = csvread('D://SewJoint_LOAD_L.csv');
-
-figure(11);hold on; grid on;title('left hand t versus feedback joint load'); xlabel('t'); ylabel('angle'); grid on;   
-
-abst=Joint_L(:,1);  
-% for i=1:1:7
-    i=4;
-    plot(abst,Load_L(:,i+1),'LineWidth',2)
+% Load_L = csvread('D://SewJoint_LOAD_L.csv');
+% 
+% figure(11);hold on; grid on;title('left hand t versus feedback joint load'); xlabel('t'); ylabel('angle'); grid on;   
+% 
+% abst=Joint_L(:,1);  
+% % for i=1:1:7
+%     i=4;
+%     plot(abst,Load_L(:,i+1),'LineWidth',2)
     
 % Moving_L = csvread('D://SewJoint_MOVING_L.csv');
 % 
@@ -82,19 +120,18 @@ abst=Joint_L(:,1);
   
 vel_cmd_L = csvread('D://JointVelCmdL.csv');   
 abst=vel_cmd_L(:,1);  
-% for i=1:1:7
-i=4;
-plot(abst,vel_cmd_L(:,i+1),'LineWidth',2)   
-
+for i=1:1:7
+    plot(abst,vel_cmd_L(:,i+1),'LineWidth',2)   
+end
     
 
-vel_L = csvread('D://JointVel_FeedBack_L.csv');   
-abst=vel_L(:,1);  
-% for i=1:1:7
-i=4;
-plot(abst,vel_L(:,i+1),'LineWidth',2)   
-%('p_cmd','feedback','load','moving','velcmd','velfb');
-legend('p_cmd','feedback','load','velcmd','velfb');
+% vel_L = csvread('D://JointVel_FeedBack_L.csv');   
+% abst=vel_L(:,1);  
+% % for i=1:1:7
+% i=4;
+% plot(abst,vel_L(:,i+1),'LineWidth',2)   
+% %('p_cmd','feedback','load','moving','velcmd','velfb');
+% legend('p_cmd','feedback','load','velcmd','velfb');
 
 %right hand cmd
 % figure(21); hold on; grid on;title('c++ right hand t versus x'); xlabel('t'); ylabel('Pend-R x'); grid on;   
