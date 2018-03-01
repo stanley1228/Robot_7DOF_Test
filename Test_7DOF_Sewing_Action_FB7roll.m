@@ -32,7 +32,7 @@ Needle_ini_Plate=[30 -30 0];%下針點在架子plate座標系上的初始點
 TranFrameToRobot=Needle_RobotF-Needle_ini_Plate;%利用兩個的差值去做比較
 
 MovOutLen=50;%移出抓取點的長度
-SewingLength=60;%縫紉行程
+SewingLength=50;%縫紉行程
 RelMovLen=180;%框架抓取點間距
 
 HoldLen_L=[180 0 0];%左手抓取點間距 由框決定
@@ -71,8 +71,8 @@ disp('spindle on');
 
 %右手往正X SewingLenth 左手往正X 縫線長度 SewingLenth
 FRAME_UPDATE=true;%架子繪圖
-R_starP=[[-90 -90 0] [50  0 0] -50]; 
-R_endP=[[-90+SewingLength -90 0]  50 0 0 -50]; 
+R_starP=[[-90 -90 0] [70  0 0] -50]; 
+R_endP=[[-90+SewingLength -90 0]  70 0 0 -50]; 
 L_starP=[[-90  90 0] [-90  0 0]  90];
 L_endP=[[-90+SewingLength  90 0] [-90 0 0]  90];
 CostTime=3;
@@ -89,7 +89,7 @@ disp('left release');
 
 %右手不動 左手往正y移動 
 FRAME_UPDATE=false;
-R_starP=[[-90+SewingLength -90 0]  [50 0 0] -50]; 
+R_starP=[[-90+SewingLength -90 0]  [70 0 0] -50]; 
 R_endP=[[-90+SewingLength -90 0]  [50 0 0] -50]; 
 L_starP=[[-90+SewingLength  90 0] [-90 0 0]  90];
 L_endP= [[-90+SewingLength  90+MovOutLen 0] [-90 0 0]  90];
